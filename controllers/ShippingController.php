@@ -1,1 +1,1 @@
-// xoa shipp
+// comm shiping

@@ -27,12 +27,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($stmt->execute()) {
             echo "<p style='color: green;'>Thêm danh mục thành công!</p>";
+            
         } else {
             echo "<p style='color: red;'>Lỗi khi thêm danh mục!</p>";
         }
     } else {
         echo "<p style='color: red;'>Tên danh mục không được để trống!</p>";
     }
+    
 }
 ?>
 

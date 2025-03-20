@@ -107,7 +107,9 @@ switch ($act) {
                 
                 case 'xoa':
                     if (!empty($id)) {
-                        echo "Load giao diện xóa danh mục";
+                        // echo "Load giao diện xóa danh mục";
+                        require 'modules/danhmuc/delete.php';
+
                     } else {
                         require 'modules/danhmuc/listCategories.php';
                     }

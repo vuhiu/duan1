@@ -1,75 +1,67 @@
 <?php
-// Kết nối database
-$servername = "localhost";
-$username = "root"; // Thay bằng username MySQL của bạn
-$password = ""; // Thay bằng mật khẩu MySQL của bạn
-$database = "duan1"; // Thay bằng tên database của bạn
+require '../commons/connect.php';
 
-$conn = new mysqli($servername, $username, $password, $database);
-$conn->set_charset("utf8mb4");
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Kiểm tra kết nối
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
+$conn = connectDB();
+if (!$conn) {
+    die("Lỗi kết nối CSDL");
 }
 
 // Truy vấn danh sách sản phẩm
-$sql = "SELECT * FROM products ORDER BY created_at DESC";
-$result = $conn->query($sql);
+$sql = "SELECT p.*, c.name AS category_name 
+        FROM products p 
+        LEFT JOIN categories c ON p.category_id = c.category_id 
+        ORDER BY p.created_at DESC";
+
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách sản phẩm</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-</head>
-<body>
-<div class="container mt-4">
-    <h2 class="mb-4">Danh sách sản phẩm</h2>
-    
+<h2 class="mt-3">Danh sách sản phẩm</h2>
 
-    <table class="table table-bordered table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Ảnh</th>
-                <th>Tên sản phẩm</th>
-                <th>Giá gốc</th>
-                <th>Giá khuyến mãi</th>
-                <th>Trạng thái</th>
-                <th>Hành động</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<tr>";
-                    echo "<td>{$row['product_id']}</td>";
-                    echo "<td><img src='uploads/{$row['image']}' width='80' height='80' alt='{$row['name']}'></td>";
-                    echo "<td>{$row['name']}</td>";
-                    echo "<td>" . number_format($row['price']) . "đ</td>";
-                    echo "<td>" . number_format($row['sale_price']) . "đ</td>";
-                    echo "<td>" . ($row['status'] ? "<span class='text-success'>Hiển thị</span>" : "<span class='text-danger'>Ẩn</span>") . "</td>";
-                    echo "<td>
-                            <a href='edit_product.php?id={$row['product_id']}' class='btn btn-warning btn-sm'>Sửa</a>
-                            <a href='delete_product.php?id={$row['product_id']}' class='btn btn-danger btn-sm' onclick='return confirm(\"Bạn có chắc muốn xóa?\");'>Xóa</a>
-                          </td>";
-                    echo "</tr>";
-                }
-            } else {
-                echo "<tr><td colspan='7' class='text-center'>Không có sản phẩm nào</td></tr>";
-            }
-            ?>
-        </tbody>
-    </table>
-</div>
-</body>
-</html>
+<a href="add_product.php" class="btn btn-success mb-3">Thêm sản phẩm</a>
 
-<?php
-$conn->close();
-?>
+<table class="table table-bordered">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">STT</th>
+      <th scope="col">Ảnh</th>
+      <th scope="col">Tên sản phẩm</th>
+      <th scope="col">Giá gốc</th>
+      <th scope="col">Giá khuyến mãi</th>
+      <th scope="col">Danh mục</th>
+      <th scope="col">Hành động</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php if (!empty($products)): ?>
+      <?php foreach ($products as $index => $product): ?>
+        <tr>
+          <th scope="row"><?= $index + 1 ?></th>
+          <td>
+            <?php if (!empty($product['image']) && file_exists("../uploads/" . $product['image'])): ?>
+              <img src="<?= htmlspecialchars('../uploads/' . $product['image']) ?>" width="80" height="80" alt="<?= htmlspecialchars($product['name']) ?>">
+            <?php else: ?>
+              <span class="text-muted">Không có ảnh</span>
+            <?php endif; ?>
+          </td>
+          <td><?= htmlspecialchars($product['name']) ?></td>
+          <td><?= number_format($product['price']) ?>đ</td>
+          <td><?= number_format($product['sale_price']) ?>đ</td>
+          <td><?= htmlspecialchars($product['category_name']) ?></td>
+          <td>
+            <a href="edit_product.php?id=<?= $product['product_id'] ?>" class="btn btn-warning btn-sm">Sửa</a>
+            <a href="delete_product.php?id=<?= $product['product_id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</a>
+          </td>
+        </tr>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <tr>
+        <td colspan="7" class="text-center text-danger">Không có sản phẩm nào</td>
+      </tr>
+    <?php endif; ?>
+  </tbody>
+</table>

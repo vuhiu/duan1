@@ -1,7 +1,7 @@
 <?php
     require './commons/connect.php';
     require './commons/env.php';
-    include "./views/layout/header.php";
+    include "./client/views/layout/header.php";
     $act = isset($_GET['act']) ? $_GET['act'] : '/';
 
 switch ($act) {
@@ -17,5 +17,5 @@ switch ($act) {
         break;
     
 }
-include "./views/layout/footer.php";    
+include "./client/views/layout/footer.php";    
 ?>

@@ -31,6 +31,9 @@ if (!empty($act)) {
         case "donhang":
 
             break;
+        case "categories":
+            echo"danh mục sản phẩm"
+            break;
         case "nguoidung":
 
             break;

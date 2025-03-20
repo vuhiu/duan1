@@ -47,7 +47,7 @@
           </li>
          
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="http://localhost/duan1/admin/?act=sanpham&page=them" class="nav-link">
               <i class="nav-icon fas fa-copy"></i>
               <p>
                 Sản Phẩm
@@ -57,13 +57,13 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="http://localhost/duan1/admin/?act=sanpham&page=them" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Thêm sản phẩm mới</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="pages/layout/top-nav-sidebar.html" class="nav-link">
+                <a href="http://localhost/duan1/admin/?act=sanpham" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Danh sách sản phẩm</p>
                 </a>

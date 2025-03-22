@@ -2,6 +2,7 @@
     require './commons/connect.php';
     require './commons/env.php';
     include "./views/layout/header.php";
+    
     $act = isset($_GET['act']) ? $_GET['act'] : '/';
 
 switch ($act) {

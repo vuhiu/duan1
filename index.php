@@ -1,8 +1,8 @@
 <?php
     require './commons/connect.php';
     require './commons/env.php';
-    
-=======
+
+
     include "./views/layout/header.php";
     
 >>>>>>> oanh

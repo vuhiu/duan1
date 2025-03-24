@@ -9,10 +9,13 @@ switch ($act) {
     case '/':
         echo "Home";
         break;
-    case '/products':
+    case 'products':
         echo "Products";
         break;
     case '/123':
+        echo "12345";
+        break;
+    case '/333':
         echo "12345";
         break;
 

@@ -1,8 +1,7 @@
 <?php
     require './commons/connect.php';
     require './commons/env.php';
-<<<<<<< HEAD
-    include "./client/views/layout/header.php";
+    
 =======
     include "./views/layout/header.php";
     

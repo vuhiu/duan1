@@ -16,7 +16,7 @@ switch ($act) {
         echo "Products";
         break;
     case 'category':
-        echo "category";
+        echo "123";
         break;
 
     default:

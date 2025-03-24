@@ -12,8 +12,11 @@ switch ($act) {
     case '/':
         echo "Home";
         break;
-    case '/products':
+    case 'products':
         echo "Products";
+        break;
+    case 'category':
+        echo "category";
         break;
 
     default:

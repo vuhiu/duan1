@@ -1,7 +1,12 @@
 <?php
     require './commons/connect.php';
     require './commons/env.php';
+<<<<<<< HEAD
     include "./client/views/layout/header.php";
+=======
+    include "./views/layout/header.php";
+    
+>>>>>>> oanh
     $act = isset($_GET['act']) ? $_GET['act'] : '/';
 
 switch ($act) {

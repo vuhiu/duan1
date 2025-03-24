@@ -15,6 +15,9 @@ switch ($act) {
     case '/123':
         echo "12345";
         break;
+    case '/333':
+        echo "12345";
+        break;
 
     default:
         echo "Router không hợp lệ";

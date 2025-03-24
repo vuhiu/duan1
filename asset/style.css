@@ -1,0 +1,123 @@
+/* ======= RESET ======= */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* ======= HEADER ======= */
+.top-header {
+    background-color: #212529;
+    padding: 10px 0;
+}
+
+.top-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-header .logo h2 {
+    font-size: 26px;
+    font-weight: bold;
+    color: white;
+}
+
+/* ======= THANH TÌM KIẾM ======= */
+.search-bar {
+    display: flex;
+    align-items: center;
+    width: 550px;
+    background: white;
+    border-radius: 30px;
+    padding: 5px;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar select {
+    width: 25%;
+    height: 40px;
+    border: none;
+    background-color: #f8f9fa;
+    padding: 0 10px;
+    border-right: 1px solid #ddd;
+    border-radius: 30px 0 0 30px;
+    outline: none;
+}
+
+.search-bar input {
+    flex-grow: 1;
+    height: 40px;
+    border: none;
+    padding-left: 10px;
+    font-size: 16px;
+    outline: none;
+}
+
+.search-bar button {
+    height: 40px;
+    border: none;
+    background-color: red;
+    color: white;
+    padding: 0 20px;
+    font-weight: bold;
+    border-radius: 0 30px 30px 0;
+    transition: 0.3s;
+}
+
+.search-bar button:hover {
+    background-color: darkred;
+    transform: scale(1.05);
+}
+
+/* ======= NAVBAR ======= */
+.navbar {
+    background-color: white;
+    border-bottom: 2px solid #f1f1f1;
+    padding: 10px 0;
+}
+
+.navbar .navbar-nav {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.navbar .nav-item {
+    margin: 0 15px;
+}
+
+.navbar .nav-item .nav-link {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    padding: 12px 15px;
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar .nav-item .nav-link:hover {
+    color: red;
+}
+
+/* ======= FOOTER ======= */
+footer {
+    background: #0D0D0D;
+    padding: 30px 0;
+    color: white;
+    text-align: center;
+}
+
+footer h5 {
+    color: red;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+footer a {
+    color: white;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+footer a:hover {
+    color: red;
+}

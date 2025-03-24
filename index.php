@@ -1,7 +1,8 @@
 <?php
     require './commons/connect.php';
     require './commons/env.php';
-    include "./client/views/layout/header.php";
+    include "./views/layout/header.php";
+    
     $act = isset($_GET['act']) ? $_GET['act'] : '/';
 
 switch ($act) {
@@ -10,6 +11,9 @@ switch ($act) {
         break;
     case '/products':
         echo "Products";
+        break;
+    case '/123':
+        echo "12345";
         break;
 
     default:

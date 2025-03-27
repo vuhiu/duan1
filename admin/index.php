@@ -1,12 +1,13 @@
 <?php
+    ob_start(); // Bật bộ đệm đầu ra
     ini_set('display_errors', '11');
     ini_set('display_startup_errors', '11');
     error_reporting(E_ALL);
-    include "./layouts/header.php";
+    include __DIR__ . "/layouts/header.php";
 ?>
 
 <?php
-    include "./layouts/sidebar.php";
+    include __DIR__ . "/layouts/sidebar.php";
 ?>
 
 
@@ -36,14 +37,14 @@
     <section class="content">
       <div class="container-fluid">
       <?php
-    include "./config/router.php";
+    include __DIR__ . "/config/router.php";
 ?>
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
   </div>
   <?php
-    include "./layouts/copyright.php";
+    include __DIR__ . "/layouts/copyright.php";
 ?>
 
   <!-- Control Sidebar -->
@@ -54,5 +55,5 @@
 
 
   <?php
-    include "./layouts/footer.php";
+    include __DIR__ . "/layouts/footer.php";
 ?>

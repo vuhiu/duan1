@@ -2,6 +2,7 @@
     // Kết nối database & Load cấu hình
     require __DIR__ . '/commons/connect.php';
     require __DIR__ . '/commons/env.php';
+    // require_once __DIR__ . '/admin/config/router.php';
 
     // Kiểm tra & nạp file header
     $headerPath = __DIR__ . '/client/views/layout/header.php';
@@ -21,11 +22,9 @@
         case 'products':
             echo "Products";
             break;
-        case '123':
-            echo "12345";
-            break;
-        case '333':
-            echo "12345";
+        case 'danhmuc':
+            // Gọi router của admin nếu act là 'danhmuc'
+            require_once __DIR__ . '/admin/config/router.php';
             break;
         default:
             echo "Router không hợp lệ";

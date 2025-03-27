@@ -55,35 +55,6 @@ switch ($act) {
     case 'danhmuc':
         switch ($page) {
             case 'list':
-                require_once __DIR__ . '/../views/category/listCategory.php';
-                break;
-
-            case 'them':
-                require_once __DIR__ . '/../views/category/addCategory.php';
-                break;
-
-            case 'sua':
-                $productController->edit();
-                break;
-
-            case 'update':
-                $productController->update();
-                break;
-
-            case 'xoa':
-                $productController->delete();
-                break;
-
-            default:
-                echo "Không tìm thấy trang!";
-
-                break;
-        }
-        break;
-
-    case 'danhmuc':
-        switch ($page) {
-            case 'list':
                 $categoryController->getList();
                 break;
 

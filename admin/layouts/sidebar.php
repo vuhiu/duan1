@@ -40,8 +40,10 @@
                         <i class="nav-icon fas fa-copy"></i>
                         <p>Bài Viết <i class="fas fa-angle-left right"></i></p>
                     </a>
+
                 </li>
             </ul>
         </nav>
     </div>
 </aside>
+

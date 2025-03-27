@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/env.php';
+
     function connectDB(){
         $host = DB_HOST;
         $port = DB_PORT;

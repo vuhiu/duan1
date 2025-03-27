@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../commons/env.php';
-require_once __DIR__ . '/../commons/connect.php';
+require_once __DIR__ . '/../../commons/env.php'; // Đường dẫn chính xác đến tệp env.php
+require_once __DIR__ . '/../../commons/connect.php'; // Nếu cần nạp connect.php
 require_once __DIR__ . '/../controllers/productController.php';
 require_once __DIR__ . '/../controllers/categoryController.php';
 require_once __DIR__ . '/../models/product.php';

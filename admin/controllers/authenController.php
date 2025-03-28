@@ -12,6 +12,7 @@ class AuthenController {
             $name = trim($_POST['name']);
             $email = trim($_POST['email']);
             $password = password_hash(trim($_POST['password']), PASSWORD_BCRYPT); // Mã hóa mật khẩu
+            echo password_hash('123456', PASSWORD_BCRYPT); // Mã hóa mật khẩu mặc định
 
             try {
                 global $conn;

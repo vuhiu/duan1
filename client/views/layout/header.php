@@ -1,83 +1,256 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siêu Thị Trực Tuyến</title>
-    <link rel="stylesheet" href="asset/style.css"> 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>Electro - HTML Ecommerce Template</title>
+
+    <!-- Google font -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css" />
+
+    <!-- Slick -->
+    <link type="text/css" rel="stylesheet" href="css/slick.css" />
+    <link type="text/css" rel="stylesheet" href="css/slick-theme.css" />
+
+    <!-- nouislider -->
+    <link type="text/css" rel="stylesheet" href="css/nouislider.min.css" />
+
+    <!-- Font Awesome Icon -->
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+
+    <!-- Custom stlylesheet -->
+    <link type="text/css" rel="stylesheet" href="css/style.css" />
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+		  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
 </head>
+
 <body>
-
-<!-- HEADER -->
-<header class="top-header bg-dark text-white py-2">
-    <div class="container d-flex justify-content-between align-items-center">
-        <div class="logo">
-            <h2 class="fw-bold">ElectroShop<span style="color: red;">.</span></h2>
-        </div>
-        <div class="search-bar d-flex">
-            <select class="form-select me-2">
-                <option>Trang chủ</option>
-                <option>Giới thiệu</option>
-                <option>Góp ý</option>
-                <option>Hỏi đáp</option>
-            </select>
-            <input type="text" class="form-control me-2" placeholder="Tìm kiếm sản phẩm">
-            <button class="btn btn-danger">Tìm kiếm</button>
-        </div>
-        <div class="user-cart">
-            <a href="#" class="text-white me-3">Yêu thích</a>
-            <a href="#" class="text-white">Giỏ hàng</a>
-        </div>
-    </div>
-</header>
-
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-    <div class="container">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link fw-bold" href="#">Ưu đãi hot</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold" href="#">Máy tính bảng</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold" href="#">Laptops</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold" href="#">Điện thoại</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold" href="#">Máy ảnh</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold" href="#">Phụ kiện</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-<!-- BANNER -->
-<section class="banner mt-3">
-    <div class="container d-flex justify-content-between">
-        <div class="banner-item position-relative">
-            <img src="assets/laptop-banner.jpg" class="img-fluid" alt="Bộ Sưu Tập Laptop">
-            <div class="banner-text">
-                <h4>Bộ Sưu Tập Laptop</h4>
-                <a href="#" class="btn btn-danger">Mua ngay</a>
+    <!-- HEADER -->
+    <header>
+        <!-- TOP HEADER -->
+        <div id="top-header">
+            <div class="container">
+                <ul class="header-links pull-left">
+                    <li><a href="#"><i class="fa fa-phone"></i> +021-95-51-84</a></li>
+                    <li><a href="#"><i class="fa fa-envelope-o"></i> email@email.com</a></li>
+                    <li><a href="#"><i class="fa fa-map-marker"></i> Hà Nội, Việt Nam</a></li>
+                </ul>
+                <ul class="header-links pull-right">
+                    <li><a href="#"><i class="fa fa-dollar"></i> VN</a></li>
+                    <li><a href="#"><i class="fa fa-user-o"></i> Tài khoản</a></li>
+                </ul>
             </div>
         </div>
-        <div class="banner-item position-relative">
-            <img src="assets/accessories-banner.jpg" class="img-fluid" alt="Bộ sưu tập Phụ kiện">
-            <div class="banner-text">
-<h4>Bộ sưu tập Phụ kiện</h4>
-                <a href="#" class="btn btn-danger">Mua ngay</a>
-            </div>
-        </div>
-        <div class="banner-item position-relative">
-            <img src="assets/camera-banner.jpg" class="img-fluid" alt="Bộ sưu tập Máy ảnh">
-            <div class="banner-text">
-                <h4>Bộ sưu tập Máy ảnh </h4>
-                <a href="#" class="btn btn-danger"> Mua ngay</a>
-            </div>
-        </div>
-    </div>
-</section>
+        <!-- /TOP HEADER -->
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- MAIN HEADER -->
+        <div id="header">
+            <!-- container -->
+            <div class="container">
+                <!-- row -->
+                <div class="row">
+                    <!-- LOGO -->
+                    <div class="col-md-3">
+                        <div class="header-logo">
+                            <a href="#" class="logo">
+                                <img src="./img/logo.png" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    <!-- /LOGO -->
+
+                    <!-- SEARCH BAR -->
+                    <div class="col-md-6">
+                        <div class="header-search">
+                            <form>
+                                <select class="input-select">
+                                    <option value="0">Tất cả</option>
+                                    <option value="1"> Sản phẩm 1</option>
+                                    <option value="1"> Sản phẩm 2</option>
+                                </select>
+                                <input class="input" placeholder="Tìm kiếm ở đây">
+                                <button class="search-btn"> Tìm kiếm</button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- /SEARCH BAR -->
+
+                    <!-- ACCOUNT -->
+                    <div class="col-md-3 clearfix">
+                        <div class="header-ctn">
+                            <!-- Wishlist -->
+                            <div>
+                                <a href="#">
+                                    <i class="fa fa-heart-o"></i>
+                                    <span> Yêu thích</span>
+                                    <div class="qty">2</div>
+                                </a>
+                            </div>
+                            <!-- /Wishlist -->
+
+                            <!-- Cart -->
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span> Giỏ hàng</span>
+                                    <div class="qty">3</div>
+                                </a>
+                                <div class="cart-dropdown">
+                                    <div class="cart-list">
+                                        <div class="product-widget">
+                                            <div class="product-img">
+                                                <img src="./img/product01.png" alt="">
+                                            </div>
+                                            <div class="product-body">
+                                                <h3 class="product-name"><a href="#">Tên sản phẩm</a></h3>
+                                                <h4 class="product-price"><span class="qty">1x</span>$980.00</h4>
+                                            </div>
+                                            <button class="delete"><i class="fa fa-close"></i></button>
+                                        </div>
+
+                                        <div class="product-widget">
+                                            <div class="product-img">
+                                                <img src="./img/product02.png" alt="">
+                                            </div>
+                                            <div class="product-body">
+                                                <h3 class="product-name"><a href="#"> Tên sản phẩm</a></h3>
+                                                <h4 class="product-price"><span class="qty">3x</span>$980.00</h4>
+                                            </div>
+                                            <button class="delete"><i class="fa fa-close"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="cart-summary">
+                                        <small> Giỏ hàng</small>
+                                        <h5> Tổng tiền: $1960.00</h5>
+                                    </div>
+                                    <div class="cart-btns">
+                                        <a href="#"> Tiếp tục mua hàng</a>
+                                        <a href="#">Thanh toán<i class="fa fa-arrow-circle-right"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /Cart -->
+
+                            <!-- Menu Toogle -->
+                            <div class="menu-toggle">
+                                <a href="#">
+                                    <i class="fa fa-bars"></i>
+                                    <span> Menu</span>
+                                </a>
+                            </div>
+                            <!-- /Menu Toogle -->
+                        </div>
+                    </div>
+                    <!-- /ACCOUNT -->
+                </div>
+                <!-- row -->
+            </div>
+            <!-- container -->
+        </div>
+        <!-- /MAIN HEADER -->
+    </header>
+    <!-- /HEADER -->
+
+    <!-- NAVIGATION -->
+    <nav id="navigation">
+        <!-- container -->
+        <div class="container">
+            <!-- responsive-nav -->
+            <div id="responsive-nav">
+                <!-- NAV -->
+                <ul class="main-nav nav navbar-nav">
+                    <li class="active"><a href="#">Trang chủ</a></li>
+                    <li><a href="#">Ưu đãi hot</a></li>
+                    <li><a href="#">Danh mục</a></li>
+                    <li><a href="#">Laptop</a></li>
+                    <li><a href="#">Điện thoại</a></li>
+                    <li><a href="#">Máy ảnh</a></li>
+                    <li><a href="#">Phụ kiện</a></li>
+                    <li><a href="#">Liên hệ</a></li>
+                </ul>
+                <!-- /NAV -->
+            </div>
+            <!-- /responsive-nav -->
+        </div>
+        <!-- /container -->
+    </nav>
+    <!-- /NAVIGATION -->
+
+    <!-- SECTION -->
+    <div class="section">
+        <!-- container -->
+        <div class="container">
+            <!-- row -->
+            <div class="row">
+                <!-- shop -->
+                <div class="col-md-4 col-xs-6">
+                    <div class="shop">
+                        <div class="shop-img">
+                            <img src="./img/shop01.png" alt="">
+                        </div>
+                        <div class="shop-body">
+                            <h3>Laptop<br>Collection</h3>
+                            <a href="#" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <!-- /shop -->
+
+                <!-- shop -->
+                <div class="col-md-4 col-xs-6">
+                    <div class="shop">
+                        <div class="shop-img">
+                            <img src="./img/shop03.png" alt="">
+                        </div>
+                        <div class="shop-body">
+                            <h3>Accessories<br>Collection</h3>
+                            <a href="#" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <!-- /shop -->
+
+                <!-- shop -->
+                <div class="col-md-4 col-xs-6">
+                    <div class="shop">
+                        <div class="shop-img">
+                            <img src="./img/shop02.png" alt="">
+                        </div>
+                        <div class="shop-body">
+                            <h3>Cameras<br>Collection</h3>
+                            <a href="#" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <!-- /shop -->
+            </div>
+            <!-- /row -->
+        </div>
+        <!-- /container -->
+    </div>
+    <!-- /SECTION -->
+
+    <!-- jQuery Plugins -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/slick.min.js"></script>
+    <script src="js/nouislider.min.js"></script>
+    <script src="js/jquery.zoom.min.js"></script>
+    <script src="js/main.js"></script>
+
 </body>
+
 </html>

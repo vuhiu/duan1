@@ -1,7 +1,7 @@
 <?php
 ob_start();
 require_once __DIR__ . '/../models/product.php';
-require_once __DIR__ . '/../commons/connect.php';
+require_once __DIR__ . '/../../commons/connect.php'; 
 
 class ProductController {
     public $productModel;

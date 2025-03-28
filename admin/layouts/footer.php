@@ -1,3 +1,4 @@
+<!-- filepath: c:\xampp\htdocs\duan1\admin\layouts\footer.php -->
 </div>
 <!-- ./wrapper -->
 
@@ -47,5 +48,15 @@
     })
   })
 </script>
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    .content-wrapper {
+        flex: 1;
+    }
+</style>
 </body>
 </html>

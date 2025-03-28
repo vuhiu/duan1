@@ -28,22 +28,16 @@ switch ($act) {
                 $productController->addProduct();
                 break;
 
-            case 'sua': // Cập nhật route để hiển thị trang chỉnh sửa
-               
-                    $productController->edit();
-                
+            case 'sua':
+                $productController->editProduct();
                 break;
 
-            case 'update': // Cập nhật route để xử lý cập nhật sản phẩm
-               
-                    $productController->update();
-                
+            case 'update':
+                $productController->updateProduct();
                 break;
 
             case 'xoa':
-               
-                    $productController->delete();
-                
+                $productController->delete();
                 break;
 
             default:

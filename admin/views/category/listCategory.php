@@ -24,7 +24,7 @@
                 <?php if (!empty($category['image'])): ?>
                 <?php if (file_exists(__DIR__ . '/../upload/' . $category['image'])): ?>
                 <!-- Nếu tệp tồn tại trong thư mục upload -->
-                <img src="../upload/<?php echo $category['image']; ?>" alt="Image" width="50">
+                <img src="duan1/admin/upload/<?php echo $category['image']; ?>" alt="Image" width="50">
                 <?php else: ?>
                 <!-- Nếu tệp không tồn tại -->
                 Không có hình ảnh

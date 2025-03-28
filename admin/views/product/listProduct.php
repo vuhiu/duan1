@@ -29,7 +29,7 @@
             <td><?= ($p['status'] == 1) ? 'Hiển thị' : 'Ẩn' ?></td>
             <td><?= ($p['category_id']) ?></td>
             <td>
-                <a href="?act=sanpham&page=sua&product_id=<?= $p['product_id'] ?>" class="btn btn-warning btn-sm">Sửa</a>
+            <a href="?act=sanpham&page=sua&product_id=<?= $p['product_id'] ?>" class="btn btn-warning btn-sm">Sửa</a>
             </td>
             <td>
                 <a href="?act=sanpham&page=xoa&product_id=<?= $p['product_id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>

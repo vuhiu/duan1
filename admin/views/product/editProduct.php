@@ -1,3 +1,4 @@
+<!-- filepath: c:\xampp\htdocs\duan1\admin\views\product\editProduct.php -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -6,9 +7,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container mt-4">
+    <div class="container mt-4" style="padding-bottom: 100px;"> <!-- Add padding-bottom -->
         <h2>Chỉnh sửa sản phẩm</h2>
-        <form action="?act=sanpham&page=update&id=<?= $product['product_id'] ?>" method="POST" enctype="multipart/form-data">
+        <form action="?act=sanpham&page=update" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="product_id" value="<?= $product['product_id'] ?>">
             <input type="hidden" name="current_image" value="<?= $product['image'] ?>">
 
             <div class="mb-3">
@@ -61,7 +63,7 @@
                 <input type="file" name="image" class="form-control">
                 <br>
                 <?php if (!empty($product['image'])): ?>
-                    <img src="uploads/<?= $product['image'] ?>" alt="Ảnh sản phẩm" width="150">
+                    <img src="/duan1/upload/<?= $product['image'] ?>" alt="Ảnh sản phẩm" width="150">
                 <?php endif; ?>
             </div>
 

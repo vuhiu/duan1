@@ -36,20 +36,18 @@ class Product {
         }
     }
     public function getProductById($product_id) {
-        $sql = "SELECT * FROM products
-         left join categories on products.category_id=categories.category_id
-         WHERE products.product_id = ?";
+        $sql = "SELECT products.*, categories.name AS category_name 
+                FROM products
+                LEFT JOIN categories ON products.category_id = categories.category_id
+                WHERE products.product_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$product_id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function update($id, $data) {
-        $stmt = $this->conn->prepare("UPDATE products SET name = ?, description = ?, price = ?, sale_price = ?, slug = ?, status = ?, category_id = ?, image = ? WHERE product_id = ?");
-        return $stmt->execute([
-            $data['name'], $data['description'], $data['price'], $data['sale_price'], 
-            $data['slug'], $data['status'], $data['category_id'], $data['image'], $id
-        ]);
+    public function update($id, $name, $description, $status, $image, $price, $sale_price, $slug) {
+        $stmt = $this->conn->prepare("UPDATE products SET name = ?, description = ?, status = ?, image = ?, price = ?, sale_price = ?, slug = ? WHERE product_id = ?");
+        $stmt->execute([$name, $description, $status, $image, $price, $sale_price, $slug, $id]);
     }
     
     

@@ -1,16 +1,20 @@
 <?php
 ob_start();
 require_once __DIR__ . '/../models/product.php';
+require_once __DIR__ . '/../models/category.php';
 require_once __DIR__ . '/../../commons/connect.php'; 
 
 class ProductController {
     public $productModel;
+    public $categoryModel;
 
     public function __construct() {
         $this->productModel = new Product();
+        $this->categoryModel = new Category();
     }
 
     public function getList() {
+        $categories = $this->categoryModel->getAllCategories();
         $products = $this->productModel->getAllProduct();
         require_once __DIR__ . '/../views/product/listProduct.php';
     }
@@ -52,14 +56,13 @@ public function addProduct() {
 
         // Đảm bảo không có output trước khi chuyển hướng
         ob_clean();
-        header('Location: index.php?act=sanpham&page=list');
+        header('Location: ?act=sanpham&page=list');
         exit();
     }
 
     require_once __DIR__ . '/../views/product/addProduct.php';
 }
-
-public function edit() {
+public function editProduct() {
     if (!isset($_GET['product_id']) || !is_numeric($_GET['product_id'])) {
         die("❌ Lỗi: ID sản phẩm không hợp lệ!");
     }
@@ -68,43 +71,48 @@ public function edit() {
     $product = $this->productModel->getProductById($id);
 
     if (!$product) {
-        die("Sản phẩm không tồn tại.");
+        die("❌ Lỗi: Sản phẩm không tồn tại.");
     }
 
-    global $conn;
-    $categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSOC);
+    $categories = $this->categoryModel->getAllCategories();
 
-    // Pass the variables to the view
-    include __DIR__ . '/../views/product/editProduct.php';
+    // Pass the product and categories data to the view
+    require_once __DIR__ . '/../views/product/editProduct.php';
 }
     
-public function update() {
+public function updateProduct() {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (!isset($_POST['product_id']) || !is_numeric($_POST['product_id'])) {
-            die("❌ Lỗi: ID sản phẩm không hợp lệ!");
-        }
-
         $id = $_POST['product_id'];
-        $data = [
-            'name' => trim($_POST['name']),
-            'description' => trim($_POST['description']),
-            'price' => floatval($_POST['price']),
-            'sale_price' => floatval($_POST['sale_price']),
-            'slug' => trim($_POST['slug']),
-            'status' => intval($_POST['status']),
-            'category_id' => intval($_POST['category_id']),
-            'image' => $_POST['current_image']
-        ];
+        $name = trim($_POST['name']);
+        $description = trim($_POST['description']);
+        $price = trim($_POST['price']);
+        $sale_price = trim($_POST['sale_price']);
+        $slug = trim($_POST['slug']);
+        $status = trim($_POST['status']);
+        $image = $_POST['current_image'];
 
-        // Xử lý upload ảnh mới
         if (!empty($_FILES['image']['name'])) {
-            $target_dir = __DIR__ . '/../upload/';
-            $data['image'] = basename($_FILES["image"]["name"]);
-            move_uploaded_file($_FILES["image"]["tmp_name"], $target_dir . $data['image']);
+            $file = $_FILES['image'];
+            $image = basename($file['name']);
+            $from = $file['tmp_name'];
+            $upload_dir = __DIR__ . '/../../upload/';
+
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0777, true);
+            }
+
+            $to = $upload_dir . $image;
+
+            if (!move_uploaded_file($from, $to)) {
+                die("Lỗi khi tải lên hình ảnh.");
+            }
         }
 
-        $this->productModel->update($id, $data);
-        header("Location: index.php?act=sanpham&page=list");
+        // Gọi phương thức update trong model
+        $this->productModel->update($id, $name, $description, $status, $image, $price, $sale_price, $slug);
+
+        // Chuyển hướng về danh sách sản phẩm
+        header("Location: ?act=sanpham&page=list");
         exit();
     }
 }
@@ -128,7 +136,7 @@ public function update() {
     
         // Chắc chắn không có output trước khi chuyển hướng
         ob_clean();
-        header('Location: index.php?act=sanpham&page=list');
+        header('Location: ?act=sanpham&page=list');
         exit();
     }
     

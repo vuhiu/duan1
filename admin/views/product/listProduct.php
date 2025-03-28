@@ -21,7 +21,7 @@
         <tr>
             <td><?= ($p['product_id']) ?></td>
             <td><?= ($p['name']) ?></td>
-            <td><img src="<?= ($p['image']) ?>" alt="Ảnh sản phẩm" width="50"></td>
+            <td><img src="/duan1/admin/upload/<?= ($p['image']) ?>" alt="Ảnh sản phẩm" width="50"></td>
             <td><?= number_format($p['price'], 0, ',', '.') ?> đ</td>
             <td><?= number_format($p['sale_price'], 0, ',', '.') ?> đ</td>
             <td><?= ($p['slug']) ?></td>
@@ -32,7 +32,7 @@
                 <a href="?act=sanpham&page=sua&product_id=<?= $p['product_id'] ?>" class="btn btn-warning btn-sm">Sửa</a>
             </td>
             <td>
-            <a href="?act=sanpham&page=xoa&product_id=<?= $p['product_id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
+                <a href="?act=sanpham&page=xoa&product_id=<?= $p['product_id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
             </td>
         </tr>
     <?php } ?>

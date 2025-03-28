@@ -57,13 +57,13 @@ $user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : "Hiếu";
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="http://localhost/duan1/admin/?act=sanpham&page=them" class="nav-link">
+                            <a href="index.php?act=sanpham&page=them" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Thêm sản phẩm mới</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="http://localhost/duan1/admin/?act=sanpham&page=list" class="nav-link">
+                            <a href="index.php?act=sanpham&page=list" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Danh sách sản phẩm</p>
                             </a>

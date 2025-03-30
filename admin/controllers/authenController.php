@@ -1,4 +1,5 @@
 <?php
+ob_start(); // Bật bộ đệm đầu ra
 session_start();
 require_once __DIR__ . '/../../commons/connect.php';
 
@@ -17,10 +18,12 @@ class AuthenController {
                 global $conn;
                 $stmt = $conn->prepare("INSERT INTO users (name, email, password, role_id) VALUES (?, ?, ?, 2)"); // role_id = 2 cho admin
                 $stmt->execute([$name, $email, $password]);
-                echo "Đăng ký thành công! <a href='/duan1/admin/views/form-login.php'>Đăng nhập</a>";
+                echo "<script>alert('Đăng ký thành công!');</script>";
+                header("Location: /duan1/admin/views/form-login.php");
+                exit();
             } catch (PDOException $e) {
                 if ($e->getCode() == 23000) { // Lỗi trùng email
-                    echo "Email đã tồn tại!";
+                    echo "<script>alert('Email đã tồn tại!');</script>";
                 } else {
                     echo "Lỗi: " . $e->getMessage();
                 }
@@ -41,15 +44,15 @@ class AuthenController {
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if ($user && password_verify($password, $user['password'])) {
-                    $_SESSION['admin'] = [
-                        'user_id' => $user['user_id'],
-                        'name' => $user['name'],
-                        'role_id' => $user['role_id']
-                    ];
-                    header("Location: /duan1/admin/index.php");
-                    exit;
+                    $_SESSION['user_id'] = $user['user_id']; // Lưu ID người dùng vào session
+                    $_SESSION['admin'] = ['name' => $user['name']]; // Lưu thông tin admin vào session
+
+                    header("Location: /duan1/admin/index.php"); // Chuyển hướng đến trang quản trị
+                    exit();
                 } else {
-                    echo "Email hoặc mật khẩu không đúng!";
+                    echo "<script>alert('Email hoặc mật khẩu không đúng!');</script>";
+                    header("Refresh: 2; URL=/duan1/admin/views/form-login.php");
+                    exit();
                 }
             } catch (PDOException $e) {
                 echo "Lỗi: " . $e->getMessage();
@@ -59,8 +62,8 @@ class AuthenController {
 
     // Chức năng đăng xuất
     public function logout() {
-        session_destroy();
-        header("Location: /duan1/admin/views/form-login.php");
+        session_destroy(); // Hủy toàn bộ session
+        header("Location: /duan1/admin/views/form-login.php?logout=success"); // Chuyển hướng về trang đăng nhập
         exit;
     }
 }
@@ -76,4 +79,5 @@ if (isset($_GET['action'])) {
 } else {
     $authenController->login();
 }
+ob_end_flush(); // Xóa bộ đệm đầu ra
 ?>

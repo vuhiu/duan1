@@ -1,3 +1,9 @@
+<?php
+session_start();
+if (isset($_GET['logout']) && $_GET['logout'] == 'success') {
+    echo "<div class='alert alert-success text-center'>Bạn đã đăng xuất thành công!</div>";
+}
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>

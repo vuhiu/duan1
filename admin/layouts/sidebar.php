@@ -125,26 +125,26 @@ $user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : "Hiếu";
                 </li>
 
 
-                <!-- Bài Viết -->
+                <!-- Khuyến mại -->
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-newspaper"></i>
                         <p>
-                            Bài Viết
+                            Mã giảm giá
                             <i class="fas fa-angle-left right"></i>
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="index.php?act=baiviet&page=them" class="nav-link">
+                            <a href="index.php?act=coupon&page=add" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Thêm bài viết</p>
+                                <p>Tạo mã giảm giá</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="index.php?act=baiviet&page=list" class="nav-link">
+                            <a href="index.php?act=coupon&page=list" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Danh sách bài viết</p>
+                                <p>Danh sách mã giảm giá </p>
                             </a>
                         </li>
                     </ul>

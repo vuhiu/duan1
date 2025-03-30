@@ -8,7 +8,8 @@ $user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : "Hiếu";
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="index.php" class="brand-link">
-        <img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+            style="opacity: .8">
         <span class="brand-text font-weight-light">ElectroShop</span>
     </a>
 
@@ -27,7 +28,8 @@ $user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : "Hiếu";
         <!-- SidebarSearch Form -->
         <div class="form-inline">
             <div class="input-group" data-widget="sidebar-search">
-                <input class="form-control form-control-sidebar" type="search" placeholder="Tìm kiếm chức năng" aria-label="Search">
+                <input class="form-control form-control-sidebar" type="search" placeholder="Tìm kiếm chức năng"
+                    aria-label="Search">
                 <div class="input-group-append">
                     <button class="btn btn-sidebar">
                         <i class="fas fa-search fa-fw"></i>
@@ -96,6 +98,32 @@ $user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : "Hiếu";
                         </li>
                     </ul>
                 </li>
+                <!-- Đơn hàng -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-list"></i>
+                        <p>
+                            Đơn Hàng
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="index.php?act=order&page=list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Danh sách đơn hàng</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="index.php?act=order&page=edit&order_id=1" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Chỉnh sửa đơn hàng</p>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+
 
                 <!-- Bài Viết -->
                 <li class="nav-item">

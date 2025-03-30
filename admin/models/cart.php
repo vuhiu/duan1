@@ -9,25 +9,67 @@ class Cart {
         $this->conn = $conn;
     }
 
+    // Thêm sản phẩm vào giỏ hàng
+    public function addItem($user_id, $product_id, $variant_id, $quantity) {
+        if ($user_id === null) {
+            throw new Exception("User ID không được để trống.");
+        }
+
+        // Lấy cart_id từ bảng carts
+        $stmt = $this->conn->prepare("SELECT id FROM carts WHERE user_id = ?");
+        $stmt->execute([$user_id]);
+        $cart = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$cart) {
+            // Nếu giỏ hàng chưa tồn tại, tạo mới
+            $stmt = $this->conn->prepare("INSERT INTO carts (user_id) VALUES (?)");
+            $stmt->execute([$user_id]);
+            $cart_id = $this->conn->lastInsertId();
+        } else {
+            $cart_id = $cart['id'];
+        }
+
+        // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
+        $stmt = $this->conn->prepare("SELECT id FROM cart_items WHERE cart_id = ? AND product_id = ? AND variant_id = ?");
+        $stmt->execute([$cart_id, $product_id, $variant_id]);
+        $cart_item = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($cart_item) {
+            // Nếu sản phẩm đã tồn tại, cập nhật số lượng
+            $stmt = $this->conn->prepare("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?");
+            $stmt->execute([$quantity, $cart_item['id']]);
+        } else {
+            // Nếu sản phẩm chưa tồn tại, thêm mới
+            $stmt = $this->conn->prepare("INSERT INTO cart_items (cart_id, product_id, variant_id, quantity) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$cart_id, $product_id, $variant_id, $quantity]);
+        }
+    }
+
+    // Lấy tất cả sản phẩm trong giỏ hàng của người dùng
     public function getAllCartItems($user_id) {
-        $stmt = $this->conn->prepare("SELECT * FROM cart WHERE user_id = ?");
+        $stmt = $this->conn->prepare("
+            SELECT ci.id AS cart_item_id, ci.product_id, ci.variant_id, ci.quantity, 
+                   p.name AS product_name, p.price, pv.sale_price, pv.quantity AS stock_quantity
+            FROM cart_items ci
+            JOIN carts c ON ci.cart_id = c.id
+            JOIN products p ON ci.product_id = p.product_id
+            JOIN product_variants pv ON ci.variant_id = pv.product_variant_id
+            WHERE c.user_id = ?
+        ");
         $stmt->execute([$user_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function addItem($user_id, $product_id, $quantity) {
-        $stmt = $this->conn->prepare("INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)");
-        $stmt->execute([$user_id, $product_id, $quantity]);
+    // Cập nhật số lượng sản phẩm trong giỏ hàng
+    public function updateItem($cart_item_id, $quantity) {
+        $stmt = $this->conn->prepare("UPDATE cart_items SET quantity = ? WHERE id = ?");
+        $stmt->execute([$quantity, $cart_item_id]);
     }
 
-    public function updateItem($cart_id, $quantity) {
-        $stmt = $this->conn->prepare("UPDATE cart SET quantity = ? WHERE cart_id = ?");
-        $stmt->execute([$quantity, $cart_id]);
-    }
-
-    public function deleteItem($cart_id) {
-        $stmt = $this->conn->prepare("DELETE FROM cart WHERE cart_id = ?");
-        $stmt->execute([$cart_id]);
+    // Xóa sản phẩm khỏi giỏ hàng
+    public function deleteItem($cart_item_id) {
+        $stmt = $this->conn->prepare("DELETE FROM cart_items WHERE id = ?");
+        $stmt->execute([$cart_item_id]);
     }
 }
 ?>

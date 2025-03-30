@@ -4,7 +4,8 @@ require_once __DIR__ . '/../../commons/connect.php'; // Nếu cần nạp connec
 require_once __DIR__ . '/../controllers/productController.php';
 require_once __DIR__ . '/../controllers/categoryController.php';
 require_once __DIR__ . '/../controllers/cartController.php';
-require_once __DIR__ . '/../controllers/OrderAdminController.php'; // Thêm OrderController
+require_once __DIR__ . '/../controllers/OrderAdminController.php';// Thêm OrderController
+require_once __DIR__ . '/../controllers/couponController.php'; 
 // require_once __DIR__ . '/../../client/controllers/OrderController.php';
 require_once __DIR__ . '/../models/product.php';
 require_once __DIR__ . '/../models/category.php';
@@ -21,6 +22,7 @@ $productController = new ProductController();
 $categoryController = new CategoryController();
 $cartController = new CartController();
 $orderController = new OrderAdminController(); // Sử dụng OrderAdminController
+$couponController = new CouponController();
 
 switch ($act) {
     case 'sanpham': // Quản lý sản phẩm
@@ -132,6 +134,33 @@ switch ($act) {
                 break;
         }
         break;
+        case 'coupon': // Quản lý mã giảm giá
+            switch ($page) {
+                case 'list': // Hiển thị danh sách mã giảm giá
+                    $couponController->getList();
+                    break;
+    
+                case 'add': // Thêm mã giảm giá mới
+                    $couponController->addCoupon();
+                    break;
+    
+                case 'edit': // Hiển thị form chỉnh sửa mã giảm giá
+                    $couponController->editCoupon();
+                    break;
+    
+                case 'update': // Cập nhật mã giảm giá
+                    $couponController->updateCoupon();
+                    break;
+    
+                case 'delete': // Xóa mã giảm giá
+                    $couponController->deleteCoupon();
+                    break;
+    
+                default:
+                    echo "Không tìm thấy trang!";
+                    break;
+            }
+            break;
 
     default:
         echo "Module không hợp lệ";

@@ -1,3 +1,4 @@
+<!-- filepath: c:\xampp\htdocs\duan1\index.php -->
 <?php
 // Kết nối database & Load cấu hình
 require __DIR__ . '/commons/connect.php';
@@ -13,6 +14,7 @@ if (file_exists($headerPath)) {
 
 // Xử lý router
 $act = isset($_GET['act']) ? $_GET['act'] : '';
+$page = isset($_GET['page']) ? $_GET['page'] : '';
 
 switch ($act) {
     case "":
@@ -36,42 +38,49 @@ switch ($act) {
         break;
 
     case 'cart':
-        // Gọi trang giỏ hàng
-        $cartPath = __DIR__ . '/client/views/cart.php';
-        if (file_exists($cartPath)) {
-            include $cartPath;
-        } else {
-            echo "Lỗi: Không tìm thấy file cart.php";
+        // Điều hướng các hành động liên quan đến giỏ hàng
+        switch ($page) {
+            case 'list':
+                $cartPath = __DIR__ . '/client/views/cart.php';
+                if (file_exists($cartPath)) {
+                    include $cartPath;
+                } else {
+                    echo "Lỗi: Không tìm thấy file cart.php";
+                }
+                break;
+
+            case 'add':
+                $addToCartPath = __DIR__ . '/client/views/addToCart.php';
+                if (file_exists($addToCartPath)) {
+                    include $addToCartPath;
+                } else {
+                    echo "Lỗi: Không tìm thấy file addToCart.php";
+                }
+                break;
+
+            default:
+                echo "Lỗi: Không tìm thấy trang giỏ hàng.";
+                break;
         }
         break;
 
     case 'store':
-        // Gọi cua hàng
-        $cartPath = __DIR__ . '/client/views/store.php';
-        if (file_exists($cartPath)) {
-            include $cartPath;
+        // Gọi cửa hàng
+        $storePath = __DIR__ . '/client/views/store.php';
+        if (file_exists($storePath)) {
+            include $storePath;
         } else {
             echo "Lỗi: Không tìm thấy file store.php";
-        }
-        break;
-        
-    case 'checkout':
-        // Gọi trang thanh toán
-        $cartPath = __DIR__ . '/client/views/checkout.php';
-        if (file_exists($cartPath)) {
-            include $cartPath;
-        } else {
-            echo "Lỗi: Không tìm thấy file checkout.php";
         }
         break;
 
     case 'checkout':
         // Gọi trang thanh toán
-        $cartPath = __DIR__ . '/client/views/blank.php';
-        if (file_exists($cartPath)) {
-            include $cartPath;
+        $checkoutPath = __DIR__ . '/client/views/checkout.php';
+        if (file_exists($checkoutPath)) {
+            include $checkoutPath;
         } else {
-            echo "Lỗi: Không tìm thấy file blank.php";
+            echo "Lỗi: Không tìm thấy file checkout.php";
         }
         break;
 

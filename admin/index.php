@@ -1,3 +1,4 @@
+<!-- filepath: c:\xampp\htdocs\duan1\admin\index.php -->
 <?php
 session_start();
 if (!isset($_SESSION['admin'])) {
@@ -15,9 +16,13 @@ if (!isset($_SESSION['admin'])) {
 </head>
 <body>
     <div class="container mt-3">
-        <div class="d-flex justify-content-between align-items-center">
-            <h1>Chào mừng, <?= $_SESSION['admin']['name'] ?? 'Admin' ?>!</h1>
-            <a href="/duan1/admin/controllers/authenController.php?action=logout" class="btn btn-danger">Đăng xuất</a>
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-0">sdbsv...  Chào mừng, <?= htmlspecialchars($_SESSION['admin']['name'] ?? 'Admin') ?>!</h1>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="/duan1/admin/controllers/authenController.php?action=logout" class="btn btn-danger">Đăng xuất</a>
+            </div>
         </div>
         <hr>
     </div>

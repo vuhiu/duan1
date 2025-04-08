@@ -9,7 +9,7 @@
     }
 
     if (!defined('DB_NAME')) {
-        define('DB_NAME', 'du_an_1_wd20104');
+        define('DB_NAME', 'du_an_1');
     }
 
     if (!defined('DB_USERNAME')) {

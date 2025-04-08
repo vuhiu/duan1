@@ -26,6 +26,7 @@ require_once __DIR__ . '/../../client/models/cart.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// Get parameters from the URL
 $act = $_GET['act'] ?? '';
 $page = $_GET['page'] ?? '';
 $id = $_GET['id'] ?? '';
@@ -72,7 +73,7 @@ switch ($act) {
                 break;
 
             case 'xoa':
-                $productController->delete();
+                $productController->deleteProduct();
                 break;
 
             default:
@@ -81,7 +82,7 @@ switch ($act) {
         }
         break;
 
-    case 'danhmuc': // Quản lý danh mục
+    case 'danhmuc': // Category management
         switch ($page) {
             case 'list':
                 $categoryController->getList();
@@ -109,15 +110,11 @@ switch ($act) {
         }
         break;
 
-    case 'cart': // Quản lý giỏ hàng
+    case 'cart': // Cart management
         switch ($page) {
-            case 'cart': // Hiển thị giỏ hàng
-                $user_id = $_SESSION['user_id'] ?? 0; // Lấy user_id từ session
-                if ($user_id > 0) {
-                    $cartController->getCart($user_id);
-                } else {
-                    echo "❌ Bạn cần đăng nhập để xem giỏ hàng!";
-                }
+            case 'list':
+                $user_id = $_SESSION['user_id'] ?? 0; // Get user_id from session
+                $cartController->getCart($user_id);
                 break;
             case 'add_cart': // Thêm sản phẩm vào giỏ hàng
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -146,25 +143,26 @@ switch ($act) {
         }
         break;
 
-    case 'order': // Quản lý đơn hàng
+    case 'order': // Order management
         switch ($page) {
-            case 'list': // Hiển thị danh sách đơn hàng
+            case 'list': // Display order list
                 $orderController->getList();
                 break;
 
-            case 'edit': // Hiển thị form chỉnh sửa đơn hàng
+            case 'edit': // Edit order
                 $orderController->editOrder();
                 break;
 
-            case 'update': // Cập nhật trạng thái đơn hàng và thanh toán
+            case 'update': // Update order status
                 $orderController->updateOrder();
                 break;
-            case 'history': // Lịch sử đơn hàng
-                $userId = $_SESSION['user_id'] ?? 0; // Lấy user_id từ session
+
+            case 'history': // Order history
+                $userId = $_SESSION['user_id'] ?? 0; // Get user_id from session
                 $orderController->getHistory($userId);
                 break;
-    
-            case 'status': // Trạng thái đơn hàng
+
+            case 'status': // Order status
                 $orderId = $_GET['order_id'] ?? 0;
                 $orderController->getOrderStatus($orderId);
                 break;
@@ -174,36 +172,37 @@ switch ($act) {
                 break;
         }
         break;
-        case 'coupon': // Quản lý mã giảm giá
-            switch ($page) {
-                case 'list': // Hiển thị danh sách mã giảm giá
-                    $couponController->getList();
-                    break;
-    
-                case 'add': // Thêm mã giảm giá mới
-                    $couponController->addCoupon();
-                    break;
-    
-                case 'edit': // Hiển thị form chỉnh sửa mã giảm giá
-                    $couponController->editCoupon();
-                    break;
-    
-                case 'update': // Cập nhật mã giảm giá
-                    $couponController->updateCoupon();
-                    break;
-    
-                case 'delete': // Xóa mã giảm giá
-                    $couponController->deleteCoupon();
-                    break;
-    
-                default:
-                    echo "Không tìm thấy trang!";
-                    break;
-            }
-            break;
+
+    case 'coupon': // Coupon management
+        switch ($page) {
+            case 'list': // Display coupon list
+                $couponController->getList();
+                break;
+
+            case 'add': // Add a new coupon
+                $couponController->addCoupon();
+                break;
+
+            case 'edit': // Edit a coupon
+                $couponController->editCoupon();
+                break;
+
+            case 'update': // Update a coupon
+                $couponController->updateCoupon();
+                break;
+
+            case 'delete': // Delete a coupon
+                $couponController->deleteCoupon();
+                break;
+
+            default:
+                echo "Không tìm thấy trang!";
+                break;
+        }
+        break;
 
     default:
-        echo "Module không hợp lệ";
+        echo "Module không hợp lệ!";
         break;
         case 'customer': // Quản lý khách hàng
             switch ($page) {

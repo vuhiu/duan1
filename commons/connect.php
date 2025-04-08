@@ -3,9 +3,9 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 $host = 'localhost';
-$dbname = 'du_an_1_wd20104'; // Tên cơ sở dữ liệu
-$username = 'root'; // Tên người dùng MySQL
-$password = ''; // Mật khẩu MySQL (để trống nếu không có)
+$dbname = 'du_an_1';
+$username = 'root';
+$password = '';
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);

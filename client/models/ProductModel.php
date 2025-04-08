@@ -8,36 +8,17 @@ class Product {
         $this->conn = $conn;
     }
 
-    public function getAllProduct() {
-        $sql = "SELECT products.*, categories.name AS category_name 
-                FROM products
-                LEFT JOIN categories ON products.category_id = categories.category_id";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function save($name, $image, $price, $sale_price, $slug, $description, $status, $category_id) {
-        try {
-            $sql = "INSERT INTO products (name, image, price, sale_price, slug, description, status, category_id)
-                    VALUES (:name, :image, :price, :sale_price, :slug, :description, :status, :category_id)";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute([
-                ':name' => $name,
-                ':image' => $image,
-                ':price' => $price,
-                ':sale_price' => $sale_price,
-                ':slug' => $slug,
-                ':description' => $description,
-                ':status' => $status,
-                ':category_id' => $category_id
-            ]);
-        } catch (PDOException $e) {
-            die("Lỗi: " . $e->getMessage());
-        }
-    }
+    // Get product by ID
     public function getProductById($product_id) {
-        $sql = "SELECT products.*, categories.name AS category_name 
+        $sql = "SELECT 
+                    products.product_id,
+                    products.name AS product_name,
+                    products.price AS product_price,
+                    products.sale_price AS product_sale_price,
+                    products.image AS product_image,
+                    products.description AS product_description,
+                    products.status AS product_status,
+                    categories.name AS category_name
                 FROM products
                 LEFT JOIN categories ON products.category_id = categories.category_id
                 WHERE products.product_id = ?";
@@ -46,26 +27,42 @@ class Product {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function update($id, $name, $description, $status, $image, $price, $sale_price, $slug) {
-        $stmt = $this->conn->prepare("UPDATE products SET name = ?, description = ?, status = ?, image = ?, price = ?, sale_price = ?, slug = ? WHERE product_id = ?");
-        $stmt->execute([$name, $description, $status, $image, $price, $sale_price, $slug, $id]);
-    }
-    
-    
-   public function delete($id) {
-    try {
-        $sql = "DELETE FROM products WHERE product_id = :id";
+    // Get all products with their variants
+    public function getAllProductWithVariants() {
+        $sql = "SELECT 
+                    products.product_id,
+                    products.name AS product_name,
+                    products.price AS product_price,
+                    products.sale_price AS product_sale_price,
+                    products.image AS product_image,
+                    products.description AS product_description,
+                    categories.name AS category_name
+                FROM products
+                LEFT JOIN categories ON products.category_id = categories.category_id";
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([':id' => $id]);
+        $stmt->execute();
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Kiểm tra xem có dòng nào bị ảnh hưởng không
-        if ($stmt->rowCount() === 0) {
-            die("Lỗi: Không thể xóa sản phẩm hoặc sản phẩm không tồn tại.");
+        // Fetch variants for each product
+        foreach ($products as &$product) {
+            $product['variants'] = $this->getProductVariants($product['product_id']);
         }
-    } catch (PDOException $e) {
-        die("Lỗi khi xóa: " . $e->getMessage());
-    }
-}
 
+        return $products;
+    }
+
+    // Fetch product variants
+    public function getProductVariants($product_id) {
+        $sql = "SELECT 
+                    variant_colors.color_name AS color,
+                    variant_size.size_name AS size
+                FROM product_variants
+                LEFT JOIN variant_colors ON product_variants.variant_color_id = variant_colors.variant_color_id
+                LEFT JOIN variant_size ON product_variants.variant_size_id = variant_size.variant_size_id
+                WHERE product_variants.product_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$product_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>

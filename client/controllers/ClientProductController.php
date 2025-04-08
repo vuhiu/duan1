@@ -1,11 +1,12 @@
 <?php
-require_once 'models/ProductModel.php';
+require_once __DIR__ . '/../../client/models/ProductModel.php';
 
-class ProductController {
+class ClientProductController {
     private $productModel;
 
-    public function __construct($db) {
-        $this->productModel = new ProductModel($db);
+    public function __construct($productModel)
+    {
+        $this->productModel = $productModel;
     }
 
     // Danh sách sản phẩm

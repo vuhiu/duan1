@@ -1,11 +1,11 @@
 <?php
-require_once 'commons/connect.php';
+require_once __DIR__ . '/../../commons/connect.php';
 
 class ProductModel {
     private $conn;
 
-    public function __construct($db) {
-        $this->conn = $db;
+    public function __construct($conn) {
+        $this->conn = $conn;
     }
 
     // Lấy danh sách sản phẩm

@@ -90,69 +90,35 @@
 
                 <!-- Product details -->
                 <div class="col-md-5">
+                    <!-- filepath: c:\xampp\htdocs\duan1\client\views\product.php -->
                     <div class="product-details">
-                        <h2 class="product-name">Tên sản phẩm sẽ hiển thị tại đây</h2>
-                        <div>
-                            <div class="product-rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star-o"></i>
-                            </div>
-                            <a class="review-link" href="#">10 Đánh giá | Thêm đánh giá của bạn</a>
-                        </div>
-                        <div>
-                            <h3 class="product-price">980.000₫ <del class="product-old-price">990.000₫</del></h3>
-                            <span class="product-available">Còn hàng</span>
-                        </div>
-                        <p>Mô tả sản phẩm ngắn gọn. Bạn có thể thay thế đoạn này bằng thông tin thật của sản phẩm.</p>
+                        <h2 class="product-name"><?= htmlspecialchars($product['product_name']) ?></h2>
+                        <h3 class="product-price">
+                            <?= number_format($product['product_sale_price'], 0, ',', '.') ?>₫
+                            <?php if ($product['product_sale_price'] < $product['product_price']): ?>
+                                <del class="product-old-price"><?= number_format($product['product_price'], 0, ',', '.') ?>₫</del>
+                            <?php endif; ?>
+                        </h3>
+                        <p><?= htmlspecialchars($product['product_description']) ?></p>
                         <div class="product-options">
                             <label>
                                 Kích cỡ
                                 <select class="input-select">
-                                    <option value="0">X</option>
+                                    <?php foreach ($variants as $variant): ?>
+                                        <option value="<?= htmlspecialchars($variant['size']) ?>"><?= htmlspecialchars($variant['size']) ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </label>
                             <label>
                                 Màu sắc
                                 <select class="input-select">
-                                    <option value="0">Đỏ</option>
+                                    <?php foreach ($variants as $variant): ?>
+                                        <option value="<?= htmlspecialchars($variant['color']) ?>"><?= htmlspecialchars($variant['color']) ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </label>
                         </div>
-
-                        <div class="add-to-cart">
-                            <div class="qty-label">
-                                Số lượng
-                                <div class="input-number">
-                                    <input type="number">
-                                    <span class="qty-up">+</span>
-                                    <span class="qty-down">-</span>
-                                </div>
-                            </div>
-                            <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
-                        </div>
-
-                        <ul class="product-btns">
-                            <li><a href="#"><i class="fa fa-heart-o"></i> Yêu thích</a></li>
-                            <li><a href="#"><i class="fa fa-exchange"></i> So sánh</a></li>
-                        </ul>
-
-                        <ul class="product-links">
-                            <li>Danh mục:</li>
-                            <li><a href="#">Tai nghe</a></li>
-                            <li><a href="#">Phụ kiện</a></li>
-                        </ul>
-
-                        <ul class="product-links">
-                            <li>Chia sẻ:</li>
-                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                            <li><a href="#"><i class="fa fa-envelope"></i></a></li>
-                        </ul>
-
+                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
                     </div>
                 </div>
                 <!-- /Product details -->

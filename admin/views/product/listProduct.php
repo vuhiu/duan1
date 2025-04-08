@@ -1,40 +1,61 @@
-<h2 class="mt-3">Danh sách sản phẩm</h2>
+<!-- filepath: c:\xampp\htdocs\duan1\admin\views\product\listProduct.php -->
+<h2 class="mt-3 text-center">Danh sách sản phẩm</h2>
 
-<table class="table table-bordered">
-  <thead class="table-dark">
-    <tr>
-      <th scope="col">ID</th>
-      <th scope="col">Tên sản phẩm</th>
-      <th scope="col">Ảnh</th>
-      <th scope="col">Giá gốc</th>
-      <th scope="col">Giá khuyến mãi</th>
-      <th scope="col">Slug</th>
-      <th scope="col">Mô tả</th>
-      <th scope="col">Trạng thái</th>
-      <th scope="col">Danh mục</th>
-      <th scope="col"></th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php foreach ($products as $p) { ?>
-        <tr>
-            <td><?= ($p['product_id']) ?></td>
-            <td><?= ($p['name']) ?></td>
-            <td><img src="/duan1/admin/upload/<?= ($p['image']) ?>" alt="Ảnh sản phẩm" width="50"></td>
-            <td><?= number_format($p['price'], 0, ',', '.') ?> đ</td>
-            <td><?= number_format($p['sale_price'], 0, ',', '.') ?> đ</td>
-            <td><?= ($p['slug']) ?></td>
-            <td><?= ($p['description']) ?></td>
-            <td><?= ($p['status'] == 1) ? 'Hiển thị' : 'Ẩn' ?></td>
-            <td><?= ($p['category_id']) ?></td>
-            <td>
-            <a href="?act=sanpham&page=sua&product_id=<?= $p['product_id'] ?>" class="btn btn-warning btn-sm">Sửa</a>
-            </td>
-            <td>
-                <a href="?act=sanpham&page=xoa&product_id=<?= $p['product_id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
-            </td>
-        </tr>
-    <?php } ?>
-  </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-dark text-center">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Tên sản phẩm</th>
+                <th scope="col">Ảnh</th>
+                <th scope="col">Giá gốc</th>
+                <th scope="col">Giá khuyến mãi</th>
+                <th scope="col">Slug</th>
+                <th scope="col">Mô tả</th>
+                <th scope="col">Trạng thái</th>
+                <th scope="col">Danh mục</th>
+                <th scope="col">Biến thể</th>
+                <th scope="col">Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($listProduct as $product): ?>
+                <tr>
+                    <td class="text-center"><?= htmlspecialchars($product['product_id']) ?></td>
+                    <td><?= htmlspecialchars($product['product_name']) ?></td>
+                    <td class="text-center">
+                        <img src="/duan1/upload/<?= htmlspecialchars($product['product_image']) ?>" alt="Ảnh sản phẩm" class="img-thumbnail" width="180">
+                    </td>
+                    <td class="text-end"><?= number_format($product['product_price'], 0, ',', '.') ?> đ</td>
+                    <td class="text-end"><?= number_format($product['product_sale_price'], 0, ',', '.') ?> đ</td>
+                    <td><?= htmlspecialchars($product['product_slug']) ?></td>
+                    <td><?= htmlspecialchars($product['description'] ?? 'Không có mô tả') ?></td>
+                    <td class="text-center">
+                        <?= $product['product_status'] == 1 ? '<span class="badge bg-success">Hiển thị</span>' : '<span class="badge bg-danger">Ẩn</span>' ?>
+                    </td>
+                    <td><?= htmlspecialchars($product['category_name']) ?></td>
+                    <td>
+                        <?php if (!empty($product['variants'])): ?>
+                            <ul class="list-unstyled mb-0">
+                                <?php foreach ($product['variants'] as $variant): ?>
+                                    <li>
+                                        <strong>Màu:</strong> <?= htmlspecialchars($variant['product_variant_color']) ?>, 
+                                        <strong>Kích thước:</strong> <?= htmlspecialchars($variant['product_variant_size']) ?>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            <span class="text-muted">Không có biến thể</span>
+                        <?php endif; ?>
+                    </td>
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center gap-2">
+                            <a href="?act=sanpham&page=sua&product_id=<?= $product['product_id'] ?>" class="btn btn-warning btn-sm">Sửa</a>
+                            <a href="?act=sanpham&page=xoa&product_id=<?= $product['product_id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')">Xóa</a>
+                        </div>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>

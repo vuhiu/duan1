@@ -1,4 +1,4 @@
-<!-- filepath: c:\laragon\www\duan1\client\views\home.php -->
+<!-- filepath: c:\xampp\htdocs\duan1\client\views\home.php -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,7 +22,7 @@
     <link type="text/css" rel="stylesheet" href="/duan1/css/nouislider.min.css" />
 
     <!-- Font Awesome Icon -->
-    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="/duan1/css/font-awesome.min.css">
 
     <!-- Custom stylesheet -->
     <link type="text/css" rel="stylesheet" href="/duan1/css/style.css" />
@@ -31,101 +31,79 @@
 <body>
 
     <!-- SECTION: New Products -->
-<div class="section">
-    <div class="container">
-        <div class="row">
-            <!-- Section Title -->
-            <div class="col-md-12">
-                <div class="section-title">
-                    <h3 class="title">Sản phẩm mới</h3>
-                    <div class="section-nav">
-                        <ul class="section-tab-nav tab-nav">
-                            <li class="active"><a data-toggle="tab" href="#tab1">Laptop</a></li>
-                            <li><a data-toggle="tab" href="#tab1">Điện thoại</a></li>
-                            <li><a data-toggle="tab" href="#tab1">Máy ảnh</a></li>
-                            <li><a data-toggle="tab" href="#tab1">Phụ kiện</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <!-- /Section Title -->
-
-            <!-- Product List -->
-            <div class="col-md-12">
-                <div class="row">
-                    <div class="products-tabs">
-                        <div id="tab1" class="tab-pane active">
-                            <div class="products-slick" data-nav="#slick-nav-1">
-                                <?php
-                                // Include the ProductModel and fetch products
-                                require_once __DIR__ . '/../models/ProductModel.php';
-                                $productModel = new Product();
-                                $products = $productModel->getAllProduct();
-
-                                // Loop through the products and display them
-                                foreach ($products as $product): 
-                                    $image = htmlspecialchars($product['image'] ?? 'default.jpg');
-                                    $categoryName = htmlspecialchars($product['category_name'] ?? 'Không xác định');
-                                    $productName = htmlspecialchars($product['name'] ?? 'Không xác định');
-                                    $salePrice = $product['sale_price'] ?? 0;
-                                    $price = $product['price'] ?? 0;
-                                ?>
-                                    <div class="col-md-4">
-                                        <div class="product">
-                                            <div class="product-img">
-                                                <img src="/duan1/upload/<?= $image ?>" alt="Ảnh sản phẩm">
-                                                <div class="product-label">
-                                                    <?php if ($salePrice < $price): ?>
-                                                        <span class="sale">-<?= round((($price - $salePrice) / $price) * 100) ?>%</span>
-                                                    <?php endif; ?>
-                                                    <span class="new">MỚI</span>
-                                                </div>
-                                            </div>
-                                            <div class="product-body">
-                                                <p class="product-category"><?= $categoryName ?></p>
-                                                <h3 class="product-name"><a href="#"><?= $productName ?></a></h3>
-                                                <h4 class="product-price">
-                                                    <?= number_format($salePrice, 0, ',', '.') ?>₫
-                                                    <?php if ($salePrice < $price): ?>
-                                                        <del class="product-old-price"><?= number_format($price, 0, ',', '.') ?>₫</del>
-                                                    <?php endif; ?>
-                                                </h4>
-                                                <div class="product-rating">
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star-o"></i>
-                                                </div>
-                                                <div class="product-btns">
-                                                    <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Thêm vào yêu thích</span></button>
-                                                    <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">So sánh</span></button>
-                                                    <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">Xem nhanh</span></button>
-                                                </div>
-                                            </div>
-                                            <div class="add-to-cart">
-                                                <form action="/duan1/client/views/addToCart.php" method="POST">
-                                                    <input type="hidden" name="user_id" value="<?= $_SESSION['user_id'] ?? 1; ?>">
-                                                    <input type="hidden" name="product_id" value="<?= $product['product_id'] ?>">
-                                                    <input type="hidden" name="variant_id" value="<?= $product['variant_id'] ?? 0; ?>">
-                                                    <input type="hidden" name="quantity" value="1">
-                                                    <button type="submit" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <div id="slick-nav-1" class="products-slick-nav"></div>
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <!-- Section Title -->
+                <div class="col-md-12">
+                    <div class="section-title">
+                        <h3 class="title">Sản phẩm mới</h3>
+                        <div class="section-nav">
+                            <ul class="section-tab-nav tab-nav">
+                                <li class="active"><a data-toggle="tab" href="#tab1">Laptop</a></li>
+                                <li><a data-toggle="tab" href="#tab1">Điện thoại</a></li>
+                                <li><a data-toggle="tab" href="#tab1">Máy ảnh</a></li>
+                                <li><a data-toggle="tab" href="#tab1">Phụ kiện</a></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
+                <!-- /Section Title -->
+
+                <!-- Product List -->
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="products-tabs">
+                            <div id="tab1" class="tab-pane active">
+                                <!-- filepath: c:\xampp\htdocs\duan1\client\views\home.php -->
+                                <div class="products-slick" data-nav="#slick-nav-1">
+                                    <?php foreach ($products as $product): ?>
+                                        <div class="col-md-4">
+                                            <div class="product">
+                                                <div class="product-img">
+                                                    <img src="/duan1/upload/<?= htmlspecialchars($product['product_image']) ?>" alt="Ảnh sản phẩm">
+                                                    <div class="product-label">
+                                                        <?php if ($product['product_sale_price'] < $product['product_price']): ?>
+                                                            <span class="sale">-<?= round((($product['product_price'] - $product['product_sale_price']) / $product['product_price']) * 100) ?>%</span>
+                                                        <?php endif; ?>
+                                                        <span class="new">MỚI</span>
+                                                    </div>
+                                                </div>
+                                                <div class="product-body">
+                                                    <p class="product-category"><?= htmlspecialchars($product['category_name']) ?></p>
+                                                    <h3 class="product-name"><a href="/duan1/client/index.php?act=product&product_id=<?= $product['product_id'] ?>"><?= htmlspecialchars($product['product_name']) ?></a></h3>
+                                                    <h4 class="product-price">
+                                                        <?= number_format($product['product_sale_price'], 0, ',', '.') ?>₫
+                                                        <?php if ($product['product_sale_price'] < $product['product_price']): ?>
+                                                            <del class="product-old-price"><?= number_format($product['product_price'], 0, ',', '.') ?>₫</del>
+                                                        <?php endif; ?>
+                                                    </h4>
+                                                    <div class="product-variants">
+                                                        <strong>Biến thể:</strong>
+                                                        <ul>
+                                                            <?php foreach ($product['variants'] as $variant): ?>
+                                                                <li><?= htmlspecialchars($variant['color']) ?> - <?= htmlspecialchars($variant['size']) ?></li>
+                                                            <?php endforeach; ?>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="add-to-cart">
+                                                    <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                                <div id="slick-nav-1" class="products-slick-nav"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Product List -->
             </div>
-            <!-- /Product List -->
         </div>
     </div>
-</div>
-<!-- /SECTION: New Products -->
+    <!-- /SECTION: New Products -->
 
     <!-- SECTION: Hot Deals -->
     <div id="hot-deal" class="section">
@@ -170,28 +148,28 @@
     <!-- /SECTION: Hot Deals -->
 
     <!-- Newsletter -->
-<div id="newsletter" class="section">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="newsletter">
-                    <p>Đăng ký để nhận <strong>BẢN TIN</strong></p>
-                    <form>
-                        <input class="input" type="email" placeholder="Nhập email của bạn">
-                        <button class="newsletter-btn"><i class="fa fa-envelope"></i> Đăng ký</button>
-                    </form>
-                    <ul class="newsletter-follow">
-                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                        <li><a href="#"><i class="fa fa-instagram"></i></a></li>
-                        <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
-                    </ul>
+    <div id="newsletter" class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="newsletter">
+                        <p>Đăng ký để nhận <strong>BẢN TIN</strong></p>
+                        <form>
+                            <input class="input" type="email" placeholder="Nhập email của bạn">
+                            <button class="newsletter-btn"><i class="fa fa-envelope"></i> Đăng ký</button>
+                        </form>
+                        <ul class="newsletter-follow">
+                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                            <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+                            <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- /Newsletter -->
+    <!-- /Newsletter -->
 
     <!-- jQuery Plugins -->
     <script src="/duan1/js/jquery.min.js"></script>

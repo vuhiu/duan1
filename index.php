@@ -3,6 +3,7 @@
 // Kết nối database & Load cấu hình
 require __DIR__ . '/commons/connect.php';
 require __DIR__ . '/commons/env.php';
+require __DIR__ . '/client/controllers/ProductController.php';
 
 // Kiểm tra & nạp file header
 $headerPath = __DIR__ . '/client/views/layout/header.php';
@@ -16,25 +17,17 @@ if (file_exists($headerPath)) {
 $act = isset($_GET['act']) ? $_GET['act'] : '';
 $page = isset($_GET['page']) ? $_GET['page'] : '';
 
+$controller = new ProductController();
+
 switch ($act) {
     case "":
         // Gọi trang chủ
-        $homePath = __DIR__ . '/client/views/home.php';
-        if (file_exists($homePath)) {
-            include $homePath;
-        } else {
-            echo "Lỗi: Không tìm thấy file home.php";
-        }
+        $controller->getAllProducts();
         break;
 
-    case 'products':
-        // Gọi trang sản phẩm
-        $productPath = __DIR__ . '/client/views/product.php';
-        if (file_exists($productPath)) {
-            include $productPath;
-        } else {
-            echo "Lỗi: Không tìm thấy file product.php";
-        }
+    case 'product':
+        // Gọi trang chi tiết sản phẩm
+        $controller->getProductDetail();
         break;
 
     case 'cart':
@@ -64,26 +57,6 @@ switch ($act) {
         }
         break;
 
-    case 'store':
-        // Gọi cửa hàng
-        $storePath = __DIR__ . '/client/views/store.php';
-        if (file_exists($storePath)) {
-            include $storePath;
-        } else {
-            echo "Lỗi: Không tìm thấy file store.php";
-        }
-        break;
-
-    case 'checkout':
-        // Gọi trang thanh toán
-        $checkoutPath = __DIR__ . '/client/views/checkout.php';
-        if (file_exists($checkoutPath)) {
-            include $checkoutPath;
-        } else {
-            echo "Lỗi: Không tìm thấy file checkout.php";
-        }
-        break;
-
     default:
         echo "Router không hợp lệ";
         break;
@@ -96,3 +69,4 @@ if (file_exists($footerPath)) {
 } else {
     die("Lỗi: Không tìm thấy file footer.php");
 }
+?>

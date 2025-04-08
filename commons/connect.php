@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$dbname = 'du_an_1_wd20104';
+$dbname = 'du_an_1';
 $username = 'root';
 $password = '';
 

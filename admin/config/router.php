@@ -1,31 +1,29 @@
 <?php
-require_once __DIR__ . '/../../commons/env.php'; // Đường dẫn chính xác đến tệp env.php
-require_once __DIR__ . '/../../commons/connect.php'; // Nếu cần nạp connect.php
+require_once __DIR__ . '/../../commons/env.php'; // Load environment variables
+require_once __DIR__ . '/../../commons/connect.php'; // Database connection
 require_once __DIR__ . '/../controllers/productController.php';
 require_once __DIR__ . '/../controllers/categoryController.php';
 require_once __DIR__ . '/../controllers/cartController.php';
-require_once __DIR__ . '/../controllers/OrderAdminController.php';// Thêm OrderController
-require_once __DIR__ . '/../controllers/couponController.php'; 
-// require_once __DIR__ . '/../../client/controllers/OrderController.php';
-require_once __DIR__ . '/../models/product.php';
-require_once __DIR__ . '/../models/category.php';
-require_once __DIR__ . '/../models/cart.php';
+require_once __DIR__ . '/../controllers/OrderAdminController.php';
+require_once __DIR__ . '/../controllers/couponController.php';
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// Get parameters from the URL
 $act = $_GET['act'] ?? '';
 $page = $_GET['page'] ?? '';
 $id = $_GET['id'] ?? '';
 
+// Initialize controllers
 $productController = new ProductController();
 $categoryController = new CategoryController();
 $cartController = new CartController();
-$orderController = new OrderAdminController(); // Sử dụng OrderAdminController
+$orderController = new OrderAdminController();
 $couponController = new CouponController();
 
 switch ($act) {
-    case 'sanpham': // Quản lý sản phẩm
+    case 'sanpham': // Product management
         switch ($page) {
             case 'list':
                 $productController->getList();
@@ -44,7 +42,7 @@ switch ($act) {
                 break;
 
             case 'xoa':
-                $productController->delete();
+                $productController->deleteProduct();
                 break;
 
             default:
@@ -53,7 +51,7 @@ switch ($act) {
         }
         break;
 
-    case 'danhmuc': // Quản lý danh mục
+    case 'danhmuc': // Category management
         switch ($page) {
             case 'list':
                 $categoryController->getList();
@@ -81,10 +79,10 @@ switch ($act) {
         }
         break;
 
-    case 'cart': // Quản lý giỏ hàng
+    case 'cart': // Cart management
         switch ($page) {
             case 'list':
-                $user_id = $_SESSION['user_id'] ?? 0; // Lấy user_id từ session
+                $user_id = $_SESSION['user_id'] ?? 0; // Get user_id from session
                 $cartController->getCart($user_id);
                 break;
 
@@ -106,25 +104,26 @@ switch ($act) {
         }
         break;
 
-    case 'order': // Quản lý đơn hàng
+    case 'order': // Order management
         switch ($page) {
-            case 'list': // Hiển thị danh sách đơn hàng
+            case 'list': // Display order list
                 $orderController->getList();
                 break;
 
-            case 'edit': // Hiển thị form chỉnh sửa đơn hàng
+            case 'edit': // Edit order
                 $orderController->editOrder();
                 break;
 
-            case 'update': // Cập nhật trạng thái đơn hàng và thanh toán
+            case 'update': // Update order status
                 $orderController->updateOrder();
                 break;
-            case 'history': // Lịch sử đơn hàng
-                $userId = $_SESSION['user_id'] ?? 0; // Lấy user_id từ session
+
+            case 'history': // Order history
+                $userId = $_SESSION['user_id'] ?? 0; // Get user_id from session
                 $orderController->getHistory($userId);
                 break;
-    
-            case 'status': // Trạng thái đơn hàng
+
+            case 'status': // Order status
                 $orderId = $_GET['order_id'] ?? 0;
                 $orderController->getOrderStatus($orderId);
                 break;
@@ -134,36 +133,37 @@ switch ($act) {
                 break;
         }
         break;
-        case 'coupon': // Quản lý mã giảm giá
-            switch ($page) {
-                case 'list': // Hiển thị danh sách mã giảm giá
-                    $couponController->getList();
-                    break;
-    
-                case 'add': // Thêm mã giảm giá mới
-                    $couponController->addCoupon();
-                    break;
-    
-                case 'edit': // Hiển thị form chỉnh sửa mã giảm giá
-                    $couponController->editCoupon();
-                    break;
-    
-                case 'update': // Cập nhật mã giảm giá
-                    $couponController->updateCoupon();
-                    break;
-    
-                case 'delete': // Xóa mã giảm giá
-                    $couponController->deleteCoupon();
-                    break;
-    
-                default:
-                    echo "Không tìm thấy trang!";
-                    break;
-            }
-            break;
+
+    case 'coupon': // Coupon management
+        switch ($page) {
+            case 'list': // Display coupon list
+                $couponController->getList();
+                break;
+
+            case 'add': // Add a new coupon
+                $couponController->addCoupon();
+                break;
+
+            case 'edit': // Edit a coupon
+                $couponController->editCoupon();
+                break;
+
+            case 'update': // Update a coupon
+                $couponController->updateCoupon();
+                break;
+
+            case 'delete': // Delete a coupon
+                $couponController->deleteCoupon();
+                break;
+
+            default:
+                echo "Không tìm thấy trang!";
+                break;
+        }
+        break;
 
     default:
-        echo "Module không hợp lệ";
+        echo "Module không hợp lệ!";
         break;
 }
 ?>

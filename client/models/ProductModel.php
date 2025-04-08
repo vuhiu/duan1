@@ -4,8 +4,7 @@ require_once __DIR__ . '/../../commons/connect.php';
 class Product {
     private $conn;
 
-    public function __construct() {
-        global $conn;
+    public function __construct($conn) {
         $this->conn = $conn;
     }
 

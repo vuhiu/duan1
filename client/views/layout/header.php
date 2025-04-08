@@ -13,20 +13,20 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
 
     <!-- Bootstrap -->
-    <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="/duan1css/bootstrap.min.css" />
 
     <!-- Slick -->
-    <link type="text/css" rel="stylesheet" href="css/slick.css" />
-    <link type="text/css" rel="stylesheet" href="css/slick-theme.css" />
+    <link type="text/css" rel="stylesheet" href="/duan1css/slick.css" />
+    <link type="text/css" rel="stylesheet" href="/duan1css/slick-theme.css" />
 
     <!-- nouislider -->
-    <link type="text/css" rel="stylesheet" href="css/nouislider.min.css" />
+    <link type="text/css" rel="stylesheet" href="/duan1css/nouislider.min.css" />
 
     <!-- Font Awesome Icon -->
-    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="/duan1css/font-awesome.min.css">
 
     <!-- Custom stlylesheet -->
-    <link type="text/css" rel="stylesheet" href="css/style.css" />
+    <link type="text/css" rel="stylesheet" href="/duan1css/style.css" />
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -51,6 +51,9 @@
                 <ul class="header-links pull-right">
                     <li><a href="#"><i class="fa fa-dollar"></i> VN</a></li>
                     <li><a href="#"><i class="fa fa-user-o"></i> Tài khoản</a></li>
+                    <li><a href="/duan1/client/views/form-login.php"><i class="fa fa-check"></i> Đăng nhập</a></li>
+                    <li><a href="/duan1/client/views/form-register.php"><i class="fa fa-user-plus"></i> Đăng ký</a></li>
+                    <li><a href="/duan1/client/controllers/AuthController.php?action=logout"><i class="fa fa-sign-out"></i> Đăng xuất</a></li>   
                 </ul>
             </div>
         </div>
@@ -244,13 +247,12 @@
     <!-- /SECTION -->
 
     <!-- jQuery Plugins -->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/slick.min.js"></script>
-    <script src="js/nouislider.min.js"></script>
-    <script src="js/jquery.zoom.min.js"></script>
-    <script src="js/main.js"></script>
-
+    <script src="/duan1/js/jquery.min.js"></script>
+    <script src="/duan1/js/bootstrap.min.js"></script>
+    <script src="/duan1/js/slick.min.js"></script>
+    <script src="/duan1/js/nouislider.min.js"></script>
+    <script src="/duan1/js/jquery.zoom.min.js"></script>
+    <script src="/duan1/js/main.js"></script>
 </body>
 
 </html>

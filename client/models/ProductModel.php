@@ -55,6 +55,7 @@ class Product {
     // Fetch product variants
     public function getProductVariants($product_id) {
         $sql = "SELECT 
+                    product_variants.product_variant_id AS variant_id,
                     variant_colors.color_name AS color,
                     variant_size.size_name AS size
                 FROM product_variants

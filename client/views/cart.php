@@ -14,6 +14,7 @@
                 <tr>
                     <th>#</th>
                     <th>Tên sản phẩm</th>
+                    <th>Biến thể</th>
                     <th>Giá</th>
                     <th>Số lượng</th>
                     <th>Thành tiền</th>
@@ -25,11 +26,12 @@
                     <tr>
                         <td><?= $index + 1 ?></td>
                         <td><?= htmlspecialchars($item['product_name']) ?></td>
-                        <td><?= number_format($item['sale_price'], 0, ',', '.') ?>₫</td>
+                        <td><?= htmlspecialchars($item['variant_id']) ?></td>
+                        <td><?= number_format($item['price'], 0, ',', '.') ?>₫</td>
                         <td><?= $item['quantity'] ?></td>
-                        <td><?= number_format($item['sale_price'] * $item['quantity'], 0, ',', '.') ?>₫</td>
+                        <td><?= number_format($item['price'] * $item['quantity'], 0, ',', '.') ?>₫</td>
                         <td>
-                            <a href="/duan1/client/views/cart.php?act=delete&cart_item_id=<?= $item['cart_item_id'] ?>" class="btn btn-danger btn-sm">Xóa</a>
+                            <a href="/duan1/index.php?act=cart&page=delete&cart_item_id=<?= $item['cart_item_id'] ?>" class="btn btn-danger btn-sm">Xóa</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

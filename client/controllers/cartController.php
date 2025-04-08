@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../models/cartModel.php'; // Corrected path to cartModel.php
+require_once __DIR__ . '/../models/CartModel.php';
 
 class CartController {
     public $cartModel;
@@ -8,38 +8,45 @@ class CartController {
         $this->cartModel = new Cart();
     }
 
-    // Hiển thị giỏ hàng
     public function getCart($user_id) {
+        // Retrieve all cart items for the user
         $cartItems = $this->cartModel->getAllCartItems($user_id);
-        require_once __DIR__ . '/../views/cart/listCart.php';
+
+        // Pass the cart items to the cart view
+        require_once __DIR__ . '/../views/cart.php';
     }
 
-    // Thêm sản phẩm vào giỏ hàng
-    public function addToCart($user_id, $product_id, $variant_id, $quantity) {
-        $this->cartModel->addItem($user_id, $product_id, $variant_id, $quantity);
-    }
-
-    // Cập nhật số lượng sản phẩm trong giỏ hàng
-    public function updateCart() {
+    public function addToCart() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $cart_item_id = $_POST['cart_item_id'];
-            $quantity = $_POST['quantity'];
+            $user_id = $_POST['user_id'];
+            $product_id = $_POST['product_id'];
+            $variant_id = $_POST['variant_id'];
+            $quantity = isset($_POST['quantity']) ? $_POST['quantity'] : null;
 
-            $this->cartModel->updateItem($cart_item_id, $quantity);
+            // Validate required fields
+            if (empty($variant_id)) {
+                die("❌ Lỗi: Biến thể sản phẩm không hợp lệ.");
+            }
+            if (empty($quantity) || $quantity <= 0) {
+                die("❌ Lỗi: Số lượng sản phẩm không hợp lệ.");
+            }
 
-            header('Location: /duan1/admin/index.php?act=cart&page=list');
+            $this->cartModel->addItem($user_id, $product_id, $variant_id, $quantity);
+
+            // Redirect to the cart page
+            header('Location: /duan1/index.php?act=cart&page=list');
             exit();
         }
     }
 
-    // Xóa sản phẩm khỏi giỏ hàng
     public function deleteFromCart() {
         if (isset($_GET['cart_item_id'])) {
             $cart_item_id = $_GET['cart_item_id'];
 
             $this->cartModel->deleteItem($cart_item_id);
 
-            header('Location: /duan1/admin/index.php?act=cart&page=list');
+            // Redirect to the cart page
+            header('Location: /duan1/index.php?act=cart&page=list');
             exit();
         }
     }

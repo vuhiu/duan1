@@ -4,6 +4,7 @@
 require __DIR__ . '/commons/connect.php';
 require __DIR__ . '/commons/env.php';
 require __DIR__ . '/client/controllers/ProductController.php';
+require __DIR__ . '/client/controllers/CartController.php';
 
 // Kiểm tra & nạp file header
 $headerPath = __DIR__ . '/client/views/layout/header.php';
@@ -17,38 +18,33 @@ if (file_exists($headerPath)) {
 $act = isset($_GET['act']) ? $_GET['act'] : '';
 $page = isset($_GET['page']) ? $_GET['page'] : '';
 
-$controller = new ProductController();
+$productController = new ProductController();
+$cartController = new CartController();
 
 switch ($act) {
     case "":
         // Gọi trang chủ
-        $controller->getAllProducts();
+        $productController->getAllProducts();
         break;
 
     case 'product':
         // Gọi trang chi tiết sản phẩm
-        $controller->getProductDetail();
+        $productController->getProductDetail();
         break;
 
     case 'cart':
         // Điều hướng các hành động liên quan đến giỏ hàng
         switch ($page) {
             case 'list':
-                $cartPath = __DIR__ . '/client/views/cart.php';
-                if (file_exists($cartPath)) {
-                    include $cartPath;
-                } else {
-                    echo "Lỗi: Không tìm thấy file cart.php";
-                }
+                $cartController->getCart(1); // Pass user_id (e.g., 1 for testing)
                 break;
 
             case 'add':
-                $addToCartPath = __DIR__ . '/client/views/addToCart.php';
-                if (file_exists($addToCartPath)) {
-                    include $addToCartPath;
-                } else {
-                    echo "Lỗi: Không tìm thấy file addToCart.php";
-                }
+                $cartController->addToCart();
+                break;
+
+            case 'delete':
+                $cartController->deleteFromCart();
                 break;
 
             default:

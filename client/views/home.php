@@ -88,7 +88,13 @@
                                                     </div>
                                                 </div>
                                                 <div class="add-to-cart">
-                                                    <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
+                                                    <form method="POST" action="/duan1/index.php?act=cart&page=add">
+                                                        <input type="hidden" name="user_id" value="1"> <!-- Replace with dynamic user_id -->
+                                                        <input type="hidden" name="product_id" value="<?= $product['product_id'] ?>">
+                                                        <input type="hidden" name="variant_id" value="<?= isset($product['variants'][0]['variant_id']) ? $product['variants'][0]['variant_id'] : null ?>"> <!-- Handle missing variants -->
+                                                        <input type="hidden" name="quantity" value="1"> <!-- Default quantity -->
+                                                        <button type="submit" class="add-to-cart-btn btn btn-primary"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>

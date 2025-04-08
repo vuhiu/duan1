@@ -1,33 +1,16 @@
-<?php
-require_once __DIR__ . '/../controllers/cartController.php';
-
-$cartController = new CartController();
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $user_id = $_POST['user_id'];
-    $product_id = $_POST['product_id'];
-    $variant_id = $_POST['variant_id'];
-    $quantity = $_POST['quantity'];
-
-    // Add the product to the cart
-    $cartController->addToCart($user_id, $product_id, $variant_id, $quantity);
-
-    // Redirect to the cart page
-    header('Location: /duan1/client/views/cart.php');
-    exit();
-}
-?>
-
+<!-- filepath: c:\xampp\htdocs\duan1\client\views\addToCart.php -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <title>Thêm sản phẩm vào giỏ hàng</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container mt-5">
         <h1>Thêm sản phẩm vào giỏ hàng</h1>
-        <form method="POST" action="/duan1/admin/index.php?act=cart&page=add">
+        <form method="POST" action="/duan1/index.php?act=cart&page=add">
+            <input type="hidden" name="user_id" value="1"> <!-- Replace with dynamic user_id -->
             <div class="mb-3">
                 <label for="product_id" class="form-label">ID Sản phẩm:</label>
                 <input type="number" id="product_id" name="product_id" class="form-control" required>

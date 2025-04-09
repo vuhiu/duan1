@@ -40,7 +40,6 @@ $id = $_GET['id'] ?? '';
 // $clientProductController = new ClientProductController();
 // $productModel = new ProductModel($conn); // Khởi tạo đối tượng ProductModel với $conn
 // $clientProductController = new ClientProductController($productModel); // Truyền $productModel vào ClientProductController
-
 // Khởi tạo các đối tượng
 $productModel = new ProductModel($conn); // Truyền $conn vào ProductModel
 $clientProductController = new ClientProductController($productModel); // Truyền $productModel vào ClientProductController

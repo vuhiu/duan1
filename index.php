@@ -3,7 +3,7 @@
 // Kết nối database & Load cấu hình
 require __DIR__ . '/commons/connect.php';
 require __DIR__ . '/commons/env.php';
-require __DIR__ . '/client/controllers/ProductController.php';
+require_once __DIR__ . '/client/controllers/ClientProductController.php';
 
 // Kiểm tra & nạp file header
 $headerPath = __DIR__ . '/client/views/layout/header.php';
@@ -17,7 +17,8 @@ if (file_exists($headerPath)) {
 $act = isset($_GET['act']) ? $_GET['act'] : '';
 $page = isset($_GET['page']) ? $_GET['page'] : '';
 
-$controller = new ProductController();
+use Client\Controllers\ClientProductController;
+$controller = new ClientProductController($conn); // Truyền kết nối $conn
 
 switch ($act) {
     case "":

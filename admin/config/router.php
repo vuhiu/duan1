@@ -17,11 +17,14 @@ require_once __DIR__ . '/../controllers/categoryController.php';
 require_once __DIR__ . '/../controllers/OrderAdminController.php';
 require_once __DIR__ . '/../controllers/couponController.php';
 require_once __DIR__ . '/../controllers/CustomerAdminController.php';
-require_once __DIR__ . '/../../client/controllers/ClientProductController.php';
 require_once __DIR__ . '/../../client/models/ProductModel.php';
 require_once __DIR__ . '/../models/product.php';
 require_once __DIR__ . '/../models/category.php';
-require_once __DIR__ . '/../../client/models/cart.php';
+require_once __DIR__ . '/../../client/controllers/ClientProductController.php';
+use Client\Controllers\ClientProductController; // Import lớp ClientProductController
+use Client\Models\ClientProduct; // Import lớp ClientProduct
+
+// require_once __DIR__ . '/../../client/models/cart.php'
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -41,7 +44,7 @@ $id = $_GET['id'] ?? '';
 // $productModel = new ProductModel($conn); // Khởi tạo đối tượng ProductModel với $conn
 // $clientProductController = new ClientProductController($productModel); // Truyền $productModel vào ClientProductController
 // Khởi tạo các đối tượng
-$productModel = new ProductModel($conn); // Truyền $conn vào ProductModel
+$productModel = new ClientProduct($conn); // Truyền $conn vào ProductModel
 $clientProductController = new ClientProductController($productModel); // Truyền $productModel vào ClientProductController
 $productController = new ProductController();
 $categoryController = new CategoryController();

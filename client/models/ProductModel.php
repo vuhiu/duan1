@@ -1,7 +1,8 @@
 <?php
+namespace Client\Models; // Sử dụng namespace để phân biệt lớp
 require_once __DIR__ . '/../../commons/connect.php';
 
-class Product {
+class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
     private $conn;
 
     public function __construct($conn) {
@@ -24,7 +25,7 @@ class Product {
                 WHERE products.product_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$product_id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     // Get all products with their variants
@@ -41,7 +42,7 @@ class Product {
                 LEFT JOIN categories ON products.category_id = categories.category_id";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
-        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $products = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         // Fetch variants for each product
         foreach ($products as &$product) {
@@ -62,7 +63,7 @@ class Product {
                 WHERE product_variants.product_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$product_id]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 }
 ?>

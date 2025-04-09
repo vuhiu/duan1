@@ -1,12 +1,14 @@
 <?php
+namespace Client\Controllers;
+
 require_once __DIR__ . '/../../client/models/ProductModel.php';
+use Client\Models\ClientProduct; // Import lớp ClientProduct
 
 class ClientProductController {
     private $productModel;
 
-    public function __construct($productModel)
-    {
-        $this->productModel = $productModel;
+    public function __construct($conn) {
+        $this->productModel = new ClientProduct($conn); // Sử dụng ClientProduct
     }
 
     // Danh sách sản phẩm

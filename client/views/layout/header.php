@@ -13,20 +13,20 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
 
     <!-- Bootstrap -->
-    <link type="text/css" rel="stylesheet" href="/duan1css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="/duan1/css/bootstrap.min.css" />
 
     <!-- Slick -->
-    <link type="text/css" rel="stylesheet" href="/duan1css/slick.css" />
-    <link type="text/css" rel="stylesheet" href="/duan1css/slick-theme.css" />
+    <link type="text/css" rel="stylesheet" href="/duan1/css/slick.css" />
+    <link type="text/css" rel="stylesheet" href="/duan1/css/slick-theme.css" />
 
     <!-- nouislider -->
-    <link type="text/css" rel="stylesheet" href="/duan1css/nouislider.min.css" />
+    <link type="text/css" rel="stylesheet" href="/duan1/css/nouislider.min.css" />
 
     <!-- Font Awesome Icon -->
-    <link rel="stylesheet" href="/duan1css/font-awesome.min.css">
+    <link rel="stylesheet" href="/duan1/css/font-awesome.min.css">
 
     <!-- Custom stlylesheet -->
-    <link type="text/css" rel="stylesheet" href="/duan1css/style.css" />
+    <link type="text/css" rel="stylesheet" href="/duan1/css/style.css" />
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

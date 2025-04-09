@@ -25,7 +25,14 @@ class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
                 WHERE products.product_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$product_id]);
-        return $stmt->fetch(\PDO::FETCH_ASSOC);
+        $product = $stmt->fetch(\PDO::FETCH_ASSOC);
+    
+        // Lấy các biến thể của sản phẩm
+        if ($product) {
+            $product['variants'] = $this->getProductVariants($product_id);
+        }
+    
+        return $product;
     }
 
     // Get all products with their variants
@@ -82,5 +89,6 @@ class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
         $stmt->execute(['keyword' => '%' . $keyword . '%']);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+    
 }
 ?>

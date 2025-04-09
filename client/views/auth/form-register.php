@@ -1,5 +1,4 @@
-<!-- filepath: c:\laragon\www\duan1\client\views\form-register.php -->
-<!DOCTYPE html>
+<!-- filepath: c:\laragon\www\duan1\client\views\auth\form-register.php --><!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">

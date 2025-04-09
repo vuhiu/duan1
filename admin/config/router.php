@@ -53,6 +53,9 @@ $couponController = new CouponController();
 $customerController = new CustomerAdminController();
 
 switch ($act) {
+    case 'search':
+        $controller->search();
+        break;
     case 'product_detail': // Xem chi tiết sản phẩm
         $productController->productDetail();
         break;
@@ -232,5 +235,6 @@ switch ($act) {
                     break;
             }
             break;
+
 }
 ?>

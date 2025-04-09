@@ -51,8 +51,8 @@
                 <ul class="header-links pull-right">
                     <li><a href="#"><i class="fa fa-dollar"></i> VN</a></li>
                     <li><a href="#"><i class="fa fa-user-o"></i> Tài khoản</a></li>
-                    <li><a href="/duan1/client/views/form-login.php"><i class="fa fa-check"></i> Đăng nhập</a></li>
-                    <li><a href="/duan1/client/views/form-register.php"><i class="fa fa-user-plus"></i> Đăng ký</a></li>
+                    <li><a href="/duan1/client/views/auth/form-login.php"><i class="fa fa-check"></i> Đăng nhập</a></li>
+                    <li><a href="/duan1/client/views/auth/form-register.php"><i class="fa fa-user-plus"></i> Đăng ký</a></li>
                     <li><a href="/duan1/client/controllers/AuthController.php?action=logout"><i class="fa fa-sign-out"></i> Đăng xuất</a></li>   
                 </ul>
             </div>
@@ -78,13 +78,16 @@
                     <!-- SEARCH BAR -->
                     <div class="col-md-6">
                         <div class="header-search">
-                            <form>
+                            <form action="/duan1/index.php" method="GET">
+                            <input type="hidden" name="act" value="search">
                                 <select class="input-select">
                                     <option value="0">Tất cả</option>
-                                    <option value="1"> Sản phẩm 1</option>
-                                    <option value="1"> Sản phẩm 2</option>
+                                    <option value="1"> iphone</option>
+                                    <option value="2"> SamSung</option>
+                                    <option value="3"> macbook</option>
+                                    <option value="4"> phụ kiện </option>
                                 </select>
-                                <input class="input" placeholder="Tìm kiếm ở đây">
+                                <input class="input" placeholder="Tìm kiếm sản phẩm" name="keyword" required>
                                 <button class="search-btn"> Tìm kiếm</button>
                             </form>
                         </div>

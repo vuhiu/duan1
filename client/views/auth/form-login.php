@@ -1,4 +1,4 @@
-<!-- filepath: c:\laragon\www\duan1\client\views\form-login.php -->
+<!-- filepath: c:\laragon\www\duan1\client\views\auth\form-login.php -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>

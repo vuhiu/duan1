@@ -31,6 +31,10 @@ switch ($act) {
         $controller->getProductDetail();
         break;
 
+    case 'search': // Thêm case xử lý tìm kiếm
+        $controller->search();
+        break;
+
     case 'cart':
         // Điều hướng các hành động liên quan đến giỏ hàng
         switch ($page) {

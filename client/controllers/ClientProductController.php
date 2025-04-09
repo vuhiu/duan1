@@ -137,5 +137,16 @@ public function updateProduct() {
         $products = $this->productModel->getAllProductWithVariants(); // Fetch products with variants
         require_once __DIR__ . '/../views/home.php'; // Pass $products to the view
     }
+
+    // Search products
+    public function search() {
+        if (isset($_GET['keyword'])) {
+            $keyword = trim($_GET['keyword']);
+            $products = $this->productModel->searchProducts($keyword); // Gọi phương thức từ model
+            require_once __DIR__ . '/../views/search/search_result.php'; // Truyền dữ liệu vào view
+        } else {
+            echo "Vui lòng nhập từ khóa tìm kiếm.";
+        }
+    }
 }
 ?>

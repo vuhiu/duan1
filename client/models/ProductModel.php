@@ -65,5 +65,22 @@ class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
         $stmt->execute([$product_id]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+    // search products by keyword
+    public function searchProducts($keyword) {
+        $sql = "SELECT 
+                    product_id, 
+                    name AS product_name, 
+                    price AS product_price, 
+                    sale_price AS product_sale_price, 
+                    image AS product_image, 
+                    description AS product_description 
+                FROM products 
+                WHERE name LIKE :keyword 
+                   OR product_id LIKE :keyword 
+                   OR description LIKE :keyword";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['keyword' => '%' . $keyword . '%']);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }
 ?>

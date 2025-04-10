@@ -62,8 +62,12 @@ class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
     // Fetch product variants
     public function getProductVariants($product_id) {
         $sql = "SELECT 
-                    variant_colors.color_name AS color,
-                    variant_size.size_name AS size
+                    product_variants.product_variant_id,
+                    product_variants.price,
+                    product_variants.sale_price,
+                    product_variants.quantity,
+                    variant_colors.color_name AS product_variant_color,
+                    variant_size.size_name AS product_variant_size
                 FROM product_variants
                 LEFT JOIN variant_colors ON product_variants.variant_color_id = variant_colors.variant_color_id
                 LEFT JOIN variant_size ON product_variants.variant_size_id = variant_size.variant_size_id
@@ -88,6 +92,23 @@ class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
         $stmt = $this->conn->prepare($sql);
         $stmt->execute(['keyword' => '%' . $keyword . '%']);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+    
+    public function deleteVariants($product_id) {
+        // Kiểm tra xem có bản ghi liên quan trong bảng cart_items không
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM cart_items WHERE variant_id IN (
+            SELECT product_variant_id FROM product_variants WHERE product_id = ?
+        )");
+        $stmt->execute([$product_id]);
+        $count = $stmt->fetchColumn();
+    
+        if ($count > 0) {
+            throw new Exception("Không thể xóa vì có sản phẩm trong giỏ hàng liên quan.");
+        }
+    
+        // Xóa các bản ghi trong bảng product_variants
+        $stmt = $this->conn->prepare("DELETE FROM product_variants WHERE product_id = ?");
+        $stmt->execute([$product_id]);
     }
     
 }

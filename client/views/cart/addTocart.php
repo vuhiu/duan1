@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cartController->addToCart($user_id, $product_id, $variant_id, $quantity);
 
     // Chuyển hướng đến trang giỏ hàng
-    header('Location: /duan1/client/views/cart/cart.php');
+    header('Location: /duan1/client/views/cart/list.php');
     exit();
 }
 ?>
@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
         </form>
-        <a href="/duan1/client/views/cart/cart.php" class="btn btn-secondary mt-3">Quay lại giỏ hàng</a>
+        <a href="/duan1/client/views/cart/list.php" class="btn btn-secondary mt-3">Quay lại giỏ hàng</a>
     </div>
 </body>
 

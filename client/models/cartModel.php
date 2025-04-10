@@ -13,17 +13,13 @@ class Cart {
 
     // Thêm sản phẩm vào giỏ hàng
     public function addItem($user_id, $product_id, $variant_id, $quantity) {
-        if ($user_id === null) {
-            throw new Exception("User ID không được để trống.");
-        }
-    
-        // Check if the cart exists for the user
+        // Kiểm tra giỏ hàng của người dùng
         $stmt = $this->conn->prepare("SELECT id FROM carts WHERE user_id = ?");
         $stmt->execute([$user_id]);
         $cart = $stmt->fetch(\PDO::FETCH_ASSOC);
     
         if (!$cart) {
-            // Create a new cart if it doesn't exist
+            // Tạo giỏ hàng mới nếu chưa tồn tại
             $stmt = $this->conn->prepare("INSERT INTO carts (user_id) VALUES (?)");
             $stmt->execute([$user_id]);
             $cart_id = $this->conn->lastInsertId();
@@ -31,17 +27,17 @@ class Cart {
             $cart_id = $cart['id'];
         }
     
-        // Check if the product already exists in the cart
+        // Kiểm tra sản phẩm đã tồn tại trong giỏ hàng chưa
         $stmt = $this->conn->prepare("SELECT id FROM cart_items WHERE cart_id = ? AND product_id = ? AND variant_id = ?");
         $stmt->execute([$cart_id, $product_id, $variant_id]);
         $cart_item = $stmt->fetch(\PDO::FETCH_ASSOC);
     
         if ($cart_item) {
-            // Update quantity if the product already exists
+            // Cập nhật số lượng nếu sản phẩm đã tồn tại
             $stmt = $this->conn->prepare("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?");
             $stmt->execute([$quantity, $cart_item['id']]);
         } else {
-            // Insert a new product into the cart
+            // Thêm sản phẩm mới vào giỏ hàng
             $stmt = $this->conn->prepare("INSERT INTO cart_items (cart_id, product_id, variant_id, quantity) VALUES (?, ?, ?, ?)");
             $stmt->execute([$cart_id, $product_id, $variant_id, $quantity]);
         }

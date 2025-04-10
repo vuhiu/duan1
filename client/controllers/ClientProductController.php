@@ -163,5 +163,10 @@ public function updateProduct() {
             echo "ID sản phẩm không hợp lệ.";
         }
     }
+    // Get products by category
+    public function getProductsByCategory($category_id) {
+        $products = $this->productModel->getProductsByCategory($category_id); // Lấy sản phẩm theo danh mục
+        require_once __DIR__ . '/../views/product/category.php'; // Truyền dữ liệu vào view
+    }
 }
 ?>

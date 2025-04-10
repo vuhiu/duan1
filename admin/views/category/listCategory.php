@@ -1,4 +1,8 @@
 <h2 class="mt-3">Danh sách danh mục</h2>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<!-- <link type="text/css" rel="stylesheet" href="/duan1/css/bootstrap.min.css" /> -->
+    <link rel="stylesheet" href="/duan1/client/public/css/style.css">
+
 
 <?php if (!empty($categories)): ?>
 <table class="table table-bordered">

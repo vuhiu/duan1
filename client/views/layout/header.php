@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,7 +9,10 @@
 
     <title>Electro - HTML Ecommerce Template</title>
 
+    <!-- <base> sẽ giúp các đường dẫn tương đối được hiểu đúng dù bạn ở bất kỳ trang nào. -->
+    <base href="http://localhost/duan1/" />
     <!-- Google font -->
+
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
 
     <!-- Bootstrap -->
@@ -51,8 +55,10 @@
                     <li><a href="#"><i class="fa fa-dollar"></i> VN</a></li>
                     <li><a href="#"><i class="fa fa-user-o"></i> Tài khoản</a></li>
                     <li><a href="/duan1/client/views/auth/form-login.php"><i class="fa fa-check"></i> Đăng nhập</a></li>
-                    <li><a href="/duan1/client/views/auth/form-register.php"><i class="fa fa-user-plus"></i> Đăng ký</a></li>
-                    <li><a href="/duan1/client/controllers/AuthController.php?action=logout"><i class="fa fa-sign-out"></i> Đăng xuất</a></li>   
+                    <li><a href="/duan1/client/views/auth/form-register.php"><i class="fa fa-user-plus"></i> Đăng ký</a>
+                    </li>
+                    <li><a href="/duan1/client/controllers/AuthController.php?action=logout"><i
+                                class="fa fa-sign-out"></i> Đăng xuất</a></li>
                 </ul>
             </div>
         </div>
@@ -78,7 +84,7 @@
                     <div class="col-md-6">
                         <div class="header-search">
                             <form action="/duan1/index.php" method="GET">
-                            <input type="hidden" name="act" value="search">
+                                <input type="hidden" name="act" value="search">
                                 <select class="input-select">
                                     <option value="0">Tất cả</option>
                                     <option value="1"> iphone</option>
@@ -108,7 +114,8 @@
 
                             <!-- Cart -->
                             <div class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                <a href="/duan1/index.php?act=cart&page=list" class="dropdown-toggle"
+                                    data-toggle="dropdown" aria-expanded="true">
                                     <i class="fa fa-shopping-cart"></i>
                                     <span> Giỏ hàng</span>
                                     <div class="qty">3</div>
@@ -142,7 +149,7 @@
                                         <h5> Tổng tiền: $1960.00</h5>
                                     </div>
                                     <div class="cart-btns">
-                                        <a href="#"> Tiếp tục mua hàng</a>
+                                        <a href="/duan1/index.php?act=cart&page=list">Xem giỏ hàng</a>
                                         <a href="#">Thanh toán<i class="fa fa-arrow-circle-right"></i></a>
                                     </div>
                                 </div>
@@ -178,12 +185,20 @@
                 <!-- NAV -->
                 <ul class="main-nav nav navbar-nav">
                     <li class="active"><a href="#">Trang chủ</a></li>
-                    <li><a href="#">Ưu đãi hot</a></li>
-                    <li><a href="#">Danh mục</a></li>
-                    <li><a href="#">Laptop</a></li>
-                    <li><a href="#">Điện thoại</a></li>
-                    <li><a href="#">Máy ảnh</a></li>
-                    <li><a href="#">Phụ kiện</a></li>
+                    <!-- <li><a href="#">Ưu đãi hot</a></li> -->
+                    <!-- <li><a href="/duan1/index.php?act=category">Danh mục</a></li> -->
+                    <li><a href="/duan1/index.php?act=category&category_id=14">Laptop</a></li>
+                    <!-- Dropdown cho Điện thoại -->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Điện thoại <span
+                                class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/duan1/index.php?act=category&category_id=34">iPhone</a></li>
+                            <li><a href="/duan1/index.php?act=category&category_id=36">Samsung</a></li>
+                        </ul>
+                    </li>
+                    <!-- <li><a href="#">Máy ảnh</a></li> -->
+                    <li><a href="/duan1/index.php?act=category&category_id=35">Phụ kiện</a></li>
                     <li><a href="#">Liên hệ</a></li>
                 </ul>
                 <!-- /NAV -->

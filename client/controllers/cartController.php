@@ -22,7 +22,7 @@ class CartController
         $cartItems = $cartModel->getAllCartItems($user_id); 
     
         // Truyền dữ liệu vào view
-        require_once __DIR__ . '/../views/cart/cart.php';
+        require_once __DIR__ . '/../views/cart/list.php';
     }
 
     public function addToCart($user_id, $product_id, $variant_id, $quantity) {

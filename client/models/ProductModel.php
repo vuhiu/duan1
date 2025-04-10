@@ -27,7 +27,7 @@ class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
         $stmt->execute([$product_id]);
         $product = $stmt->fetch(\PDO::FETCH_ASSOC);
     
-        // Lấy các biến thể của sản phẩm
+        // Lấy biến thể của sản phẩm
         if ($product) {
             $product['variants'] = $this->getProductVariants($product_id);
         }
@@ -50,12 +50,12 @@ class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $products = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        // Fetch variants for each product
+    
+        // Lấy biến thể cho từng sản phẩm
         foreach ($products as &$product) {
             $product['variants'] = $this->getProductVariants($product['product_id']);
         }
-
+    
         return $products;
     }
 

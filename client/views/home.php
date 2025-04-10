@@ -58,76 +58,35 @@
                                 <!-- filepath: c:\xampp\htdocs\duan1\client\views\home.php -->
                                 <div class="products-slick" data-nav="#slick-nav-1">
                                     <?php foreach ($products as $product): ?>
-                                    <div class="col-md-4">
-                                        <div class="product">
-                                            <div class="product-img">
-                                                <img src="/duan1/upload/<?= htmlspecialchars($product['product_image']) ?>"
-                                                    alt="Ảnh sản phẩm">
-                                                <div class="product-label">
-                                                    <?php if ($product['product_sale_price'] < $product['product_price']): ?>
-                                                    <span
-                                                        class="sale">-<?= round((($product['product_price'] - $product['product_sale_price']) / $product['product_price']) * 100) ?>%</span>
-                                                    <?php endif; ?>
-                                                    <span class="new">MỚI</span>
+                                        <div class="col-md-4">
+                                            <div class="product">
+                                                <div class="product-img">
+                                                    <img src="/duan1/upload/<?= htmlspecialchars($product['product_image']) ?>" alt="Ảnh sản phẩm">
                                                 </div>
-                                            </div>
-                                            <div class="product-body">
-                                                <p class="product-category">
-                                                    <?= htmlspecialchars($product['category_name']) ?></p>
-                                                <h3 class="product-name"><a
-                                                        href="/duan1/client/index.php?act=product&product_id=<?= $product['product_id'] ?>"><?= htmlspecialchars($product['product_name']) ?></a>
-                                                </h3>
-                                                <h4 class="product-price">
-                                                    <?= number_format($product['product_sale_price'], 0, ',', '.') ?>₫
-                                                    <?php if ($product['product_sale_price'] < $product['product_price']): ?>
-                                                    <del
-                                                        class="product-old-price"><?= number_format($product['product_price'], 0, ',', '.') ?>₫</del>
-                                                    <?php endif; ?>
-                                                </h4>
-                                                <div class="product-variants">
-                                                    <strong>Biến thể:</strong>
-                                                    <ul>
-                                                        <?php if (!empty($product['variants'])): ?>
-                                                        <?php foreach ($product['variants'] as $variant): ?>
-                                                        <li>
-                                                            <?= htmlspecialchars($variant['color'] ?? 'Không xác định') ?>
-                                                            -
-                                                            <?= htmlspecialchars($variant['size'] ?? 'Không xác định') ?>
-                                                        </li>
-                                                        <?php endforeach; ?>
-                                                        <?php else: ?>
-                                                        <li>Không có biến thể</li>
+                                                <div class="product-body">
+                                                    <p class="product-category"><?= htmlspecialchars($product['category_name']) ?></p>
+                                                    <h3 class="product-name">
+                                                        <a href="/duan1/index.php?act=product&product_id=<?= $product['product_id'] ?>">
+                                                            <?= htmlspecialchars($product['product_name']) ?>
+                                                        </a>
+                                                    </h3>
+                                                    <h4 class="product-price">
+                                                        <?= number_format($product['product_sale_price'], 0, ',', '.') ?>₫
+                                                        <?php if ($product['product_sale_price'] < $product['product_price']): ?>
+                                                            <del class="product-old-price"><?= number_format($product['product_price'], 0, ',', '.') ?>₫</del>
                                                         <?php endif; ?>
+                                                    </h4>
+                                                    <ul>
+                                                        <?php foreach ($product['variants'] as $variant): ?>
+                                                            <li>
+                                                                Màu: <?= htmlspecialchars($variant['product_variant_color']) ?>,
+                                                                Kích thước: <?= htmlspecialchars($variant['product_variant_size']) ?>
+                                                            </li>
+                                                        <?php endforeach; ?>
                                                     </ul>
                                                 </div>
                                             </div>
-                                            <div class="add-to-cart">
-                                                <form action="/duan1/index.php?act=cart&page=add" method="POST"
-                                                    onsubmit="return redirectToCart();">
-                                                    <input type="hidden" name="product_id"
-                                                        value="<?= $product['product_id'] ?>">
-                                                    <input type="hidden" name="variant_id" value="1">
-                                                    <!-- hoặc biến thể đúng -->
-                                                    <input type="hidden" name="quantity" value="1">
-                                                    <button type="submit" class="add-to-cart-btn"><i
-                                                            class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
-                                                </form>
-                                            </div>
-                                            <script>
-                                            // Hàm xử lý khi nhấn nút "Thêm vào giỏ hàng"
-                                            // Hàm redirectToCart() sử dụng setTimeout để chuyển hướng đến trang giỏ hàng
-                                            //  (/duan1/index.php?act=cart&page=list) sau khi form được gửi.
-                                            function redirectToCart() {
-                                                // Chuyển hướng đến trang giỏ hàng sau khi thêm sản phẩm
-                                                setTimeout(function() {
-                                                    window.location.href =
-                                                    "/duan1/index.php?act=cart&page=list";
-                                                }, 100); // Đợi 100ms để đảm bảo form được gửi
-                                                return true; // Tiếp tục gửi form
-                                            }
-                                            </script>
                                         </div>
-                                    </div>
                                     <?php endforeach; ?>
                                 </div>
                                 <div id="slick-nav-1" class="products-slick-nav"></div>

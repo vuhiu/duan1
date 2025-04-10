@@ -134,8 +134,8 @@ public function updateProduct() {
 
     // Get all products
     public function getAllProducts() {
-        $products = $this->productModel->getAllProductWithVariants(); // Fetch products with variants
-        require_once __DIR__ . '/../views/home.php'; // Pass $products to the view
+        $products = $this->productModel->getAllProductWithVariants(); // Lấy sản phẩm cùng biến thể
+        require_once __DIR__ . '/../views/home.php'; // Truyền dữ liệu vào view
     }
 
     // Search products
@@ -152,7 +152,7 @@ public function updateProduct() {
     public function getProductDetail() {
         if (isset($_GET['product_id']) && is_numeric($_GET['product_id'])) {
             $product_id = $_GET['product_id'];
-            $product = $this->productModel->getProductById($product_id); // Gọi phương thức từ model
+            $product = $this->productModel->getProductById($product_id); // Lấy chi tiết sản phẩm từ model
     
             if ($product) {
                 require_once __DIR__ . '/../views/product/product_detail.php'; // Truyền dữ liệu vào view

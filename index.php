@@ -51,25 +51,44 @@ switch ($act) {
         break;
 
     case 'cart':
-        // Điều hướng các hành động liên quan đến giỏ hàng
         switch ($page) {
             case 'list':
                 $user_id = $_SESSION['user_id'] ?? 0; // Lấy user_id từ session
                 $cartController->getCart($user_id);
                 break;
-
+    
             case 'add':
-                $addToCartPath = __DIR__ . '/client/views/cart/addTocart.php';
-                if (file_exists($addToCartPath)) {
-                    include $addToCartPath;
-                } else {
-                    echo "Lỗi: Không tìm thấy file addTocart.php";
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $user_id = $_SESSION['user_id'];
+                    $product_id = $_POST['product_id'];
+                    $variant_id = $_POST['variant_id'];
+                    $quantity = $_POST['quantity'];
+                    $cartController->addToCart($user_id, $product_id, $variant_id, $quantity);
+                    header('Location: /duan1/index.php?act=cart&page=list'); // Đổi từ cart.php thành list.php
+                    exit();
                 }
                 break;
+            case 'update_cart':
+            $cartController->updateCartItem();
+            break;
 
+            case 'delete_cart':
+            $cartController->deleteCartItem();
+            break;
+    
             default:
                 echo "Lỗi: Không tìm thấy trang giỏ hàng.";
                 break;
+    }
+    break;
+    
+    // Xử lý danh mục sản phẩm
+    case 'category':
+        if (isset($_GET['category_id']) && is_numeric($_GET['category_id'])) {
+            $category_id = $_GET['category_id'];
+            $controller->getProductsByCategory($category_id);
+        } else {
+            echo "Danh mục không hợp lệ.";
         }
         break;
 

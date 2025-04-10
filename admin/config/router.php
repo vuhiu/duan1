@@ -121,6 +121,7 @@ switch ($act) {
                 $user_id = $_SESSION['user_id'] ?? 0; // Get user_id from session
                 $cartController->getCart($user_id);
                 break;
+    
             case 'add_cart': // Thêm sản phẩm vào giỏ hàng
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $cartController->addToCart();
@@ -128,6 +129,7 @@ switch ($act) {
                     echo "❌ Phương thức không hợp lệ!";
                 }
                 break;
+    
             case 'update_cart': // Cập nhật số lượng sản phẩm
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $cartController->updateCartItem();
@@ -135,6 +137,7 @@ switch ($act) {
                     echo "❌ Phương thức không hợp lệ!";
                 }
                 break;
+    
             case 'delete_cart': // Xóa sản phẩm khỏi giỏ hàng
                 if (isset($_GET['cart_item_id'])) {
                     $cartController->deleteCartItem();
@@ -142,6 +145,7 @@ switch ($act) {
                     echo "❌ Không tìm thấy sản phẩm để xóa!";
                 }
                 break;
+    
             default:
                 echo "Không tìm thấy trang!";
                 break;

@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>Thêm danh mục</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- <link type="text/css" rel="stylesheet" href="/duan1/css/bootstrap.min.css" /> -->
+    <link rel="stylesheet" href="/duan1/client/public/css/style.css">
+
 </head>
 <body>
     <div class="container mt-4">

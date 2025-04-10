@@ -102,9 +102,30 @@
                                                 </div>
                                             </div>
                                             <div class="add-to-cart">
-                                                <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Thêm
-                                                    vào giỏ</button>
+                                                <form action="/duan1/index.php?act=cart&page=add" method="POST"
+                                                    onsubmit="return redirectToCart();">
+                                                    <input type="hidden" name="product_id"
+                                                        value="<?= $product['product_id'] ?>">
+                                                    <input type="hidden" name="variant_id" value="1">
+                                                    <!-- hoặc biến thể đúng -->
+                                                    <input type="hidden" name="quantity" value="1">
+                                                    <button type="submit" class="add-to-cart-btn"><i
+                                                            class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
+                                                </form>
                                             </div>
+                                            <script>
+                                            // Hàm xử lý khi nhấn nút "Thêm vào giỏ hàng"
+                                            // Hàm redirectToCart() sử dụng setTimeout để chuyển hướng đến trang giỏ hàng
+                                            //  (/duan1/index.php?act=cart&page=list) sau khi form được gửi.
+                                            function redirectToCart() {
+                                                // Chuyển hướng đến trang giỏ hàng sau khi thêm sản phẩm
+                                                setTimeout(function() {
+                                                    window.location.href =
+                                                    "/duan1/index.php?act=cart&page=list";
+                                                }, 100); // Đợi 100ms để đảm bảo form được gửi
+                                                return true; // Tiếp tục gửi form
+                                            }
+                                            </script>
                                         </div>
                                     </div>
                                     <?php endforeach; ?>
@@ -112,6 +133,11 @@
                                 <div id="slick-nav-1" class="products-slick-nav"></div>
                             </div>
                         </div>
+                        <!-- form gửi dữ liệu sp vào giỏ hàng khi nhấn nút "Thêm vào giỏ hàng" -->
+
+
+
+
                     </div>
                 </div>
                 <!-- /Product List -->

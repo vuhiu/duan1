@@ -110,6 +110,23 @@ class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
         $stmt = $this->conn->prepare("DELETE FROM product_variants WHERE product_id = ?");
         $stmt->execute([$product_id]);
     }
+    // lấy sản phẩm theo danh mục
+    public function getProductsByCategory($category_id) {
+        $sql = "SELECT 
+                    products.product_id,
+                    products.name AS product_name,
+                    products.price AS product_price,
+                    products.sale_price AS product_sale_price,
+                    products.image AS product_image,
+                    products.description AS product_description,
+                    categories.name AS category_name
+                FROM products
+                LEFT JOIN categories ON products.category_id = categories.category_id
+                WHERE categories.category_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$category_id]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
     
 }
 ?>

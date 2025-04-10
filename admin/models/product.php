@@ -124,8 +124,26 @@ class Product {
 
     // Delete all variants for a product
     public function deleteVariants($product_id) {
-        $sql = "DELETE FROM product_variants WHERE product_id = ?";
-        $stmt = $this->conn->prepare($sql);
+        // Kiểm tra xem có bản ghi liên quan trong bảng cart_items không
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM cart_items WHERE variant_id IN (
+            SELECT product_variant_id FROM product_variants WHERE product_id = ?
+        )");
+        $stmt->execute([$product_id]);
+        $cartCount = $stmt->fetchColumn();
+    
+        // Kiểm tra xem có bản ghi liên quan trong bảng orders không
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM orders WHERE variant_id IN (
+            SELECT product_variant_id FROM product_variants WHERE product_id = ?
+        )");
+        $stmt->execute([$product_id]);
+        $orderCount = $stmt->fetchColumn();
+    
+        if ($cartCount > 0 || $orderCount > 0) {
+            throw new Exception("Không thể xóa vì có sản phẩm trong giỏ hàng hoặc đơn hàng liên quan.");
+        }
+    
+        // Xóa các biến thể trong bảng product_variants
+        $stmt = $this->conn->prepare("DELETE FROM product_variants WHERE product_id = ?");
         $stmt->execute([$product_id]);
     }
 
@@ -138,6 +156,7 @@ class Product {
                     products.sale_price AS product_sale_price,
                     products.image AS product_image,
                     products.slug AS product_slug,
+                     products.description AS description,
                     products.status AS product_status,
                     categories.category_id,
                     categories.name AS category_name,

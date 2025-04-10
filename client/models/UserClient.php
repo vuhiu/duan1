@@ -9,39 +9,24 @@ class UserClient {
         $this->conn = $conn;
     }
 
-    // Đăng ký người dùng
-    public function register($name, $email, $password) {
-        try {
-            $hash_password = password_hash($password, PASSWORD_DEFAULT); // Mã hóa mật khẩu
-            $sql = 'INSERT INTO users(name, email, password, role_id, created_at) VALUES(?, ?, ?, 2, now())';
-            $stmt = $this->conn->prepare($sql);
-            return $stmt->execute([$name, $email, $hash_password]);
-        } catch (PDOException $e) {
-            error_log("Error in register: " . $e->getMessage());
-            return false;
-        }
-    }
-
     // Kiểm tra email đã tồn tại
     public function checkEmail($email) {
-        $sql = "SELECT COUNT(*) as count FROM users WHERE email = ?";
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$email]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result['count'] > 0;
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Đăng nhập người dùng
-    public function login($email, $password) {
-        $sql = 'SELECT * FROM users WHERE email = ?';
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$email]);
-        $user = $stmt->fetch();
+    // Đăng ký người dùng mới
+    public function register($name, $email, $password) {
+        $stmt = $this->conn->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
+        return $stmt->execute([$name, $email, md5($password)]);
+    }
 
-        if ($user && password_verify($password, $user['password'])) {
-            return $user;
-        }
-        return false;
+    // Đăng nhập
+    public function login($email, $password) {
+        $stmt = $this->conn->prepare("SELECT user_id, name, email, password FROM users WHERE email = ? AND password = ?");
+        $stmt->execute([$email, md5($password)]);
+        return $stmt->fetch(PDO::FETCH_ASSOC); // Trả về thông tin người dùng
     }
 
     // Đăng xuất người dùng
@@ -51,3 +36,4 @@ class UserClient {
         session_destroy();
     }
 }
+?>

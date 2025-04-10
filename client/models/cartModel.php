@@ -1,4 +1,6 @@
 <?php
+namespace Client\Models;
+
 require_once __DIR__ . '/../../commons/connect.php';
 
 class Cart {
@@ -18,7 +20,7 @@ class Cart {
         // Check if the cart exists for the user
         $stmt = $this->conn->prepare("SELECT id FROM carts WHERE user_id = ?");
         $stmt->execute([$user_id]);
-        $cart = $stmt->fetch(PDO::FETCH_ASSOC);
+        $cart = $stmt->fetch(\PDO::FETCH_ASSOC);
     
         if (!$cart) {
             // Create a new cart if it doesn't exist
@@ -32,7 +34,7 @@ class Cart {
         // Check if the product already exists in the cart
         $stmt = $this->conn->prepare("SELECT id FROM cart_items WHERE cart_id = ? AND product_id = ? AND variant_id = ?");
         $stmt->execute([$cart_id, $product_id, $variant_id]);
-        $cart_item = $stmt->fetch(PDO::FETCH_ASSOC);
+        $cart_item = $stmt->fetch(\PDO::FETCH_ASSOC);
     
         if ($cart_item) {
             // Update quantity if the product already exists
@@ -47,6 +49,13 @@ class Cart {
 
     // Lấy tất cả sản phẩm trong giỏ hàng của người dùng
     public function getAllCartItems($user_id) {
+         //kiểm tra truy vấn cơ sở dữ liệu.
+         if (!$user_id) {
+            echo "User ID không tồn tại.";
+            exit();
+        } else {
+            echo "User ID: " . $user_id;
+        }
         $stmt = $this->conn->prepare("
             SELECT ci.id AS cart_item_id, ci.product_id, ci.variant_id, ci.quantity, 
                    p.name AS product_name, p.price, pv.sale_price, pv.quantity AS stock_quantity
@@ -57,7 +66,7 @@ class Cart {
             WHERE c.user_id = ?
         ");
         $stmt->execute([$user_id]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     // Cập nhật số lượng sản phẩm trong giỏ hàng

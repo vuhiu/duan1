@@ -1,7 +1,7 @@
 <?php
-require_once '../models/UserClient.php';
+require_once __DIR__ . '/../models/UserClient.php';
 
-class AuthController {
+class AuthenController {
     private $userClient;
 
     public function __construct() {
@@ -12,35 +12,36 @@ class AuthController {
     public function register($name, $email, $password) {
         // Kiểm tra nếu email đã tồn tại
         if ($this->userClient->checkEmail($email)) {
-            header('Location: /duan1/client/views/form-register.php?error=email_exists');
+            header('Location: /duan1/client/views/auth/form-register.php?error=email_exists');
             exit();
         }
 
         // Đăng ký người dùng mới
         if ($this->userClient->register($name, $email, $password)) {
-            header('Location: /duan1/client/views/form-login.php?success=registered');
+            header('Location: /duan1/client/views/auth/form-login.php?success=registered');
             exit();
         }
 
         // Nếu đăng ký thất bại
-        header('Location: /duan1/client/views/form-register.php?error=failed');
+        header('Location: /duan1/client/views/auth/form-register.php?error=failed');
         exit();
     }
 
     // Xử lý đăng nhập
     public function login($email, $password) {
+        session_start(); // Khởi tạo session
         $user = $this->userClient->login($email, $password);
         if ($user) {
-            session_start();
-            $_SESSION['user'] = $user;
+            $_SESSION['user_id'] = $user['user_id']; // Lưu user_id vào session
+            $_SESSION['user_name'] = $user['name']; // Lưu tên người dùng (nếu cần)
 
             // Chuyển hướng đến trang chủ sau khi đăng nhập thành công
-            header('Location: /duan1/');
+            header('Location: /duan1/index.php');
             exit();
         }
 
         // Nếu đăng nhập thất bại, chuyển hướng lại trang đăng nhập với thông báo lỗi
-        header('Location: /duan1/client/views/form-login.php?error=invalid');
+        header('Location: /duan1/client/views/auth/form-login.php?error=invalid');
         exit();
     }
 
@@ -48,14 +49,14 @@ class AuthController {
     public function logout() {
         session_start();
         session_destroy(); // Hủy session
-        header('Location: /duan1/client/views/form-login.php');
+        header('Location: /duan1/client/views/auth/form-login.php');
         exit();
     }
 }
 
 // Xử lý yêu cầu từ URL
 if (isset($_GET['action'])) {
-    $authController = new AuthController();
+    $authController = new AuthenController();
 
     switch ($_GET['action']) {
         case 'register':
@@ -76,7 +77,7 @@ if (isset($_GET['action'])) {
             break;
 
         default:
-            header('Location: /duan1/client/views/form-login.php');
+            header('Location: /duan1/client/views/auth/form-login.php');
             exit();
     }
 }

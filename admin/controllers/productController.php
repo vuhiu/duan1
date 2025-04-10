@@ -102,39 +102,67 @@ class ProductController {
             $status = $_POST['status'];
             $category_id = $_POST['category_id'];
             $image = $_POST['current_image'];
-
+    
             // Handle image upload
             if (!empty($_FILES['image']['name'])) {
                 $upload_dir = __DIR__ . '/../../upload/';
                 $image = uniqid() . '-' . basename($_FILES['image']['name']);
                 $target_file = $upload_dir . $image;
-
+    
                 if (!is_dir($upload_dir)) {
                     mkdir($upload_dir, 0777, true);
                 }
-
+    
                 if (!move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
                     die("Lỗi: Không thể tải ảnh lên.");
                 }
             }
-
+    
             // Update product
             $this->productModel->update($id, $name, $description, $status, $image, $price, $sale_price, $slug, $category_id);
+    
+            // Lấy danh sách biến thể hiện tại
+$currentVariants = $this->productModel->getProductVariant($id);
 
-            // Update variants
-            $this->productModel->deleteVariants($id);
-            if (isset($_POST['colors']) && isset($_POST['sizes'])) {
-                foreach ($_POST['colors'] as $color_id) {
-                    foreach ($_POST['sizes'] as $size_id) {
-                        $this->productModel->saveVariant($id, $color_id, $size_id);
-                    }
-                }
-            }
+// Tạo danh sách biến thể mới từ form
+$newVariants = [];
+if (isset($_POST['colors']) && isset($_POST['sizes'])) {
+    foreach ($_POST['colors'] as $color_id) {
+        foreach ($_POST['sizes'] as $size_id) {
+            $newVariants[] = ['color_id' => $color_id, 'size_id' => $size_id];
+        }
+    }
+}
+
+// Xóa các biến thể không còn được chọn
+foreach ($currentVariants as $variant) {
+    $existsInNew = false;
+    foreach ($newVariants as $newVariant) {
+        if ($variant['variant_color_id'] == $newVariant['color_id'] &&
+            $variant['variant_size_id'] == $newVariant['size_id']) {
+            $existsInNew = true;
+            break;
+        }
+    }
+
+    if (!$existsInNew) {
+        $this->productModel->deleteVariant($variant['product_variant_id']);
+    }
+}
 
             // Redirect to product list
             header('Location: /duan1/admin/index.php?act=sanpham&page=list');
             exit();
         }
+    }
+
+    //Thêm phương thức variantExists kiểm tra xem biến thể đã tồn tại hay chưa trước khi thêm mới.
+    public function variantExists($product_id, $color_id, $size_id) {
+        $sql = "SELECT COUNT(*) FROM product_variants 
+                WHERE product_id = ? AND variant_color_id = ? AND variant_size_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$product_id, $color_id, $size_id]);
+        return $stmt->fetchColumn() > 0;
     }
 
     // Delete a product
@@ -150,14 +178,18 @@ class ProductController {
             die("❌ Lỗi: Sản phẩm không tồn tại.");
         }
     
-        // Delete the product
-        $this->productModel->delete($id);
+        try {
+            // Xóa các biến thể và sản phẩm
+            $this->productModel->deleteVariants($id);
+            $this->productModel->delete($id);
     
-        // Redirect to the product list with a success message
-        $_SESSION['success'] = "Xóa sản phẩm thành công.";
-        header('Location: /duan1/admin/index.php?act=sanpham&page=list');
-        exit();
+            // Redirect to the product list with a success message
+            $_SESSION['success'] = "Xóa sản phẩm thành công.";
+            header('Location: /duan1/admin/index.php?act=sanpham&page=list');
+            exit();
+        } catch (Exception $e) {
+            die("❌ Lỗi: " . $e->getMessage());
+        }
     }
 }
-ob_end_flush();
 ?>

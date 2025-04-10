@@ -103,7 +103,7 @@ class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
         $count = $stmt->fetchColumn();
     
         if ($count > 0) {
-            throw new Exception("Không thể xóa vì có sản phẩm trong giỏ hàng liên quan.");
+            throw new \Exception("Không thể xóa vì có sản phẩm trong giỏ hàng liên quan.");
         }
     
         // Xóa các bản ghi trong bảng product_variants

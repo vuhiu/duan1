@@ -56,32 +56,47 @@ switch ($act) {
                 $user_id = $_SESSION['user_id'] ?? 0; // Lấy user_id từ session
                 $cartController->getCart($user_id);
                 break;
-    
+
             case 'add':
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $user_id = $_SESSION['user_id'];
-                    $product_id = $_POST['product_id'];
-                    $variant_id = $_POST['variant_id'];
-                    $quantity = $_POST['quantity'];
+                    $product_id = $_POST['product_id'] ?? null;
+                    $variant_id = $_POST['variant_id'] ?? null;
+                    $quantity = $_POST['quantity'] ?? 1;
+
+                    if (!$product_id || !$variant_id || $quantity < 1) {
+                        die("❌ Lỗi: Dữ liệu không hợp lệ.");
+                    }
+
                     $cartController->addToCart($user_id, $product_id, $variant_id, $quantity);
-                    header('Location: /duan1/index.php?act=cart&page=list'); // Đổi từ cart.php thành list.php
+                    header('Location: /duan1/index.php?act=cart&page=list');
                     exit();
                 }
                 break;
+
             case 'update_cart':
-            $cartController->updateCartItem();
-            break;
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $cartController->updateCartItem();
+                }
+                break;
 
             case 'delete_cart':
-            $cartController->deleteCartItem();
-            break;
-    
+                if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                    $cartController->deleteCartItem();
+                }
+                break;
+
             default:
                 echo "Lỗi: Không tìm thấy trang giỏ hàng.";
                 break;
-    }
-    break;
-    
+        }
+        break;
+
+    case 'checkout':
+        // Hiển thị trang thanh toán
+        require_once __DIR__ . '/client/views/cart/checkout.php';
+        break;
+
     // Xử lý danh mục sản phẩm
     case 'category':
         if (isset($_GET['category_id']) && is_numeric($_GET['category_id'])) {
@@ -131,4 +146,3 @@ if (file_exists($footerPath)) {
 } else {
     die("Lỗi: Không tìm thấy file footer.php");
 }
-?>

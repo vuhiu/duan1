@@ -69,7 +69,7 @@ switch ($act) {
                     }
 
                     $cartController->addToCart($user_id, $product_id, $variant_id, $quantity);
-                    header('Location: /duan1/index.php?act=cart&page=list');
+                    header('Location: /duan1/index.php?act=cart&page=list'); // Chuyển hướng về trang giỏ hàng
                     exit();
                 }
                 break;

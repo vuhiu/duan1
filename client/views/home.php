@@ -38,14 +38,14 @@
                 <div class="col-md-12">
                     <div class="section-title">
                         <h3 class="title">Sản phẩm mới</h3>
-                        <div class="section-nav">
+                        <!-- <div class="section-nav">
                             <ul class="section-tab-nav tab-nav">
                                 <li class="active"><a data-toggle="tab" href="#tab1">Laptop</a></li>
                                 <li><a data-toggle="tab" href="#tab1">Điện thoại</a></li>
                                 <li><a data-toggle="tab" href="#tab1">Máy ảnh</a></li>
                                 <li><a data-toggle="tab" href="#tab1">Phụ kiện</a></li>
                             </ul>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <!-- /Section Title -->

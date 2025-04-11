@@ -24,12 +24,15 @@
                     <th>Hành động</th>
                 </tr>
             </thead>
+            <!-- filepath: c:\xampp\htdocs\duan1\client\views\cart\list.php -->
             <tbody>
                 <?php
                 $totalPrice = 0; // Biến lưu tổng tiền
                 if (!empty($cartItems) && is_array($cartItems)): ?>
                     <?php foreach ($cartItems as $index => $item):
-                        $itemTotal = $item['price'] * $item['quantity']; // Thành tiền cho từng sản phẩm
+                        // Sử dụng giá khuyến mãi nếu có, ngược lại dùng giá gốc
+                        $price = $item['variant_sale_price'] ?? $item['variant_price'];
+                        $itemTotal = $price * $item['quantity']; // Thành tiền cho từng sản phẩm
                         $totalPrice += $itemTotal; // Cộng vào tổng tiền
                     ?>
                         <tr>
@@ -44,7 +47,14 @@
                                 Màu: <?= htmlspecialchars($item['product_variant_color'] ?? 'Không xác định') ?>,
                                 Kích thước: <?= htmlspecialchars($item['product_variant_size'] ?? 'Không xác định') ?>
                             </td>
-                            <td><?= number_format($item['price'], 0, ',', '.') ?> đ</td>
+                            <td>
+                                <?php if (!empty($item['variant_sale_price'])): ?>
+                                    <del><?= number_format($item['variant_price'], 0, ',', '.') ?> đ</del>
+                                    <span><?= number_format($item['variant_sale_price'], 0, ',', '.') ?> đ</span>
+                                <?php else: ?>
+                                    <span><?= number_format($item['variant_price'], 0, ',', '.') ?> đ</span>
+                                <?php endif; ?>
+                            </td>
                             <td>
                                 <form action="/duan1/index.php?act=cart&page=update_cart" method="POST" style="display: inline;">
                                     <input type="hidden" name="cart_item_id" value="<?= $item['cart_item_id'] ?>">

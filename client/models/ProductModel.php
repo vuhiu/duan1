@@ -12,22 +12,22 @@ class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
     // Get product by ID
     public function getProductById($product_id) {
         $sql = "SELECT 
-                    products.product_id,
-                    products.name AS product_name,
-                    products.price AS product_price,
-                    products.sale_price AS product_sale_price,
-                    products.image AS product_image,
-                    products.description AS product_description,
-                    products.status AS product_status,
-                    categories.name AS category_name
-                FROM products
-                LEFT JOIN categories ON products.category_id = categories.category_id
-                WHERE products.product_id = ?";
+                    p.product_id, p.name AS product_name, p.image AS product_image, 
+                    p.description AS product_description, p.price AS product_price, 
+                    p.sale_price AS product_sale_price, 
+                    pv.product_variant_id, pv.price, pv.sale_price, 
+                    vc.color_name AS product_variant_color, 
+                    vs.size_name AS product_variant_size
+                FROM products p
+                LEFT JOIN product_variants pv ON p.product_id = pv.product_id
+                LEFT JOIN variant_colors vc ON pv.variant_color_id = vc.variant_color_id
+                LEFT JOIN variant_size vs ON pv.variant_size_id = vs.variant_size_id
+                WHERE p.product_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$product_id]);
         $product = $stmt->fetch(\PDO::FETCH_ASSOC);
     
-        // Lấy biến thể của sản phẩm
+        // Lấy danh sách biến thể
         if ($product) {
             $product['variants'] = $this->getProductVariants($product_id);
         }

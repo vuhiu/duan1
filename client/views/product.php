@@ -26,36 +26,40 @@
         <h2 class="text-center my-4">Danh sách sản phẩm</h2>
         <div class="row">
             <?php foreach ($products as $product): ?>
-            <div class="col-md-4">
-                <div class="product">
-                    <div class="product-img">
-                        <img src="/duan1/upload/<?= htmlspecialchars($product['product_image']) ?>" alt="Ảnh sản phẩm"
-                            style="width: 100%; height: 250px; object-fit: cover;">
-                    </div>
-                    <div class="product-body">
-                        <p class="product-category"><?= htmlspecialchars($product['category_name']) ?></p>
-                        <h3 class="product-name">
-                            <a href="/duan1/index.php?act=product&product_id=<?= $product['product_id'] ?>">
-                                <?= htmlspecialchars($product['product_name']) ?>
-                            </a>
-                        </h3>
-                        <h4 class="product-price">
-                            <?= number_format($product['product_sale_price'], 0, ',', '.') ?>₫
-                            <?php if ($product['product_sale_price'] < $product['product_price']): ?>
-                            <del class="product-old-price"><?= number_format($product['product_price'], 0, ',', '.') ?>₫</del>
-                            <?php endif; ?>
-                        </h4>
-                        <ul>
-                            <?php foreach ($product['variants'] as $variant): ?>
-                            <li>
-                                Màu: <?= htmlspecialchars($variant['product_variant_color'] ?? 'Không xác định') ?>,
-                                Kích thước: <?= htmlspecialchars($variant['product_variant_size'] ?? 'Không xác định') ?>
-                            </li>
-                            <?php endforeach; ?>
-                        </ul>
+                <div class="col-md-4">
+                    <div class="product">
+                        <div class="product-img">
+                            <img src="/duan1/upload/<?= htmlspecialchars($product['product_image']) ?>" alt="Ảnh sản phẩm"
+                                style="width: 100%; height: 250px; object-fit: cover;">
+                        </div>
+                        <div class="product-body">
+                            <p class="product-category"><?= htmlspecialchars($product['category_name']) ?></p>
+                            <h3 class="product-name">
+                                <a href="/duan1/index.php?act=product&product_id=<?= $product['product_id'] ?>">
+                                    <?= htmlspecialchars($product['product_name']) ?>
+                                </a>
+                            </h3>
+                            <!-- filepath: c:\xampp\htdocs\duan1\client\views\product.php -->
+                            <h4 class="product-price">
+                                <?php if (!empty($product['product_sale_price'])): ?>
+                                    <span><?= number_format($product['product_sale_price'], 0, ',', '.') ?>₫</span>
+                                    <del class="product-old-price"><?= number_format($product['product_price'], 0, ',', '.') ?>₫</del>
+                                <?php else: ?>
+                                    <span><?= number_format($product['product_price'], 0, ',', '.') ?>₫</span>
+                                <?php endif; ?>
+                            </h4>
+                            <ul>
+                                <?php foreach ($product['variants'] as $variant): ?>
+                                    <li>
+                                        Màu: <?= htmlspecialchars($variant['product_variant_color'] ?? 'Không xác định') ?>,
+                                        Kích thước: <?= htmlspecialchars($variant['product_variant_size'] ?? 'Không xác định') ?>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+
                     </div>
                 </div>
-            </div>
             <?php endforeach; ?>
         </div>
     </div>

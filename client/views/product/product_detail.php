@@ -6,30 +6,31 @@
     <!-- Thông tin sản phẩm -->
     <div class="product-info" style="max-width: 500px;">
         <h1><?= htmlspecialchars($product['product_name']) ?></h1>
+        <!-- filepath: c:\xampp\htdocs\duan1\client\views\product\product_detail.php -->
         <h4 id="product-price">
-            <?php if (!empty($product['product_sale_price'])): ?>
-            <del><?= number_format($product['product_price'], 0, ',', '.') ?> đ</del>
-            <span><?= number_format($product['product_sale_price'], 0, ',', '.') ?> đ</span>
+            <?php if (!empty($product['variants'][0]['sale_price'])): ?>
+                <del><?= number_format($product['variants'][0]['price'], 0, ',', '.') ?> đ</del>
+                <span><?= number_format($product['variants'][0]['sale_price'], 0, ',', '.') ?> đ</span>
             <?php else: ?>
-            <?= number_format($product['product_price'], 0, ',', '.') ?> đ
+                <span><?= number_format($product['variants'][0]['price'], 0, ',', '.') ?> đ</span>
             <?php endif; ?>
         </h4>
         <p><?= htmlspecialchars($product['product_description']) ?></p>
 
         <?php if (!empty($product['variants'])): ?>
-        <h5>Chọn biến thể:</h5>
-        <select id="variant-selector" class="form-control mb-3">
-            <?php foreach ($product['variants'] as $variant): ?>
-            <option value="<?= $variant['product_variant_id'] ?>" 
-                    data-price="<?= $variant['price'] ?>" 
-                    data-sale-price="<?= $variant['sale_price'] ?>">
-                Màu: <?= htmlspecialchars($variant['product_variant_color'] ?? 'Không xác định') ?>, 
-                Kích thước: <?= htmlspecialchars($variant['product_variant_size'] ?? 'Không xác định') ?>
-            </option>
-            <?php endforeach; ?>
-        </select>
+            <h5>Chọn biến thể:</h5>
+            <select id="variant-selector" class="form-control mb-3">
+                <?php foreach ($product['variants'] as $variant): ?>
+                    <option value="<?= $variant['product_variant_id'] ?>"
+                        data-price="<?= $variant['price'] ?>"
+                        data-sale-price="<?= $variant['sale_price'] ?>">
+                        Màu: <?= htmlspecialchars($variant['product_variant_color'] ?? 'Không xác định') ?>,
+                        Kích thước: <?= htmlspecialchars($variant['product_variant_size'] ?? 'Không xác định') ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
         <?php else: ?>
-        <p>Không có biến thể cho sản phẩm này.</p>
+            <p>Không có biến thể cho sản phẩm này.</p>
         <?php endif; ?>
 
         <h5>Đánh giá:</h5>

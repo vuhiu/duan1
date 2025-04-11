@@ -70,10 +70,13 @@
                                                             <?= htmlspecialchars($product['product_name']) ?>
                                                         </a>
                                                     </h3>
+                                                    <!-- filepath: c:\xampp\htdocs\duan1\client\views\home.php -->
                                                     <h4 class="product-price">
-                                                        <?= number_format($product['product_sale_price'], 0, ',', '.') ?>₫
-                                                        <?php if ($product['product_sale_price'] < $product['product_price']): ?>
+                                                        <?php if (!empty($product['product_sale_price'])): ?>
+                                                            <span><?= number_format($product['product_sale_price'], 0, ',', '.') ?>₫</span>
                                                             <del class="product-old-price"><?= number_format($product['product_price'], 0, ',', '.') ?>₫</del>
+                                                        <?php else: ?>
+                                                            <span><?= number_format($product['product_price'], 0, ',', '.') ?>₫</span>
                                                         <?php endif; ?>
                                                     </h4>
                                                     <ul>
@@ -88,6 +91,7 @@
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
+
                                 </div>
                                 <div id="slick-nav-1" class="products-slick-nav"></div>
                             </div>

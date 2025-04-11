@@ -13,14 +13,17 @@ class Cart {
 
     // Thêm sản phẩm vào giỏ hàng
     public function addItem($user_id, $product_id, $variant_id, $quantity) {
-        // Kiểm tra xem variant_id có tồn tại trong bảng product_variants không
-        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM product_variants WHERE product_variant_id = ?");
+        // Lấy giá từ bảng product_variants
+        $stmt = $this->conn->prepare("SELECT price, sale_price FROM product_variants WHERE product_variant_id = ?");
         $stmt->execute([$variant_id]);
-        $variantExists = $stmt->fetchColumn();
+        $variant = $stmt->fetch(\PDO::FETCH_ASSOC);
     
-        if (!$variantExists) {
-            throw new \Exception("❌ Lỗi: Biến thể sản phẩm không tồn tại. Vui lòng kiểm tra lại.");
+        if (!$variant) {
+            throw new \Exception("❌ Lỗi: Biến thể sản phẩm không tồn tại.");
         }
+    
+        // Lấy giá từ biến thể (ưu tiên giá khuyến mãi nếu có)
+        $price = $variant['sale_price'] ?? $variant['price'];
     
         // Kiểm tra giỏ hàng của người dùng
         $stmt = $this->conn->prepare("SELECT id FROM carts WHERE user_id = ?");
@@ -46,9 +49,9 @@ class Cart {
             $stmt = $this->conn->prepare("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?");
             $stmt->execute([$quantity, $cart_item['id']]);
         } else {
-            // Thêm sản phẩm mới vào giỏ hàng
-            $stmt = $this->conn->prepare("INSERT INTO cart_items (cart_id, product_id, variant_id, quantity) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$cart_id, $product_id, $variant_id, $quantity]);
+            // Thêm sản phẩm mới vào giỏ hàng với giá từ biến thể
+            $stmt = $this->conn->prepare("INSERT INTO cart_items (cart_id, product_id, variant_id, quantity, price) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$cart_id, $product_id, $variant_id, $quantity, $price]);
         }
     }
 

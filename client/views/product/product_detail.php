@@ -62,21 +62,21 @@
 <script>
     // JavaScript để thay đổi giá khi chọn biến thể
     document.getElementById('variant-selector').addEventListener('change', function () {
-        const selectedOption = this.options[this.selectedIndex];
-        const price = selectedOption.getAttribute('data-price');
-        const salePrice = selectedOption.getAttribute('data-sale-price');
-        const variantId = selectedOption.value;
+    const selectedOption = this.options[this.selectedIndex];
+    const price = selectedOption.getAttribute('data-price');
+    const salePrice = selectedOption.getAttribute('data-sale-price');
+    const variantId = selectedOption.value;
 
-        // Cập nhật giá hiển thị
-        const priceElement = document.getElementById('product-price');
-        if (salePrice && salePrice !== 'null') {
-            priceElement.innerHTML = `<del>${new Intl.NumberFormat('vi-VN').format(price)} đ</del> 
-                                      <span>${new Intl.NumberFormat('vi-VN').format(salePrice)} đ</span>`;
-        } else {
-            priceElement.innerHTML = `${new Intl.NumberFormat('vi-VN').format(price)} đ`;
-        }
+    // Cập nhật giá hiển thị
+    const priceElement = document.getElementById('product-price');
+    if (salePrice && salePrice !== 'null') {
+        priceElement.innerHTML = `<del>${new Intl.NumberFormat('vi-VN').format(price)} đ</del> 
+                                  <span>${new Intl.NumberFormat('vi-VN').format(salePrice)} đ</span>`;
+    } else {
+        priceElement.innerHTML = `${new Intl.NumberFormat('vi-VN').format(price)} đ`;
+    }
 
-        // Cập nhật giá trị của input hidden variant_id
-        document.getElementById('variant-id').value = variantId;
-    });
+    // Cập nhật giá trị của input hidden variant_id
+    document.getElementById('variant-id').value = variantId;
+});
 </script>

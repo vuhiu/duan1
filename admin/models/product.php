@@ -59,6 +59,7 @@ class Product {
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$name, $description, $status, $image, $price, $sale_price, $slug, $category_id, $id]);
     }
+    
 
     // Delete a product
     public function delete($id) {
@@ -110,6 +111,23 @@ class Product {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function deleteVariants($product_id) {
+        // Lấy danh sách tất cả các biến thể của sản phẩm
+        $variants = $this->getProductVariant($product_id);
+    
+        // Xóa các bản ghi liên quan trong bảng cart_items
+        foreach ($variants as $variant) {
+            $sql = "DELETE FROM cart_items WHERE variant_id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$variant['product_variant_id']]);
+        }
+    
+        // Xóa tất cả các biến thể của sản phẩm
+        $sql = "DELETE FROM product_variants WHERE product_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$product_id]);
+    }
+
     // Save a product variant
     public function saveVariant($product_id, $color_id, $size_id) {
         $sql = "INSERT INTO product_variants (product_id, variant_color_id, variant_size_id)
@@ -123,29 +141,18 @@ class Product {
     }
 
     // Delete all variants for a product
-    public function deleteVariants($product_id) {
-        // Kiểm tra xem có bản ghi liên quan trong bảng cart_items không
-        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM cart_items WHERE variant_id IN (
-            SELECT product_variant_id FROM product_variants WHERE product_id = ?
-        )");
-        $stmt->execute([$product_id]);
-        $cartCount = $stmt->fetchColumn();
+    public function deleteVariant($variant_id) {
+        // Xóa các bản ghi liên quan trong bảng cart_items
+        $sql = "DELETE FROM cart_items WHERE variant_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$variant_id]);
     
-        // Kiểm tra xem có bản ghi liên quan trong bảng orders không
-        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM orders WHERE variant_id IN (
-            SELECT product_variant_id FROM product_variants WHERE product_id = ?
-        )");
-        $stmt->execute([$product_id]);
-        $orderCount = $stmt->fetchColumn();
-    
-        if ($cartCount > 0 || $orderCount > 0) {
-            throw new Exception("Không thể xóa vì có sản phẩm trong giỏ hàng hoặc đơn hàng liên quan.");
-        }
-    
-        // Xóa các biến thể trong bảng product_variants
-        $stmt = $this->conn->prepare("DELETE FROM product_variants WHERE product_id = ?");
-        $stmt->execute([$product_id]);
+        // Xóa biến thể trong bảng product_variants
+        $sql = "DELETE FROM product_variants WHERE product_variant_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$variant_id]);
     }
+
 
     // List all products with variants and categories
     public function listProduct() {

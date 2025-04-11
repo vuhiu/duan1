@@ -1,3 +1,4 @@
+<!-- filepath: c:\xampp\htdocs\duan1\client\views\product.php -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,386 +6,63 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-
-    <title>Electro - HTML Ecommerce Template</title>
+    <title>Danh sách sản phẩm</title>
 
     <!-- Google font -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
 
     <!-- Bootstrap -->
-    <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css" />
-
-    <!-- Slick -->
-    <link type="text/css" rel="stylesheet" href="css/slick.css" />
-    <link type="text/css" rel="stylesheet" href="css/slick-theme.css" />
-
-    <!-- nouislider -->
-    <link type="text/css" rel="stylesheet" href="css/nouislider.min.css" />
+    <link type="text/css" rel="stylesheet" href="/duan1/css/bootstrap.min.css" />
 
     <!-- Font Awesome Icon -->
-    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="/duan1/css/font-awesome.min.css">
 
-    <!-- Custom stlylesheet -->
-    <link type="text/css" rel="stylesheet" href="css/style.css" />
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-		  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-		<![endif]-->
-
+    <!-- Custom stylesheet -->
+    <link type="text/css" rel="stylesheet" href="/duan1/css/style.css" />
 </head>
 
 <body>
-    <!-- SECTION -->
-    <div class="section">
-        <!-- container -->
-        <div class="container">
-            <!-- row -->
-            <div class="row">
-                <!-- Product main img -->
-                <div class="col-md-5 col-md-push-2">
-                    <div id="product-main-img">
-                        <div class="product-preview">
-                            <img src="./img/product01.png" alt="">
-                        </div>
-
-                        <div class="product-preview">
-                            <img src="./img/product03.png" alt="">
-                        </div>
-
-                        <div class="product-preview">
-                            <img src="./img/product06.png" alt="">
-                        </div>
-
-                        <div class="product-preview">
-                            <img src="./img/product08.png" alt="">
-                        </div>
+    <div class="container">
+        <h2 class="text-center my-4">Danh sách sản phẩm</h2>
+        <div class="row">
+            <?php foreach ($products as $product): ?>
+            <div class="col-md-4">
+                <div class="product">
+                    <div class="product-img">
+                        <img src="/duan1/upload/<?= htmlspecialchars($product['product_image']) ?>" alt="Ảnh sản phẩm"
+                            style="width: 100%; height: 250px; object-fit: cover;">
                     </div>
-                </div>
-                <!-- /Product main img -->
-
-                <!-- Product thumb imgs -->
-                <div class="col-md-2  col-md-pull-5">
-                    <div id="product-imgs">
-                        <div class="product-preview">
-                            <img src="./img/product01.png" alt="">
-                        </div>
-
-                        <div class="product-preview">
-                            <img src="./img/product03.png" alt="">
-                        </div>
-
-                        <div class="product-preview">
-                            <img src="./img/product06.png" alt="">
-                        </div>
-
-                        <div class="product-preview">
-                            <img src="./img/product08.png" alt="">
-                        </div>
-                    </div>
-                </div>
-                <!-- /Product thumb imgs -->
-
-                <!-- Product details -->
-                <div class="col-md-5">
-                    <!-- filepath: c:\xampp\htdocs\duan1\client\views\product.php -->
-                    <div class="product-details">
-                        <h2 class="product-name"><?= htmlspecialchars($product['product_name']) ?></h2>
-                        <h3 class="product-price">
+                    <div class="product-body">
+                        <p class="product-category"><?= htmlspecialchars($product['category_name']) ?></p>
+                        <h3 class="product-name">
+                            <a href="/duan1/index.php?act=product&product_id=<?= $product['product_id'] ?>">
+                                <?= htmlspecialchars($product['product_name']) ?>
+                            </a>
+                        </h3>
+                        <h4 class="product-price">
                             <?= number_format($product['product_sale_price'], 0, ',', '.') ?>₫
                             <?php if ($product['product_sale_price'] < $product['product_price']): ?>
-                                <del class="product-old-price"><?= number_format($product['product_price'], 0, ',', '.') ?>₫</del>
+                            <del class="product-old-price"><?= number_format($product['product_price'], 0, ',', '.') ?>₫</del>
                             <?php endif; ?>
-                        </h3>
-                        <p><?= htmlspecialchars($product['product_description']) ?></p>
-                        <div class="product-options">
-                            <label>
-                                Kích cỡ
-                                <select class="input-select">
-                                    <?php foreach ($variants as $variant): ?>
-                                        <option value="<?= htmlspecialchars($variant['size']) ?>"><?= htmlspecialchars($variant['size']) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </label>
-                            <label>
-                                Màu sắc
-                                <select class="input-select">
-                                    <?php foreach ($variants as $variant): ?>
-                                        <option value="<?= htmlspecialchars($variant['color']) ?>"><?= htmlspecialchars($variant['color']) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </label>
-                        </div>
-                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
+                        </h4>
+                        <ul>
+                            <?php foreach ($product['variants'] as $variant): ?>
+                            <li>
+                                Màu: <?= htmlspecialchars($variant['product_variant_color'] ?? 'Không xác định') ?>,
+                                Kích thước: <?= htmlspecialchars($variant['product_variant_size'] ?? 'Không xác định') ?>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
                     </div>
                 </div>
-                <!-- /Product details -->
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
 
-                <!-- Product tab -->
-                <div class="col-md-12">
-                    <div id="product-tab">
-                        <!-- product tab nav -->
-                        <ul class="tab-nav">
-                            <li class="active"><a data-toggle="tab" href="#tab1">Mô tả</a></li>
-                            <li><a data-toggle="tab" href="#tab2">Chi tiết</a></li>
-                            <li><a data-toggle="tab" href="#tab3">Đánh giá (3)</a></li>
-                        </ul>
-                        <!-- /product tab nav -->
-
-                        <!-- Nội dung tab sản phẩm -->
-                        <div class="tab-content">
-                            <!-- Thông tin sản phẩm -->
-                            <div id="tab1" class="tab-pane fade in active">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <p>Chi tiết sản phẩm sẽ được hiển thị tại đây. Bạn có thể thêm mô tả về chất liệu, kích thước, công dụng, bảo hành,...</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Thông số kỹ thuật -->
-                            <div id="tab2" class="tab-pane fade in">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <p>Thông số kỹ thuật chi tiết của sản phẩm, bao gồm kích thước, trọng lượng, vật liệu, màu sắc, công suất,...</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Đánh giá & Nhận xét -->
-                            <div id="tab3" class="tab-pane fade in">
-                                <div class="row">
-                                    <!-- Đánh giá -->
-                                    <div class="col-md-3">
-                                        <div id="rating">
-                                            <div class="rating-avg">
-                                                <span>4.5</span>
-                                                <div class="rating-stars">
-                                                    <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i>
-                                                </div>
-                                            </div>
-                                            <ul class="rating">
-                                                <li>
-                                                    <div class="rating-stars"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></div>
-                                                    <div class="rating-progress">
-                                                        <div style="width: 80%;"></div>
-                                                    </div>
-                                                    <span class="sum">3</span>
-                                                </li>
-                                                <li>
-                                                    <div class="rating-stars"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i></div>
-                                                    <div class="rating-progress">
-                                                        <div style="width: 60%;"></div>
-                                                    </div>
-                                                    <span class="sum">2</span>
-                                                </li>
-                                                <!-- Các mức khác -->
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                    <!-- Nhận xét -->
-                                    <div class="col-md-6">
-                                        <div id="reviews">
-                                            <ul class="reviews">
-                                                <li>
-                                                    <div class="review-heading">
-                                                        <h5 class="name">Nguyễn Văn A</h5>
-                                                        <p class="date">27 Tháng 12, 2018 - 8:00 PM</p>
-                                                        <div class="review-rating">
-                                                            <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o empty"></i>
-                                                        </div>
-                                                    </div>
-                                                    <div class="review-body">
-                                                        <p>Sản phẩm rất đẹp và chắc chắn, giao hàng nhanh, đóng gói cẩn thận.</p>
-                                                    </div>
-                                                </li>
-                                                <!-- Thêm nhận xét khác tại đây -->
-                                            </ul>
-                                            <ul class="reviews-pagination">
-                                                <li class="active">1</li>
-                                                <li><a href="#">2</a></li>
-                                                <li><a href="#">3</a></li>
-                                                <li><a href="#"><i class="fa fa-angle-right"></i></a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                    <!-- Form gửi nhận xét -->
-                                    <div class="col-md-3">
-                                        <div id="review-form">
-                                            <form class="review-form">
-                                                <input class="input" type="text" placeholder="Tên của bạn">
-                                                <input class="input" type="email" placeholder="Email của bạn">
-                                                <textarea class="input" placeholder="Nội dung nhận xét"></textarea>
-                                                <div class="input-rating">
-                                                    <span>Đánh giá của bạn: </span>
-                                                    <div class="stars">
-                                                        <input id="star5" name="rating" value="5" type="radio"><label for="star5"></label>
-                                                        <input id="star4" name="rating" value="4" type="radio"><label for="star4"></label>
-                                                        <input id="star3" name="rating" value="3" type="radio"><label for="star3"></label>
-                                                        <input id="star2" name="rating" value="2" type="radio"><label for="star2"></label>
-                                                        <input id="star1" name="rating" value="1" type="radio"><label for="star1"></label>
-                                                    </div>
-                                                </div>
-                                                <button class="primary-btn">Gửi nhận xét</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Sản phẩm liên quan -->
-                        <div class="section">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="section-title text-center">
-                                            <h3 class="title">Sản phẩm liên quan</h3>
-                                        </div>
-                                    </div>
-
-                                    <!-- Sản phẩm mẫu -->
-                                    <div class="col-md-3 col-xs-6">
-                                        <div class="product">
-                                            <div class="product-img">
-                                                <img src="./img/product01.png" alt="">
-                                                <div class="product-label"><span class="sale">-30%</span></div>
-                                            </div>
-                                            <div class="product-body">
-                                                <p class="product-category">Danh mục</p>
-                                                <h3 class="product-name"><a href="#">Tên sản phẩm</a></h3>
-                                                <h4 class="product-price">980.000₫ <del class="product-old-price">990.000₫</del></h4>
-                                                <div class="product-rating"></div>
-                                                <div class="product-btns">
-                                                    <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
-                                                    <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">So sánh</span></button>
-                                                    <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">Xem nhanh</span></button>
-                                                </div>
-                                            </div>
-                                            <div class="add-to-cart">
-                                                <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- /Sản phẩm mẫu -->
-
-                                    <!-- Sản phẩm 2 -->
-                                    <div class="col-md-3 col-xs-6">
-                                        <div class="product">
-                                            <div class="product-img">
-                                                <img src="./img/product02.png" alt="">
-                                                <div class="product-label">
-                                                    <span class="new">MỚI</span>
-                                                </div>
-                                            </div>
-                                            <div class="product-body">
-                                                <p class="product-category">Danh mục</p>
-                                                <h3 class="product-name"><a href="#">Tên sản phẩm 2</a></h3>
-                                                <h4 class="product-price">980.000₫ <del class="product-old-price">990.000₫</del></h4>
-                                                <div class="product-rating">
-                                                    <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
-                                                </div>
-                                                <div class="product-btns">
-                                                    <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
-                                                    <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">So sánh</span></button>
-                                                    <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">Xem nhanh</span></button>
-                                                </div>
-                                            </div>
-                                            <div class="add-to-cart">
-                                                <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="clearfix visible-sm visible-xs"></div>
-
-                                    <!-- Sản phẩm 3 -->
-                                    <div class="col-md-3 col-xs-6">
-                                        <div class="product">
-                                            <div class="product-img">
-                                                <img src="./img/product03.png" alt="">
-                                            </div>
-                                            <div class="product-body">
-                                                <p class="product-category">Danh mục</p>
-                                                <h3 class="product-name"><a href="#">Tên sản phẩm 3</a></h3>
-                                                <h4 class="product-price">980.000₫ <del class="product-old-price">990.000₫</del></h4>
-                                                <div class="product-rating">
-                                                    <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i>
-                                                </div>
-                                                <div class="product-btns">
-                                                    <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
-                                                    <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">So sánh</span></button>
-                                                    <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">Xem nhanh</span></button>
-                                                </div>
-                                            </div>
-                                            <div class="add-to-cart">
-                                                <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Sản phẩm 4 -->
-                                    <div class="col-md-3 col-xs-6">
-                                        <div class="product">
-                                            <div class="product-img">
-                                                <img src="./img/product04.png" alt="">
-                                            </div>
-                                            <div class="product-body">
-                                                <p class="product-category">Danh mục</p>
-                                                <h3 class="product-name"><a href="#">Tên sản phẩm 4</a></h3>
-                                                <h4 class="product-price">980.000₫ <del class="product-old-price">990.000₫</del></h4>
-                                                <div class="product-rating"></div>
-                                                <div class="product-btns">
-                                                    <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
-                                                    <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">So sánh</span></button>
-                                                    <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">Xem nhanh</span></button>
-                                                </div>
-                                            </div>
-                                            <div class="add-to-cart">
-                                                <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Bản tin -->
-                        <div id="newsletter" class="section">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="newsletter">
-                                            <p>Đăng ký nhận <strong>BẢN TIN</strong></p>
-                                            <form>
-                                                <input class="input" type="email" placeholder="Nhập email của bạn">
-                                                <button class="newsletter-btn"><i class="fa fa-envelope"></i> Đăng ký</button>
-                                            </form>
-                                            <ul class="newsletter-follow">
-                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-instagram"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- jQuery Plugins -->
-                        <script src="js/jquery.min.js"></script>
-                        <script src="js/bootstrap.min.js"></script>
-                        <script src="js/slick.min.js"></script>
-                        <script src="js/nouislider.min.js"></script>
-                        <script src="js/jquery.zoom.min.js"></script>
-                        <script src="js/main.js"></script>
+    <!-- jQuery Plugins -->
+    <script src="/duan1/js/jquery.min.js"></script>
+    <script src="/duan1/js/bootstrap.min.js"></script>
 </body>
 
 </html>

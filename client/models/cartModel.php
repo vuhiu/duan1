@@ -13,6 +13,15 @@ class Cart {
 
     // Thêm sản phẩm vào giỏ hàng
     public function addItem($user_id, $product_id, $variant_id, $quantity) {
+        // Kiểm tra xem variant_id có tồn tại trong bảng product_variants không
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM product_variants WHERE product_variant_id = ?");
+        $stmt->execute([$variant_id]);
+        $variantExists = $stmt->fetchColumn();
+    
+        if (!$variantExists) {
+            throw new \Exception("❌ Lỗi: Biến thể sản phẩm không tồn tại. Vui lòng kiểm tra lại.");
+        }
+    
         // Kiểm tra giỏ hàng của người dùng
         $stmt = $this->conn->prepare("SELECT id FROM carts WHERE user_id = ?");
         $stmt->execute([$user_id]);
@@ -45,20 +54,17 @@ class Cart {
 
     // Lấy tất cả sản phẩm trong giỏ hàng của người dùng
     public function getAllCartItems($user_id) {
-         //kiểm tra truy vấn cơ sở dữ liệu.
-         if (!$user_id) {
-            echo "User ID không tồn tại.";
-            exit();
-        } else {
-            echo "User ID: " . $user_id;
-        }
         $stmt = $this->conn->prepare("
             SELECT ci.id AS cart_item_id, ci.product_id, ci.variant_id, ci.quantity, 
-                   p.name AS product_name, p.price, pv.sale_price, pv.quantity AS stock_quantity
+                   p.name AS product_name, p.price, p.image AS product_image, 
+                   pv.sale_price, pv.quantity AS stock_quantity,
+                   vc.color_name AS product_variant_color, vs.size_name AS product_variant_size
             FROM cart_items ci
             JOIN carts c ON ci.cart_id = c.id
             JOIN products p ON ci.product_id = p.product_id
             JOIN product_variants pv ON ci.variant_id = pv.product_variant_id
+            LEFT JOIN variant_colors vc ON pv.variant_color_id = vc.variant_color_id
+            LEFT JOIN variant_size vs ON pv.variant_size_id = vs.variant_size_id
             WHERE c.user_id = ?
         ");
         $stmt->execute([$user_id]);

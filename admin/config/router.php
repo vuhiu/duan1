@@ -21,6 +21,7 @@ require_once __DIR__ . '/../../client/models/ProductModel.php';
 require_once __DIR__ . '/../models/product.php';
 require_once __DIR__ . '/../models/category.php';
 require_once __DIR__ . '/../../client/controllers/ClientProductController.php';
+
 use Client\Controllers\ClientProductController; // Import lớp ClientProductController
 use Client\Models\ClientProduct; // Import lớp ClientProduct
 
@@ -56,10 +57,8 @@ switch ($act) {
     case 'search':
         $controller->search();
         break;
-    case 'product_detail': // Xem chi tiết sản phẩm
-        $productController->productDetail();
-        break;
-    case 'sanpham': // Quản lý sản phẩm
+
+    case 'sanpham':
         switch ($page) {
             case 'list':
                 $productController->getList();
@@ -86,7 +85,6 @@ switch ($act) {
                 break;
         }
         break;
-
     case 'danhmuc': // Category management
         switch ($page) {
             case 'list':
@@ -121,7 +119,7 @@ switch ($act) {
                 $user_id = $_SESSION['user_id'] ?? 0; // Get user_id from session
                 $cartController->getCart($user_id);
                 break;
-    
+
             case 'add_cart': // Thêm sản phẩm vào giỏ hàng
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $cartController->addToCart();
@@ -129,7 +127,7 @@ switch ($act) {
                     echo "❌ Phương thức không hợp lệ!";
                 }
                 break;
-    
+
             case 'update_cart': // Cập nhật số lượng sản phẩm
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $cartController->updateCartItem();
@@ -137,7 +135,7 @@ switch ($act) {
                     echo "❌ Phương thức không hợp lệ!";
                 }
                 break;
-    
+
             case 'delete_cart': // Xóa sản phẩm khỏi giỏ hàng
                 if (isset($_GET['cart_item_id'])) {
                     $cartController->deleteCartItem();
@@ -145,7 +143,7 @@ switch ($act) {
                     echo "❌ Không tìm thấy sản phẩm để xóa!";
                 }
                 break;
-    
+
             default:
                 echo "Không tìm thấy trang!";
                 break;
@@ -213,32 +211,30 @@ switch ($act) {
     default:
         echo "Module không hợp lệ!";
         break;
-        case 'customer': // Quản lý khách hàng
-            switch ($page) {
-                case 'list': // Hiển thị danh sách khách hàng
-                    $customerController->index();
-                    break;
-    
-                case 'detail': // Hiển thị chi tiết khách hàng
-                    $user_id = $_GET['user_id'] ?? 0;
-                    $customerController->detail($user_id);
-                    break;
-    
-                case 'edit': // Hiển thị form sửa thông tin khách hàng
-                    $user_id = $_GET['user_id'] ?? 0;
-                    $customerController->edit($user_id);
-                    break;
-    
-                case 'update': // Cập nhật thông tin khách hàng
-                    $user_id = $_GET['user_id'] ?? 0;
-                    $customerController->update($user_id);
-                    break;
-    
-                default:
-                    echo "Không tìm thấy trang!";
-                    break;
-            }
-            break;
+    case 'customer': // Quản lý khách hàng
+        switch ($page) {
+            case 'list': // Hiển thị danh sách khách hàng
+                $customerController->index();
+                break;
 
+            case 'detail': // Hiển thị chi tiết khách hàng
+                $user_id = $_GET['user_id'] ?? 0;
+                $customerController->detail($user_id);
+                break;
+
+            case 'edit': // Hiển thị form sửa thông tin khách hàng
+                $user_id = $_GET['user_id'] ?? 0;
+                $customerController->edit($user_id);
+                break;
+
+            case 'update': // Cập nhật thông tin khách hàng
+                $user_id = $_GET['user_id'] ?? 0;
+                $customerController->update($user_id);
+                break;
+
+            default:
+                echo "Không tìm thấy trang!";
+                break;
+        }
+        break;
 }
-?>

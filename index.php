@@ -64,7 +64,7 @@ switch ($act) {
                     $variant_id = $_POST['variant_id'];
                     $quantity = $_POST['quantity'];
                     $cartController->addToCart($user_id, $product_id, $variant_id, $quantity);
-                    header('Location: /duan1/index.php?act=cart&page=list'); // Đổi từ cart.php thành list.php
+                    header('Location: /duan1/index.php?act=cart&page=list'); // Chuyển hướng về trang giỏ hàng
                     exit();
                 }
                 break;

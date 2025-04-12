@@ -15,7 +15,8 @@ require __DIR__ . '/commons/env.php';
 require_once __DIR__ . '/client/controllers/ClientProductController.php';
 require_once __DIR__ . '/client/controllers/cartController.php';
 require_once __DIR__ . '/client/controllers/authenController.php';
-
+require_once __DIR__ . '/client/controllers/categoryController.php';
+require_once __DIR__ . '/client/models/categoryModel.php';
 // Kiểm tra & nạp file header
 $headerPath = __DIR__ . '/client/views/layout/header.php';
 if (file_exists($headerPath)) {
@@ -101,7 +102,10 @@ switch ($act) {
     case 'category':
         if (isset($_GET['category_id']) && is_numeric($_GET['category_id'])) {
             $category_id = $_GET['category_id'];
-            $controller->getProductsByCategory($category_id);
+    
+            // Khởi tạo CategoryController
+            $categoryController = new \Client\Controllers\CategoryController($conn);
+            $categoryController->index();
         } else {
             echo "Danh mục không hợp lệ.";
         }

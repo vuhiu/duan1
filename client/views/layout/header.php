@@ -86,7 +86,7 @@
                             <form action="/duan1/index.php" method="GET">
                                 <input type="hidden" name="act" value="search">
                                 <select class="input-select">
-                                    <option value="0">Tất cả</option>
+                                    <option value="0">Danh mục</option>
                                     <option value="1"> iphone</option>
                                     <option value="2"> SamSung</option>
                                     <option value="3"> macbook</option>

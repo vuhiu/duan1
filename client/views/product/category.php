@@ -26,10 +26,10 @@
                                 <div class="col-md-4">
                                     <div class="product">
                                         <div class="product-img">
-                                            <img src="/duan1/upload/<?= htmlspecialchars($product['product_image']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>">
+                                            <img src="/duan1/upload/<?= htmlspecialchars($product['product_image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" style="width: 100%; height: 250px; object-fit: cover;">
                                         </div>
                                         <div class="product-body">
-                                            <h3 class="product-name"><?= htmlspecialchars($product['product_name']) ?></h3>
+                                            <h3 class="product-name"><?= htmlspecialchars($product['name']) ?></h3>
                                             <h4 class="product-price">
                                                 <?php if (!empty($product['product_sale_price'])): ?>
                                                     <del><?= number_format($product['product_price'], 0, ',', '.') ?> đ</del>

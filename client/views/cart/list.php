@@ -42,7 +42,7 @@
                                     alt="Hình ảnh sản phẩm"
                                     style="width: 80px; height: 80px; object-fit: cover;">
                             </td>
-                            <td><?= htmlspecialchars($item['product_name']) ?></td>
+                            <td><?= htmlspecialchars($item['name']) ?></td>
                             <td>
                                 Màu: <?= htmlspecialchars($item['product_variant_color'] ?? 'Không xác định') ?>,
                                 Kích thước: <?= htmlspecialchars($item['product_variant_size'] ?? 'Không xác định') ?>

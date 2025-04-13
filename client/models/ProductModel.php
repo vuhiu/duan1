@@ -60,20 +60,24 @@ class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
     }
 
     // Fetch product variants
-    public function getProductVariants($product_id) {
-        $sql = "SELECT 
-                    product_variants.product_variant_id,
-                    product_variants.price,
-                    product_variants.sale_price,
-                    product_variants.quantity,
-                    variant_colors.color_name AS product_variant_color,
-                    variant_size.size_name AS product_variant_size
-                FROM product_variants
-                LEFT JOIN variant_colors ON product_variants.variant_color_id = variant_colors.variant_color_id
-                LEFT JOIN variant_size ON product_variants.variant_size_id = variant_size.variant_size_id
-                WHERE product_variants.product_id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$product_id]);
+    public function getProductVariants($productId) {
+        $stmt = $this->conn->prepare("
+            SELECT 
+                pv.product_variant_id, 
+                pv.price, 
+                pv.sale_price, 
+                pv.quantity, 
+                vc.variant_color_id, 
+                vc.color_code, 
+                vc.color_name, 
+                vs.variant_size_id, 
+                vs.size_name
+            FROM product_variants pv
+            LEFT JOIN variant_colors vc ON pv.variant_color_id = vc.variant_color_id
+            LEFT JOIN variant_size vs ON pv.variant_size_id = vs.variant_size_id
+            WHERE pv.product_id = ?
+        ");
+        $stmt->execute([$productId]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     // search products by keyword

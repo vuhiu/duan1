@@ -55,52 +55,85 @@
                     <div class="row">
                         <div class="products-tabs">
                             <div id="tab1" class="tab-pane active">
-                                <!-- filepath: c:\xampp\htdocs\duan1\client\views\home.php -->
                                 <div class="products-slick" data-nav="#slick-nav-1">
                                     <?php foreach ($products as $product): ?>
-                                        <div class="col-md-4">
-                                            <div class="product">
-                                                <div class="product-img">
-                                                    <img src="/duan1/upload/<?= htmlspecialchars($product['product_image']) ?>" alt="Ảnh sản phẩm">
-                                                </div>
-                                                <div class="product-body">
-                                                    <p class="product-category"><?= htmlspecialchars($product['category_name']) ?></p>
-                                                    <h3 class="product-name">
-                                                        <a href="/duan1/index.php?act=product&product_id=<?= $product['product_id'] ?>">
-                                                            <?= htmlspecialchars($product['product_name']) ?>
-                                                        </a>
-                                                    </h3>
-                                                    <!-- filepath: c:\xampp\htdocs\duan1\client\views\home.php -->
-                                                    <h4 class="product-price">
-                                                        <?php if (!empty($product['product_sale_price'])): ?>
-                                                            <span><?= number_format($product['product_sale_price'], 0, ',', '.') ?>₫</span>
-                                                            <del class="product-old-price"><?= number_format($product['product_price'], 0, ',', '.') ?>₫</del>
-                                                        <?php else: ?>
-                                                            <span><?= number_format($product['product_price'], 0, ',', '.') ?>₫</span>
-                                                        <?php endif; ?>
-                                                    </h4>
-                                                    <ul>
-                                                        <?php foreach ($product['variants'] as $variant): ?>
-                                                            <li>
-                                                                Màu: <?= htmlspecialchars($variant['product_variant_color']) ?>,
-                                                                Kích thước: <?= htmlspecialchars($variant['product_variant_size']) ?>
-                                                            </li>
+                                    <div class="col-md-3">
+                                        <div class="product-item"
+                                            style="border: 1px solid #eee; border-radius: 12px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.3s;">
+                                            <div class="product-img" style="text-align: center; height: 180px;">
+                                                <img src="/duan1/upload/<?= htmlspecialchars($product['product_image']) ?>"
+                                                    alt="Ảnh sản phẩm" style="max-height: 100%; object-fit: contain;">
+                                            </div>
+                                            <div class="product-body" style="padding-top: 10px;">
+                                                <p class="product-category"
+                                                    style="font-size: 13px; color: #888; text-transform: uppercase;">
+                                                    <?= htmlspecialchars($product['category_name']) ?></p>
+                                                <h3 class="product-name"
+                                                    style="font-size: 16px; font-weight: bold; min-height: 48px;">
+                                                    <a href="/duan1/index.php?act=product&product_id=<?= $product['product_id'] ?>"
+                                                        style="color: #333;">
+                                                        <?= htmlspecialchars($product['product_name']) ?>
+                                                    </a>
+                                                </h3>
+                                                <h4 class="product-price" style="margin-top: 5px; margin-bottom: 10px;">
+                                                    <?php if (!empty($product['product_sale_price'])): ?>
+                                                    <span
+                                                        style="color: red; font-weight: bold;"><?= number_format($product['product_sale_price'], 0, ',', '.') ?>₫</span>
+                                                    <del
+                                                        style="margin-left: 5px; color: #888;"><?= number_format($product['product_price'], 0, ',', '.') ?>₫</del>
+                                                    <?php else: ?>
+                                                    <span
+                                                        style="font-weight: bold;"><?= number_format($product['product_price'], 0, ',', '.') ?>₫</span>
+                                                    <?php endif; ?>
+                                                </h4>
+
+                                                <!-- Hiển thị biến thể sản phẩm -->
+                                                <?php
+                                                    $colors = [];
+                                                    $sizes = [];
+                                                    foreach ($product['variants'] as $variant) {
+                                                        // Lấy mã màu và tên màu
+                                                        $colorId = $variant['variant_color_id'] ?? null;
+                                                        $colorCode = $variant['color_code'] ?? null;
+                                                        if ($colorId && $colorCode && !isset($colors[$colorId])) {
+                                                            $colors[$colorId] = $colorCode;
+                                                        }
+
+                                                        // Lấy kích thước
+                                                        $sizeId = $variant['variant_size_id'] ?? null;
+                                                        $sizeName = $variant['size_name'] ?? null;
+                                                        if ($sizeId && $sizeName && !isset($sizes[$sizeId])) {
+                                                            $sizes[$sizeId] = $sizeName;
+                                                        }
+                                                    }
+                                                ?>
+                                                <div>
+                                                    <strong>Chọn màu:</strong><br>
+                                                    <div>
+                                                        <?php foreach ($colors as $colorId => $colorCode): ?>
+                                                        <div class="color-circle color-btn mb-2"
+                                                            data-color-id="<?= htmlspecialchars($colorId) ?>"
+                                                            style="background-color: <?= htmlspecialchars($colorCode) ?>;">
+                                                        </div>
                                                         <?php endforeach; ?>
-                                                    </ul>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <strong>Chọn kích thước:</strong><br>
+                                                    <?php foreach ($sizes as $sizeId => $sizeName): ?>
+                                                    <button class="btn btn-outline-secondary size-btn mb-2"
+                                                        data-size-id="<?= htmlspecialchars($sizeId) ?>"><?= htmlspecialchars($sizeName) ?></button>
+                                                    <?php endforeach; ?>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
                                     <?php endforeach; ?>
-
                                 </div>
                                 <div id="slick-nav-1" class="products-slick-nav"></div>
                             </div>
                         </div>
-                        <!-- form gửi dữ liệu sp vào giỏ hàng khi nhấn nút "Thêm vào giỏ hàng" -->
-
-
-
-
                     </div>
                 </div>
                 <!-- /Product List -->
@@ -185,3 +218,48 @@
 </body>
 
 </html>
+<!-- JavaScript -->
+<script>
+const colorButtons = document.querySelectorAll('.color-btn');
+const sizeButtons = document.querySelectorAll('.size-btn');
+
+// Xử lý chọn màu
+colorButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        colorButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    });
+});
+
+// Xử lý chọn kích thước
+sizeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        sizeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    });
+});
+</script>
+
+<!-- CSS -->
+<style>
+.color-circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+    border: 2px solid #ccc;
+    cursor: pointer;
+    transition: border 0.3s ease;
+}
+
+.color-circle.active {
+    border: 3px solid #007bff;
+}
+
+.size-btn.active {
+    border: 2px solid #007bff;
+    background-color: #e0f0ff;
+    font-weight: bold;
+}
+</style>

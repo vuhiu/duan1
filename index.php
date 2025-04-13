@@ -15,7 +15,8 @@ require __DIR__ . '/commons/env.php';
 require_once __DIR__ . '/client/controllers/ClientProductController.php';
 require_once __DIR__ . '/client/controllers/cartController.php';
 require_once __DIR__ . '/client/controllers/authenController.php';
-
+require_once __DIR__ . '/client/controllers/categoryController.php';
+require_once __DIR__ . '/client/models/categoryModel.php';
 // Kiểm tra & nạp file header
 $headerPath = __DIR__ . '/client/views/layout/header.php';
 if (file_exists($headerPath)) {
@@ -31,23 +32,27 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
 use Client\Controllers\ClientProductController;
 use Client\Controllers\CartController;
 use Client\Controllers\AuthenController;
+use Client\Controllers\CategoryController;
 
-$controller = new ClientProductController($conn); // Truyền kết nối $conn
+// Khởi tạo các controller
+$productController = new ClientProductController($conn); // Truyền kết nối $conn
 $cartController = new CartController();
+$categoryController = new CategoryController($conn); // Truyền kết nối $conn
+
 
 switch ($act) {
     case "":
         // Gọi trang chủ
-        $controller->getAllProducts();
+        $productController->getAllProducts();
         break;
 
     case 'product':
         // Gọi trang chi tiết sản phẩm
-        $controller->getProductDetail();
+        $productController->getProductDetail();
         break;
 
     case 'search': // Thêm case xử lý tìm kiếm
-        $controller->search();
+        $productController->search();
         break;
 
     case 'cart':
@@ -101,7 +106,10 @@ switch ($act) {
     case 'category':
         if (isset($_GET['category_id']) && is_numeric($_GET['category_id'])) {
             $category_id = $_GET['category_id'];
-            $controller->getProductsByCategory($category_id);
+    
+            // Khởi tạo CategoryController
+            $categoryController = new \Client\Controllers\CategoryController($conn);
+            $categoryController->index();
         } else {
             echo "Danh mục không hợp lệ.";
         }

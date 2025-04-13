@@ -86,7 +86,7 @@
                             <form action="/duan1/index.php" method="GET">
                                 <input type="hidden" name="act" value="search">
                                 <select class="input-select">
-                                    <option value="0">Tất cả</option>
+                                    <option value="0">Danh mục</option>
                                     <option value="1"> iphone</option>
                                     <option value="2"> SamSung</option>
                                     <option value="3"> macbook</option>
@@ -184,22 +184,24 @@
             <div id="responsive-nav">
                 <!-- NAV -->
                 <ul class="main-nav nav navbar-nav">
-                    <li class="active"><a href="#">Trang chủ</a></li>
+                    <li class="active"><a href="/duan1/index.php?act=category&category_id=14">Trang chủ</a></li>
                     <!-- <li><a href="#">Ưu đãi hot</a></li> -->
                     <!-- <li><a href="/duan1/index.php?act=category">Danh mục</a></li> -->
                     <li><a href="/duan1/index.php?act=category&category_id=14">Laptop</a></li>
+                    <li><a href="/duan1/index.php?act=category&category_id=34">iPhone</a></li>
+                    <li><a href="/duan1/index.php?act=category&category_id=36">Samsung</a></li>
                     <!-- Dropdown cho Điện thoại -->
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Điện thoại <span
+                    <!-- <li class="dropdown">
+                        <a href="/duan1/index.php?act=category&category_id=38" class="dropdown-toggle" data-toggle="dropdown">Điện thoại <span
                                 class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="/duan1/index.php?act=category&category_id=34">iPhone</a></li>
                             <li><a href="/duan1/index.php?act=category&category_id=36">Samsung</a></li>
                         </ul>
-                    </li>
+                    </li> -->
                     <!-- <li><a href="#">Máy ảnh</a></li> -->
                     <li><a href="/duan1/index.php?act=category&category_id=35">Phụ kiện</a></li>
-                    <li><a href="#">Liên hệ</a></li>
+                    
                 </ul>
                 <!-- /NAV -->
             </div>

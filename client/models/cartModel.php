@@ -59,7 +59,7 @@ class Cart {
     public function getAllCartItems($user_id) {
         $stmt = $this->conn->prepare("
             SELECT ci.id AS cart_item_id, ci.product_id, ci.variant_id, ci.quantity, 
-                   p.name AS product_name, p.image AS product_image, 
+                   p.name AS name, p.image AS product_image, 
                    pv.price AS variant_price, pv.sale_price AS variant_sale_price,
                    vc.color_name AS product_variant_color, vs.size_name AS product_variant_size
             FROM cart_items ci

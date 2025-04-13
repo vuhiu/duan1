@@ -1,82 +1,172 @@
-<!-- filepath: c:\xampp\htdocs\duan1\client\views\product\product_detail.php -->
-<h2 style="text-align: center;">Chi tiết sản phẩm</h2>
+<!-- filepath: c:\laragon\www\duan1\client\views\product\product_detail.php -->
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <!-- Ảnh sản phẩm -->
+        <div class="col-md-6 text-center">
+        <!-- Kiểm tra giá trị trước khi gọi htmlspecialchars() -->
+            <img src="/duan1/upload/<?= htmlspecialchars($product['product_image'] ?? 'default.jpg') ?>"
+                alt="<?= htmlspecialchars($product['product_name'] ?? 'Sản phẩm không có tên') ?>"
+                class="img-fluid rounded border shadow-sm" style="max-height: 500px; object-fit: contain;">
+        </div>
 
-<div class="product-detail"
-    style="display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; text-align: left;">
-    <!-- Thông tin sản phẩm -->
-    <div class="product-info" style="max-width: 500px;">
-        <h1><?= htmlspecialchars($product['product_name']) ?></h1>
-        <!-- filepath: c:\xampp\htdocs\duan1\client\views\product\product_detail.php -->
-        <h4 id="product-price">
-            <?php if (!empty($product['variants'][0]['sale_price'])): ?>
-                <del><?= number_format($product['variants'][0]['price'], 0, ',', '.') ?> đ</del>
-                <span><?= number_format($product['variants'][0]['sale_price'], 0, ',', '.') ?> đ</span>
-            <?php else: ?>
-                <span><?= number_format($product['variants'][0]['price'], 0, ',', '.') ?> đ</span>
-            <?php endif; ?>
-        </h4>
-        <p><?= htmlspecialchars($product['product_description']) ?></p>
+        <!-- Thông tin sản phẩm -->
+        <div class="col-md-6">
+            <h2 class="mb-3"><?= htmlspecialchars($product['product_name']) ?></h2>
 
-        <?php if (!empty($product['variants'])): ?>
-            <h5>Chọn biến thể:</h5>
-            <select id="variant-selector" class="form-control mb-3">
-                <?php foreach ($product['variants'] as $variant): ?>
-                    <option value="<?= $variant['product_variant_id'] ?>"
-                        data-price="<?= $variant['price'] ?>"
-                        data-sale-price="<?= $variant['sale_price'] ?>">
-                        Màu: <?= htmlspecialchars($variant['product_variant_color'] ?? 'Không xác định') ?>,
-                        Kích thước: <?= htmlspecialchars($variant['product_variant_size'] ?? 'Không xác định') ?>
-                    </option>
+            <div class="mb-3" id="product-price">
+                <?php if (!empty($product['variants'][0]['sale_price'])): ?>
+                <h4 class="text-danger">
+                    <del class="text-muted"><?= number_format($product['variants'][0]['price'], 0, ',', '.') ?>đ</del>
+                    <?= number_format($product['variants'][0]['sale_price'], 0, ',', '.') ?>đ
+                </h4>
+                <?php else: ?>
+                <h4><?= number_format($product['variants'][0]['price'], 0, ',', '.') ?>đ</h4>
+                <?php endif; ?>
+            </div>
+
+            <p class="text-muted mb-4"><?= htmlspecialchars($product['product_description']) ?></p>
+
+            <!-- Chọn biến thể -->
+            <?php
+                $colors = [];
+                $sizes = [];
+                foreach ($product['variants'] as $variant) {
+                    // Lấy mã màu và tên màu
+                    $colorId = $variant['variant_color_id'] ?? null;
+                    $colorCode = $variant['color_code'] ?? null;
+                    if ($colorId && $colorCode) {
+                        $colors[$colorId] = $colorCode;
+                    }
+                
+                    // Lấy kích thước
+                    $sizeId = $variant['variant_size_id'] ?? null;
+                    $sizeName = $variant['size_name'] ?? null;
+                    if ($sizeId && $sizeName) {
+                        $sizes[$sizeId] = $sizeName;
+                    }
+                }
+                $colors = array_unique($colors);
+                $sizes = array_unique($sizes);
+                // Debug giá trị màu
+                // echo '<pre>'; print_r($colors); echo '</pre>';
+            ?>
+
+            <!-- Hiển thị danh sách màu sắc: -->
+            <div class="mb-3">
+                <label><strong>Chọn màu:</strong></label><br>
+                <div>
+                    <?php foreach ($colors as $colorId => $colorCode): ?>
+                    <div class="color-circle color-btn mb-2" data-color-id="<?= htmlspecialchars($colorId) ?>"
+                        style="background-color: <?= htmlspecialchars($colorCode) ?>;">
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <!-- Hiển thị danh sách kích thước:-->
+            <div class="mb-3">
+                <label><strong>Chọn kích thước:</strong></label><br>
+                <?php foreach ($sizes as $sizeId => $sizeName): ?>
+                <button type="button" class="btn btn-outline-secondary size-btn mb-2"
+                    data-size-id="<?= htmlspecialchars($sizeId) ?>"><?= htmlspecialchars($sizeName) ?></button>
                 <?php endforeach; ?>
-            </select>
-        <?php else: ?>
-            <p>Không có biến thể cho sản phẩm này.</p>
-        <?php endif; ?>
+            </div>
 
-        <h5>Đánh giá:</h5>
-        <div class="product-rating">
-            <span>⭐⭐⭐⭐☆</span>
-            <p>(12 đánh giá)</p>
+            <!-- Form thêm vào giỏ hàng -->
+            <div class="d-flex gap-3">
+                <form action="/duan1/index.php?act=cart&page=add" method="POST">
+                    <input type="hidden" name="product_id" value="<?= $product['product_id'] ?>">
+                    <input type="hidden" id="variant-id" name="variant_id"
+                        value="<?= $product['variants'][0]['product_variant_id'] ?>">
+                    <button type="submit" class="btn btn-primary px-4">Thêm vào giỏ hàng</button>
+                </form>
+                <a href="/duan1/index.php?act=checkout&product_id=<?= $product['product_id'] ?>"
+                    class="btn btn-danger px-4">Mua ngay</a>
+            </div>
         </div>
-        <!-- form gửi dữ liệu sản phẩm vào giỏ hàng khi nhấn nút "Thêm vào giỏ hàng". -->
-        <div class="product-actions">
-            <form action="/duan1/index.php?act=cart&page=add" method="POST">
-                <input type="hidden" name="product_id" value="<?= $product['product_id'] ?>">
-                <input type="hidden" id="variant-id" name="variant_id" value="<?= $product['variants'][0]['product_variant_id'] ?>">
-
-                <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
-            </form>
-            <a href="/duan1/index.php?act=checkout&product_id=<?= $product['product_id'] ?>" class="btn btn-success">Mua
-                ngay</a>
-        </div>
-    </div>
-
-    <!-- Hình ảnh sản phẩm -->
-    <div class="product-img">
-        <img src="/duan1/upload/<?= htmlspecialchars($product['product_image']) ?>"
-            alt="<?= htmlspecialchars($product['product_name']) ?>"
-            style="height: 400px; object-fit: cover; border-radius: 8px;">
     </div>
 </div>
 
+<!-- JavaScript -->
 <script>
-    // JavaScript để thay đổi giá khi chọn biến thể
-    document.getElementById('variant-selector').addEventListener('change', function () {
-    const selectedOption = this.options[this.selectedIndex];
-    const price = selectedOption.getAttribute('data-price');
-    const salePrice = selectedOption.getAttribute('data-sale-price');
-    const variantId = selectedOption.value;
+const colorButtons = document.querySelectorAll('.color-btn');
+const sizeButtons = document.querySelectorAll('.size-btn');
+const variantIdInput = document.getElementById('variant-id');
+const priceEl = document.getElementById('product-price');
+const variants = <?= json_encode($product['variants']) ?>; //truyền dữ liệu biến thể từ PHP sang JavaScript
+//json_encode($product['variants']): Chuyển mảng PHP $product['variants'] thành JSON để sử dụng trong JavaScript.
+let selectedColor = null;
+let selectedSize = null;
 
-    // Cập nhật giá hiển thị
-    const priceElement = document.getElementById('product-price');
-    if (salePrice && salePrice !== 'null') {
-        priceElement.innerHTML = `<del>${new Intl.NumberFormat('vi-VN').format(price)} đ</del> 
-                                  <span>${new Intl.NumberFormat('vi-VN').format(salePrice)} đ</span>`;
-    } else {
-        priceElement.innerHTML = `${new Intl.NumberFormat('vi-VN').format(price)} đ`;
-    }
-
-    // Cập nhật giá trị của input hidden variant_id
-    document.getElementById('variant-id').value = variantId;
+// Xử lý chọn màu
+colorButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        colorButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedColor = btn.dataset.colorId;
+        updateVariantSelection();
+    });
 });
+
+// Xử lý chọn kích thước
+sizeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        sizeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedSize = btn.dataset.sizeId;
+        updateVariantSelection();
+    });
+});
+
+// Cập nhật biến thể và giá
+function updateVariantSelection() {
+    if (!selectedColor || !selectedSize) return;
+
+    const variant = variants.find(v =>
+        v.variant_color_id == selectedColor &&
+        v.variant_size_id == selectedSize
+    );
+
+    if (variant) {
+        // Cập nhật ID biến thể
+        variantIdInput.value = variant.product_variant_id;
+
+        // Cập nhật giá
+        if (variant.sale_price && variant.sale_price !== 'null') {
+            priceEl.innerHTML = `<h4 class="text-danger">
+                    <del class="text-muted">${Number(variant.price).toLocaleString()}đ</del>
+                    ${Number(variant.sale_price).toLocaleString()}đ
+                </h4>`;
+        } else {
+            priceEl.innerHTML = `<h4>${Number(variant.price).toLocaleString()}đ</h4>`;
+        }
+    } else {
+        // Nếu không tìm thấy biến thể phù hợp
+        priceEl.innerHTML = `<h4 class="text-muted">Không có biến thể phù hợp</h4>`;
+    }
+}
 </script>
+
+<!-- CSS -->
+<style>
+.color-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 10px;
+    border: 2px solid #ccc;
+    cursor: pointer;
+    transition: border 0.3s ease;
+}
+
+.color-circle.active {
+    border: 3px solid #007bff;
+}
+
+.size-btn.active {
+    border: 2px solid #007bff;
+    background-color: #e0f0ff;
+    font-weight: bold;
+}
+</style>

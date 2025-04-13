@@ -32,23 +32,27 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
 use Client\Controllers\ClientProductController;
 use Client\Controllers\CartController;
 use Client\Controllers\AuthenController;
+use Client\Controllers\CategoryController;
 
-$controller = new ClientProductController($conn); // Truyền kết nối $conn
+// Khởi tạo các controller
+$productController = new ClientProductController($conn); // Truyền kết nối $conn
 $cartController = new CartController();
+$categoryController = new CategoryController($conn); // Truyền kết nối $conn
+
 
 switch ($act) {
     case "":
         // Gọi trang chủ
-        $controller->getAllProducts();
+        $productController->getAllProducts();
         break;
 
     case 'product':
         // Gọi trang chi tiết sản phẩm
-        $controller->getProductDetail();
+        $productController->getProductDetail();
         break;
 
     case 'search': // Thêm case xử lý tìm kiếm
-        $controller->search();
+        $productController->search();
         break;
 
     case 'cart':

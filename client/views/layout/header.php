@@ -53,12 +53,18 @@
                 </ul>
                 <ul class="header-links pull-right">
                     <li><a href="#"><i class="fa fa-dollar"></i> VN</a></li>
-                    <li><a href="#"><i class="fa fa-user-o"></i> Tài khoản</a></li>
-                    <li><a href="/duan1/client/views/auth/form-login.php"><i class="fa fa-check"></i> Đăng nhập</a></li>
-                    <li><a href="/duan1/client/views/auth/form-register.php"><i class="fa fa-user-plus"></i> Đăng ký</a>
-                    </li>
-                    <li><a href="/duan1/client/controllers/AuthController.php?action=logout"><i
-                                class="fa fa-sign-out"></i> Đăng xuất</a></li>
+                    <?php
+                    if (session_status() === PHP_SESSION_NONE) {
+                        session_start();
+                    }
+                    if (isset($_SESSION['user_name'])) {
+                        echo '<li><a href="/duan1/client/views/auth/user-profile.php"><i class="fa fa-user"></i> ' . htmlspecialchars($_SESSION['user_name']) . '</a></li>';
+                        echo '<li><a href="/duan1/client/controllers/authenController.php?action=logout"><i class="fa fa-sign-out"></i> Đăng xuất</a></li>';
+                    } else {
+                        echo '<li><a href="/duan1/client/views/auth/form-login.php"><i class="fa fa-sign-in"></i> Đăng nhập</a></li>';
+                        echo '<li><a href="/duan1/client/views/auth/form-register.php"><i class="fa fa-user-plus"></i> Đăng ký</a></li>';
+                    }
+                    ?>
                 </ul>
             </div>
         </div>
@@ -201,7 +207,7 @@
                     </li> -->
                     <!-- <li><a href="#">Máy ảnh</a></li> -->
                     <li><a href="/duan1/index.php?act=category&category_id=35">Phụ kiện</a></li>
-                    
+
                 </ul>
                 <!-- /NAV -->
             </div>

@@ -13,12 +13,12 @@ class Customer
 
     // Lấy danh sách khách hàng
     public function getAllCustomers()
-{
-    $sql = "SELECT * FROM users WHERE role_id = 1"; // role_id = 1 là khách hàng
-    $stmt = $this->conn->prepare($sql);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC); // Trả về mảng rỗng nếu không có dữ liệu
-}
+    {
+        $sql = "SELECT * FROM users WHERE role = 'client' ORDER BY created_at DESC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     // Lấy thông tin khách hàng theo ID
     public function getCustomerById($user_id)
@@ -27,7 +27,7 @@ class Customer
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$user_id]);
         $customer = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
         // Thêm giá trị mặc định nếu trường bị thiếu
         if ($customer) {
             $customer['name'] = $customer['name'] ?? 'Không có dữ liệu';
@@ -35,7 +35,7 @@ class Customer
             $customer['phone'] = $customer['phone'] ?? 'Không có dữ liệu';
             $customer['address'] = $customer['address'] ?? 'Không có dữ liệu';
         }
-    
+
         return $customer;
     }
 

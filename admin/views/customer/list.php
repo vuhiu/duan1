@@ -20,30 +20,32 @@
                     <th>Email</th>
                     <th>Số điện thoại</th>
                     <th>Địa chỉ</th>
+                    <th>Ngày đăng ký</th>
                     <th>Hành động</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (!empty($customers)): ?>
-                <?php foreach ($customers as $customer): ?>
-                <tr>
-                    <td><?php echo $customer['user_id']; ?></td>
-                    <td><?php echo $customer['name']; ?></td>
-                    <td><?php echo $customer['email']; ?></td>
-                    <td><?php echo $customer['phone']; ?></td>
-                    <td><?php echo $customer['address']; ?></td>
-                    <td>
-                        <a href="/duan1/admin/?act=customer&page=detail&user_id=<?php echo $customer['user_id']; ?>"
-                            class="btn btn-info btn-sm">Xem</a>
-                        <a href="/duan1/admin/?act=customer&page=edit&user_id=<?php echo $customer['user_id']; ?>"
-                            class="btn btn-warning btn-sm">Sửa</a>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
+                    <?php foreach ($customers as $customer): ?>
+                        <tr>
+                            <td><?php echo $customer['user_id']; ?></td>
+                            <td><?php echo $customer['name']; ?></td>
+                            <td><?php echo $customer['email']; ?></td>
+                            <td><?php echo $customer['phone']; ?></td>
+                            <td><?php echo $customer['address']; ?></td>
+                            <td><?php echo date('d/m/Y H:i', strtotime($customer['created_at'])); ?></td>
+                            <td>
+                                <a href="/duan1/admin/?act=customer&page=detail&user_id=<?php echo $customer['user_id']; ?>"
+                                    class="btn btn-info btn-sm">Xem</a>
+                                <a href="/duan1/admin/?act=customer&page=edit&user_id=<?php echo $customer['user_id']; ?>"
+                                    class="btn btn-warning btn-sm">Sửa</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 <?php else: ?>
-                <tr>
-                    <td colspan="6" class="text-center">Không có khách hàng nào.</td>
-                </tr>
+                    <tr>
+                        <td colspan="6" class="text-center">Không có khách hàng nào.</td>
+                    </tr>
                 <?php endif; ?>
             </tbody>
         </table>

@@ -3,9 +3,10 @@
     <div class="row">
         <!-- Ảnh sản phẩm -->
         <div class="col-md-6 text-center">
-            <img src="/duan1/upload/<?= htmlspecialchars($product['product_image']) ?>"
-                alt="<?= htmlspecialchars($product['product_name']) ?>" class="img-fluid rounded border shadow-sm"
-                style="max-height: 500px; object-fit: contain;">
+        <!-- Kiểm tra giá trị trước khi gọi htmlspecialchars() -->
+            <img src="/duan1/upload/<?= htmlspecialchars($product['product_image'] ?? 'default.jpg') ?>"
+                alt="<?= htmlspecialchars($product['product_name'] ?? 'Sản phẩm không có tên') ?>"
+                class="img-fluid rounded border shadow-sm" style="max-height: 500px; object-fit: contain;">
         </div>
 
         <!-- Thông tin sản phẩm -->

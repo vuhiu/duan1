@@ -1,6 +1,7 @@
 <?php
 ob_start();
 require_once __DIR__ . '/../models/category.php';
+require_once __DIR__ . '/../models/product.php';
 
 class CategoryController {
     public $categoryModel;
@@ -104,14 +105,20 @@ class CategoryController {
     
     public function deleteCategory() {
         if (!isset($_GET['category_id']) || !is_numeric($_GET['category_id'])) {
-            die("❌ Lỗi: ID danh mục không hợp lệ!");
+            die("❌ Lỗi: Mã danh mục không hợp lệ!");
         }
 
-        $id = (int)$_GET['category_id']; // Ép kiểu về số nguyên
+        $id = (int)$_GET['category_id'];
         $category = $this->categoryModel->getById($id);
 
         if (!$category) {
             die("❌ Lỗi: Danh mục không tồn tại!");
+        }
+
+        // Kiểm tra xem danh mục có sản phẩm nào không
+        $productModel = new Product();
+        if ($productModel->hasProductsInCategory($id)) {
+            die("❌ Lỗi: Không thể xóa danh mục vì vẫn còn sản phẩm thuộc danh mục này!");
         }
 
         $this->categoryModel->delete($id);

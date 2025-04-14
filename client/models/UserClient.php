@@ -19,6 +19,14 @@ class UserClient
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    // Lấy thông tin người dùng theo ID
+    public function getUserById($user_id)
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE user_id = ?");
+        $stmt->execute([$user_id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     // Đăng ký người dùng mới
     public function register($name, $email, $password, $address, $phone)
     {

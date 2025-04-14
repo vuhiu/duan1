@@ -1,16 +1,18 @@
 <?php
-namespace Client\Models; // Sử dụng namespace để phân biệt lớp
 require_once __DIR__ . '/../../commons/connect.php';
 
-class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
+class ClientProduct
+{
     private $conn;
 
-    public function __construct($conn) {
+    public function __construct($conn)
+    {
         $this->conn = $conn;
     }
 
     // Get product by ID
-    public function getProductById($product_id) {
+    public function getProductById($product_id)
+    {
         $sql = "SELECT 
                     p.product_id, p.name AS product_name, p.image AS product_image, 
                     p.description AS product_description, p.price AS product_price, 
@@ -25,18 +27,19 @@ class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
                 WHERE p.product_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$product_id]);
-        $product = $stmt->fetch(\PDO::FETCH_ASSOC);
-    
+        $product = $stmt->fetch(PDO::FETCH_ASSOC);
+
         // Lấy danh sách biến thể
         if ($product) {
             $product['variants'] = $this->getProductVariants($product_id);
         }
-    
+
         return $product;
     }
 
     // Get all products with their variants
-    public function getAllProductWithVariants() {
+    public function getAllProductWithVariants()
+    {
         $sql = "SELECT 
                     products.product_id,
                     products.name AS product_name,
@@ -49,18 +52,19 @@ class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
                 LEFT JOIN categories ON products.category_id = categories.category_id";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
-        $products = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-    
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
         // Lấy biến thể cho từng sản phẩm
         foreach ($products as &$product) {
             $product['variants'] = $this->getProductVariants($product['product_id']);
         }
-    
+
         return $products;
     }
 
     // Fetch product variants
-    public function getProductVariants($productId) {
+    public function getProductVariants($productId)
+    {
         $stmt = $this->conn->prepare("
             SELECT 
                 pv.product_variant_id, 
@@ -78,10 +82,11 @@ class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
             WHERE pv.product_id = ?
         ");
         $stmt->execute([$productId]);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     // search products by keyword
-    public function searchProducts($keyword) {
+    public function searchProducts($keyword)
+    {
         $sql = "SELECT 
                     product_id, 
                     name AS product_name, 
@@ -95,27 +100,29 @@ class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
                    OR description LIKE :keyword";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute(['keyword' => '%' . $keyword . '%']);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
-    public function deleteVariants($product_id) {
+
+    public function deleteVariants($product_id)
+    {
         // Kiểm tra xem có bản ghi liên quan trong bảng cart_items không
         $stmt = $this->conn->prepare("SELECT COUNT(*) FROM cart_items WHERE variant_id IN (
             SELECT product_variant_id FROM product_variants WHERE product_id = ?
         )");
         $stmt->execute([$product_id]);
         $count = $stmt->fetchColumn();
-    
+
         if ($count > 0) {
             throw new \Exception("Không thể xóa vì có sản phẩm trong giỏ hàng liên quan.");
         }
-    
+
         // Xóa các bản ghi trong bảng product_variants
         $stmt = $this->conn->prepare("DELETE FROM product_variants WHERE product_id = ?");
         $stmt->execute([$product_id]);
     }
     // lấy sản phẩm theo danh mục
-    public function getProductsByCategory($category_id) {
+    public function getProductsByCategory($category_id)
+    {
         $sql = "SELECT 
                     products.product_id,
                     products.name AS product_name,
@@ -129,8 +136,6 @@ class ClientProduct { // Đổi tên lớp từ Product thành ClientProduct
                 WHERE categories.category_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$category_id]);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
 }
-?>

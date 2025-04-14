@@ -8,15 +8,23 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-
 // Kết nối database & Load cấu hình
 require __DIR__ . '/commons/connect.php';
 require __DIR__ . '/commons/env.php';
+
+// Load controllers
 require_once __DIR__ . '/client/controllers/ClientProductController.php';
 require_once __DIR__ . '/client/controllers/cartController.php';
 require_once __DIR__ . '/client/controllers/authenController.php';
 require_once __DIR__ . '/client/controllers/categoryController.php';
+
+// Load models
 require_once __DIR__ . '/client/models/categoryModel.php';
+require_once __DIR__ . '/client/models/cartModel.php';
+require_once __DIR__ . '/client/models/couponModel.php';
+require_once __DIR__ . '/client/models/UserClient.php';
+require_once __DIR__ . '/client/models/ShippingModel.php';
+
 // Kiểm tra & nạp file header
 $headerPath = __DIR__ . '/client/views/layout/header.php';
 if (file_exists($headerPath)) {
@@ -26,19 +34,13 @@ if (file_exists($headerPath)) {
 }
 
 // Xử lý router
-$act = isset($_GET['act']) ? $_GET['act'] : '';
-$page = isset($_GET['page']) ? $_GET['page'] : '';
-
-use Client\Controllers\ClientProductController;
-use Client\Controllers\CartController;
-use Client\Controllers\AuthenController;
-use Client\Controllers\CategoryController;
+$act = $_GET['act'] ?? '';
+$page = $_GET['page'] ?? '';
 
 // Khởi tạo các controller
-$productController = new ClientProductController($conn); // Truyền kết nối $conn
+$productController = new ClientProductController($conn);
 $cartController = new CartController();
-$categoryController = new CategoryController($conn); // Truyền kết nối $conn
-
+$categoryController = new CategoryController($conn);
 
 switch ($act) {
     case "":
@@ -51,14 +53,14 @@ switch ($act) {
         $productController->getProductDetail();
         break;
 
-    case 'search': // Thêm case xử lý tìm kiếm
+    case 'search':
         $productController->search();
         break;
 
     case 'cart':
         switch ($page) {
             case 'list':
-                $user_id = $_SESSION['user_id'] ?? 0; // Lấy user_id từ session
+                $user_id = $_SESSION['user_id'];
                 $cartController->getCart($user_id);
                 break;
 
@@ -74,7 +76,7 @@ switch ($act) {
                     }
 
                     $cartController->addToCart($user_id, $product_id, $variant_id, $quantity);
-                    header('Location: /duan1/index.php?act=cart&page=list'); // Chuyển hướng về trang giỏ hàng
+                    header('Location: /duan1/index.php?act=cart&page=list');
                     exit();
                 }
                 break;
@@ -91,31 +93,63 @@ switch ($act) {
                 }
                 break;
 
+            case 'checkout':
+                if (!isset($_SESSION['user_id'])) {
+                    header('Location: /duan1/index.php?act=login');
+                    exit();
+                }
+
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    if (isset($_POST['update_shipping'])) {
+                        $_SESSION['selected_shipping'] = $_POST['shipping_method'] ?? null;
+                        header('Location: /duan1/index.php?act=cart&page=checkout');
+                        exit();
+                    } elseif (isset($_POST['apply_coupon'])) {
+                        $cartController->validateCoupon();
+                        header('Location: /duan1/index.php?act=cart&page=checkout');
+                        exit();
+                    } elseif (isset($_POST['process_checkout'])) {
+                        $order_id = $cartController->processCheckout();
+                        if ($order_id) {
+                            $_SESSION['last_order'] = $order_id;
+                            header('Location: /duan1/index.php?act=cart&page=process_checkout');
+                            exit();
+                        } else {
+                            $_SESSION['error'] = "Có lỗi xảy ra trong quá trình thanh toán!";
+                            header('Location: /duan1/index.php?act=cart&page=checkout');
+                            exit();
+                        }
+                    }
+                }
+
+                $user_id = $_SESSION['user_id'];
+                $cartController->checkout();
+                break;
+
+            case 'process_checkout':
+                if (!isset($_SESSION['last_order'])) {
+                    header('Location: /duan1/index.php');
+                    exit();
+                }
+                include 'client/views/order/success.php';
+                break;
+
             default:
                 echo "Lỗi: Không tìm thấy trang giỏ hàng.";
                 break;
         }
         break;
 
-    case 'checkout':
-        // Hiển thị trang thanh toán
-        require_once __DIR__ . '/client/views/cart/checkout.php';
-        break;
-
-    // Xử lý danh mục sản phẩm
     case 'category':
         if (isset($_GET['category_id']) && is_numeric($_GET['category_id'])) {
             $category_id = $_GET['category_id'];
-    
-            // Khởi tạo CategoryController
-            $categoryController = new \Client\Controllers\CategoryController($conn);
             $categoryController->index();
         } else {
             echo "Danh mục không hợp lệ.";
         }
         break;
 
-    case 'auth': // Xử lý đăng nhập, đăng ký, đăng xuất
+    case 'auth':
         $authController = new AuthenController();
         $action = $_GET['action'] ?? '';
         switch ($action) {
@@ -138,6 +172,56 @@ switch ($act) {
 
             default:
                 header('Location: /duan1/client/views/auth/form-login.php');
+                exit();
+        }
+        break;
+
+    case 'order':
+        require_once __DIR__ . '/client/models/orderModel.php';
+        $orderModel = new OrderModel();
+        $user_id = $_SESSION['user_id'];
+
+        switch ($page) {
+            case 'success':
+                if (!isset($_SESSION['last_order'])) {
+                    header('Location: /duan1/index.php');
+                    exit();
+                }
+                include 'client/views/order/success.php';
+                break;
+
+            case 'list':
+                $orders = $orderModel->getOrdersByUserId($user_id);
+                include 'client/views/order/list.php';
+                break;
+
+            case 'detail':
+                $order_id = $_GET['id'] ?? 0;
+                $order = $orderModel->getOrderById($order_id, $user_id);
+                if (!$order) {
+                    $_SESSION['error'] = "Không tìm thấy đơn hàng!";
+                    header('Location: /duan1/index.php?act=order&page=list');
+                    exit();
+                }
+                $orderItems = $orderModel->getOrderItems($order_id);
+                include 'client/views/order/detail.php';
+                break;
+
+            case 'cancel':
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $order_id = $_POST['order_id'] ?? 0;
+                    if ($orderModel->cancelOrder($order_id, $user_id)) {
+                        $_SESSION['success'] = "Hủy đơn hàng thành công!";
+                    } else {
+                        $_SESSION['error'] = "Không thể hủy đơn hàng này!";
+                    }
+                    header('Location: /duan1/index.php?act=order&page=list');
+                    exit();
+                }
+                break;
+
+            default:
+                header('Location: /duan1/index.php?act=order&page=list');
                 exit();
         }
         break;

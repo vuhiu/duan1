@@ -1,15 +1,18 @@
 <?php
-namespace Client\Models;
+require_once __DIR__ . '/../../commons/connect.php';
 
-class CategoryModel {
+class CategoryModel
+{
     private $conn;
 
-    public function __construct($conn) {
+    public function __construct($conn)
+    {
         $this->conn = $conn;
     }
 
     // Lấy danh sách sản phẩm theo danh mục và áp dụng các bộ lọc(khoảng giá, thương hiệu, màu sắc, dung lượng, sắp xếp).
-    public function getFilteredProducts($category_id, $price_range, $brand, $color, $size, $sort) {
+    public function getFilteredProducts($category_id, $price_range, $brand, $color, $size, $sort)
+    {
         $query = "
             SELECT 
                 p.product_id, 
@@ -84,12 +87,13 @@ class CategoryModel {
         $stmt = $this->conn->prepare($query);
         $stmt->execute($params);
 
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getAllCategories() {
+    public function getAllCategories()
+    {
         $stmt = $this->conn->prepare("SELECT category_id, name FROM categories");
         $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

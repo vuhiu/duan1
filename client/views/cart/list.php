@@ -17,6 +17,11 @@ foreach ($cartItems as $item) {
     $price = $item['variant_sale_price'] ?? $item['variant_price'];
     $totalPrice += $price * $item['quantity'];
 }
+
+$ROOT_URL = "/duan1";
+$CONTENT_URL = "$ROOT_URL/content";
+$ADMIN_URL = "$ROOT_URL/admin";
+$CLIENT_URL = "$ROOT_URL/client";
 ?>
 
 <!-- BREADCRUMB -->
@@ -24,10 +29,10 @@ foreach ($cartItems as $item) {
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h3 class="breadcrumb-header">GIỎ HÀNG</h3>
+                <h3 class="breadcrumb-header">Giỏ hàng</h3>
                 <ul class="breadcrumb-tree">
-                    <li><a href="/duan1/index.php">TRANG CHỦ</a></li>
-                    <li class="active">GIỎ HÀNG</li>
+                    <li><a href="/duan1/index.php">Trang chủ</a></li>
+                    <li class="active">Giỏ hàng</li>
                 </ul>
             </div>
         </div>
@@ -39,384 +44,335 @@ foreach ($cartItems as $item) {
 <div class="section">
     <div class="container">
         <div class="row">
-            <?php if (empty($cartItems)): ?>
-                <div class="col-md-12">
-                    <div class="alert alert-warning">Giỏ hàng trống</div>
-                    <a href="/duan1/index.php" class="primary-btn">Tiếp tục mua sắm</a>
-                </div>
-            <?php else: ?>
-                <div class="col-md-8">
-                    <div class="cart-list">
-                        <?php foreach ($cartItems as $item): ?>
-                            <div class="cart-item">
-                                <div class="product-widget">
-                                    <div class="product-img">
-                                        <img src="/duan1/upload/<?= htmlspecialchars($item['image']) ?>" alt="">
-                                    </div>
-                                    <div class="product-body">
-                                        <h3 class="product-name">
-                                            <a href="/duan1/index.php?act=product&id=<?= $item['product_id'] ?>">
-                                                <?= htmlspecialchars($item['name']) ?>
-                                            </a>
-                                        </h3>
-                                        <div class="product-price">
-                                            <?php if ($item['variant_sale_price']): ?>
-                                                <span class="new-price">
-                                                    <?= number_format($item['variant_sale_price'], 0, ',', '.') ?>đ
-                                                </span>
-                                                <span class="old-price">
-                                                    <?= number_format($item['variant_price'], 0, ',', '.') ?>đ
-                                                </span>
-                                            <?php else: ?>
-                                                <span class="new-price">
-                                                    <?= number_format($item['variant_price'], 0, ',', '.') ?>đ
-                                                </span>
-                                            <?php endif; ?>
-                                        </div>
-                                        <p class="product-variant">
-                                            Phiên bản: <?= htmlspecialchars($item['size_name']) ?> -
-                                            Màu: <?= htmlspecialchars($item['color_name']) ?>
-                                        </p>
-                                    </div>
-                                    <div class="product-actions">
-                                        <div class="quantity-controls">
-                                            <form action="/duan1/index.php?act=cart&page=update_cart" method="POST" class="update-cart-form">
-                                                <input type="hidden" name="cart_item_id" value="<?= $item['cart_item_id'] ?>">
-                                                <button type="button" class="qty-btn minus">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                                <input type="number" name="quantity" value="<?= $item['quantity'] ?>" min="1" max="100" readonly>
-                                                <button type="button" class="qty-btn plus">
-                                                    <i class="fa fa-plus"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <button class="delete-btn" onclick="deleteCartItem(<?= $item['cart_item_id'] ?>)">
-                                            <i class="fa fa-trash"></i>
-                                            <span>Xóa</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Giỏ hàng của tôi</h4>
+                        <div class="header-actions">
+                            <a href="/duan1/index.php?act=order&page=list" class="cart-btn outline-btn">
+                                <i class="fas fa-history"></i> Lịch sử đơn hàng
+                            </a>
+                            <a href="/duan1/index.php" class="cart-btn primary-btn">
+                                <i class="fas fa-shopping-cart"></i> Tiếp tục mua sắm
+                            </a>
+                        </div>
                     </div>
-                </div>
+                    <div class="card-body">
+                        <?php if (empty($cartItems)): ?>
+                            <div class="text-center py-4">
+                                <p>Giỏ hàng của bạn đang trống.</p>
+                                <a href="/duan1/index.php" class="cart-btn primary-btn">Mua sắm ngay</a>
+                            </div>
+                        <?php else: ?>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Sản phẩm</th>
+                                            <th>Màu sắc</th>
+                                            <th>Kích thước</th>
+                                            <th class="text-center">Số lượng</th>
+                                            <th class="text-end">Đơn giá</th>
+                                            <th class="text-end">Thành tiền</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($cartItems as $item): ?>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="/duan1/upload/<?= $item['image'] ?>"
+                                                            alt="<?= htmlspecialchars($item['name']) ?>"
+                                                            class="me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                                        <div>
+                                                            <div class="fw-bold"><?= htmlspecialchars($item['name']) ?></div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td><?= htmlspecialchars($item['color_name'] ?? 'N/A') ?></td>
+                                                <td><?= htmlspecialchars($item['size_name'] ?? 'N/A') ?></td>
+                                                <td class="text-center">
+                                                    <form action="/duan1/index.php?act=cart&page=update_cart" method="POST" class="quantity-form">
+                                                        <input type="hidden" name="cart_item_id" value="<?= $item['cart_item_id'] ?>">
+                                                        <div class="quantity-group">
+                                                            <button type="button" class="quantity-btn minus">-</button>
+                                                            <input type="number" name="quantity" value="<?= $item['quantity'] ?>"
+                                                                class="quantity-input" min="1" max="99">
+                                                            <button type="button" class="quantity-btn plus">+</button>
+                                                        </div>
+                                                    </form>
+                                                </td>
+                                                <td class="text-end">
+                                                    <?php if ($item['variant_sale_price']): ?>
+                                                        <div class="sale-price">
+                                                            <?= number_format($item['variant_sale_price'], 0, ',', '.') ?> đ
+                                                        </div>
+                                                        <div class="original-price">
+                                                            <?= number_format($item['variant_price'], 0, ',', '.') ?> đ
+                                                        </div>
+                                                    <?php else: ?>
+                                                        <div class="sale-price">
+                                                            <?= number_format($item['variant_price'], 0, ',', '.') ?> đ
+                                                        </div>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td class="text-end">
+                                                    <div class="sale-price">
+                                                        <?php
+                                                        $itemTotal = ($item['variant_sale_price'] ?? $item['variant_price']) * $item['quantity'];
+                                                        echo number_format($itemTotal, 0, ',', '.') . ' đ';
+                                                        ?>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a href="/duan1/index.php?act=cart&page=delete_cart&cart_item_id=<?= $item['cart_item_id'] ?>"
+                                                        class="cart-btn delete-btn"
+                                                        onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
+                                                        <i class="fas fa-trash"></i> Xóa
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="5" class="text-end"><strong>Tổng tiền:</strong></td>
+                                            <td class="text-end">
+                                                <div class="total-amount">
+                                                    <?= number_format($totalPrice, 0, ',', '.') ?> đ
+                                                </div>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
 
-                <div class="col-md-4">
-                    <div class="cart-summary">
-                        <div class="section-title">
-                            <h4 class="title">TỔNG GIỎ HÀNG</h4>
-                        </div>
-                        <div class="order-summary">
-                            <div class="order-col">
-                                <div>Tạm tính</div>
-                                <div><?= number_format($totalPrice, 0, ',', '.') ?>đ</div>
-                            </div>
-                            <div class="order-col total">
-                                <div>TỔNG CỘNG</div>
-                                <div class="order-total"><?= number_format($totalPrice, 0, ',', '.') ?>đ</div>
-                            </div>
-                            <div class="cart-btns">
-                                <a href="/duan1/index.php?act=cart&page=checkout" class="primary-btn order-submit">
-                                    TIẾN HÀNH THANH TOÁN
-                                </a>
-                                <a href="/duan1/index.php" class="primary-btn continue-shopping">
-                                    TIẾP TỤC MUA SẮM
+                            <div class="d-flex justify-content-end mt-4">
+                                <a href="/duan1/index.php?act=cart&page=checkout" class="cart-btn primary-btn">
+                                    <i class="fas fa-shopping-bag"></i> Thanh toán
                                 </a>
                             </div>
-                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
-            <?php endif; ?>
+            </div>
         </div>
     </div>
 </div>
 <!-- /SECTION -->
 
 <style>
-    .cart-list {
-        background: #fff;
-        padding: 20px;
-        border-radius: 4px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    .card {
+        border: none;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     }
 
-    .cart-item {
-        padding: 15px 0;
-        border-bottom: 1px solid #e4e7ed;
+    .card-header {
+        background-color: #fff;
+        border-bottom: 1px solid #eee;
+        padding: 15px;
     }
 
-    .cart-item:last-child {
-        border-bottom: none;
-    }
-
-    .product-widget {
+    .header-actions {
         display: flex;
-        align-items: center;
-        gap: 20px;
+        gap: 10px;
     }
 
-    .product-img {
-        width: 80px;
-        flex-shrink: 0;
-    }
-
-    .product-img img {
-        width: 100%;
-        height: auto;
-        object-fit: cover;
-    }
-
-    .product-body {
-        flex: 1;
-    }
-
-    .product-name {
-        font-size: 14px;
+    .cart-btn {
+        display: inline-block;
+        text-decoration: none;
         font-weight: 600;
-        margin-bottom: 5px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        padding: 8px 20px;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        user-select: none;
+        line-height: 1.5;
+        font-size: 14px;
     }
 
-    .product-name a {
-        color: #2B2D42;
+    .primary-btn {
+        background-color: #D10024;
+        color: #fff;
+        border-color: #D10024;
+    }
+
+    .primary-btn:hover {
+        background-color: #E4002B;
+        color: #fff;
         text-decoration: none;
     }
 
-    .product-price {
-        margin-bottom: 5px;
-    }
-
-    .new-price {
+    .outline-btn {
+        background-color: transparent;
         color: #D10024;
-        font-size: 16px;
-        font-weight: 600;
+        border-color: #D10024;
     }
 
-    .old-price {
-        color: #8D99AE;
+    .outline-btn:hover {
+        background-color: #D10024;
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .delete-btn {
+        background-color: #D10024;
+        color: #fff;
+        padding: 6px 15px;
+        border: 1px solid #D10024;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
         font-size: 13px;
-        text-decoration: line-through;
-        margin-left: 5px;
+        border-radius: 3px;
+        width: auto;
+        height: auto;
     }
 
-    .product-variant {
-        font-size: 13px;
-        color: #8D99AE;
-        margin: 0;
+    .delete-btn:hover {
+        background-color: #E4002B;
+        color: #fff;
+        text-decoration: none;
     }
 
-    .product-actions {
-        display: flex;
-        align-items: center;
-        gap: 15px;
+    .delete-btn i {
+        font-size: 12px;
     }
 
-    .quantity-controls {
-        display: flex;
-        align-items: center;
-        background: #fff;
-        border: 1px solid #E4E7ED;
-        border-radius: 4px;
-        overflow: hidden;
+    .quantity-form {
+        display: inline-block;
     }
 
-    .quantity-controls form {
-        display: flex;
-        align-items: center;
-    }
-
-    .qty-btn {
-        width: 35px;
-        height: 35px;
+    .quantity-group {
         display: flex;
         align-items: center;
         justify-content: center;
+        border: 1px solid #E4E7ED;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .quantity-btn {
+        width: 30px;
+        height: 30px;
+        background: #fff;
         border: none;
-        background: #F6F7F8;
-        color: #2B2D42;
-        font-size: 12px;
+        color: #333;
+        font-size: 14px;
         cursor: pointer;
-        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
     }
 
-    .qty-btn:hover {
-        background: #E4E7ED;
+    .quantity-btn:hover {
+        background-color: #E4E7ED;
     }
 
-    .qty-btn.minus {
-        border-right: 1px solid #E4E7ED;
-    }
-
-    .qty-btn.plus {
-        border-left: 1px solid #E4E7ED;
-    }
-
-    .quantity-controls input {
-        width: 45px;
-        height: 35px;
+    .quantity-input {
+        width: 40px;
+        height: 30px;
         border: none;
+        border-left: 1px solid #E4E7ED;
+        border-right: 1px solid #E4E7ED;
         text-align: center;
         font-size: 14px;
-        font-weight: 600;
-        color: #2B2D42;
-        background: #fff;
+        padding: 0;
+        -moz-appearance: textfield;
     }
 
-    .quantity-controls input::-webkit-outer-spin-button,
-    .quantity-controls input::-webkit-inner-spin-button {
+    .quantity-input::-webkit-outer-spin-button,
+    .quantity-input::-webkit-inner-spin-button {
         -webkit-appearance: none;
         margin: 0;
     }
 
-    .quantity-controls input[type=number] {
-        -moz-appearance: textfield;
-    }
-
-    .delete-btn {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 12px;
-        border: 1px solid #D10024;
-        border-radius: 4px;
-        background: #fff;
+    .sale-price {
         color: #D10024;
-        font-size: 13px;
         font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-
-    .delete-btn:hover {
-        background: #D10024;
-        color: #fff;
-    }
-
-    .delete-btn i {
-        font-size: 14px;
-    }
-
-    .cart-summary {
-        background: #fff;
-        padding: 20px;
-        border-radius: 4px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .section-title {
-        margin-bottom: 20px;
-    }
-
-    .section-title .title {
-        color: #2B2D42;
         font-size: 16px;
-        font-weight: 700;
-        margin: 0;
     }
 
-    .order-col {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px 0;
+    .original-price {
+        color: #8D99AE;
         font-size: 14px;
+        text-decoration: line-through;
     }
 
-    .order-col.total {
-        margin-top: 10px;
-        padding-top: 10px;
-        border-top: 2px solid #E4E7ED;
-        font-size: 16px;
-        font-weight: 600;
-    }
-
-    .order-total {
+    .total-amount {
         color: #D10024;
         font-weight: 700;
+        font-size: 18px;
     }
 
-    .cart-btns {
-        margin-top: 20px;
+    .table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        border-bottom: 2px solid #D10024;
     }
 
-    .primary-btn {
-        display: block;
-        width: 100%;
-        padding: 8px 15px;
-        text-align: center;
-        font-size: 13px;
-        font-weight: 700;
-        color: #fff;
-        background: #D10024;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: 0.3s all;
-        text-decoration: none;
-        margin-bottom: 10px;
-    }
-
-    .primary-btn:hover {
-        opacity: 0.9;
-        color: #fff;
-        text-decoration: none;
-    }
-
-    .continue-shopping {
-        background: #2B2D42;
+    .table td {
+        vertical-align: middle;
     }
 
     @media (max-width: 768px) {
-        .product-widget {
+        .card-header {
             flex-direction: column;
-            align-items: flex-start;
+            align-items: stretch !important;
         }
 
-        .product-actions {
-            flex-wrap: wrap;
-            gap: 10px;
+        .header-actions {
+            margin-top: 10px;
+            flex-direction: column;
         }
 
-        .quantity-controls {
-            width: 120px;
+        .cart-btn {
+            width: 100%;
+            margin-bottom: 5px;
         }
 
-        .delete-btn {
-            flex: 1;
-            justify-content: center;
+        .quantity-form {
+            margin: 0 auto;
         }
     }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const qtyForms = document.querySelectorAll('.update-cart-form');
+        const forms = document.querySelectorAll('.quantity-form');
 
-        qtyForms.forEach(form => {
-            const input = form.querySelector('input[name="quantity"]');
-            const plusBtn = form.querySelector('.plus');
-            const minusBtn = form.querySelector('.minus');
+        forms.forEach(form => {
+            const minusBtn = form.querySelector('.quantity-btn.minus');
+            const plusBtn = form.querySelector('.quantity-btn.plus');
+            const input = form.querySelector('.quantity-input');
 
-            plusBtn.addEventListener('click', function() {
-                const currentValue = parseInt(input.value);
-                if (currentValue < 100) {
-                    input.value = currentValue + 1;
+            minusBtn.addEventListener('click', function() {
+                let value = parseInt(input.value);
+                if (value > 1) {
+                    input.value = value - 1;
                     form.submit();
                 }
             });
 
-            minusBtn.addEventListener('click', function() {
-                const currentValue = parseInt(input.value);
-                if (currentValue > 1) {
-                    input.value = currentValue - 1;
+            plusBtn.addEventListener('click', function() {
+                let value = parseInt(input.value);
+                if (value < 99) {
+                    input.value = value + 1;
                     form.submit();
                 }
+            });
+
+            input.addEventListener('change', function() {
+                let value = parseInt(this.value);
+                if (value < 1) this.value = 1;
+                if (value > 99) this.value = 99;
+                form.submit();
             });
         });
     });
-
-    function deleteCartItem(cartItemId) {
-        if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
-            window.location.href = `/duan1/index.php?act=cart&page=delete_cart&cart_item_id=${cartItemId}`;
-        }
-    }
 </script>

@@ -17,6 +17,7 @@ require_once __DIR__ . '/client/controllers/ClientProductController.php';
 require_once __DIR__ . '/client/controllers/cartController.php';
 require_once __DIR__ . '/client/controllers/authenController.php';
 require_once __DIR__ . '/client/controllers/categoryController.php';
+require_once __DIR__ . '/client/controllers/OrderController.php';
 
 // Load models
 require_once __DIR__ . '/client/models/categoryModel.php';
@@ -41,6 +42,7 @@ $page = $_GET['page'] ?? '';
 $productController = new ClientProductController($conn);
 $cartController = new CartController();
 $categoryController = new CategoryController($conn);
+$orderController = new OrderController();
 
 switch ($act) {
     case "":
@@ -177,47 +179,24 @@ switch ($act) {
         break;
 
     case 'order':
-        require_once __DIR__ . '/client/models/orderModel.php';
-        $orderModel = new OrderModel();
-        $user_id = $_SESSION['user_id'];
-
         switch ($page) {
-            case 'success':
-                if (!isset($_SESSION['last_order'])) {
-                    header('Location: /duan1/index.php');
-                    exit();
-                }
-                include 'client/views/order/success.php';
-                break;
-
             case 'list':
-                $orders = $orderModel->getOrdersByUserId($user_id);
-                include 'client/views/order/list.php';
+                $orderController->getOrders($_SESSION['user_id']);
                 break;
 
-            case 'detail':
-                $order_id = $_GET['id'] ?? 0;
-                $order = $orderModel->getOrderById($order_id, $user_id);
-                if (!$order) {
-                    $_SESSION['error'] = "Không tìm thấy đơn hàng!";
-                    header('Location: /duan1/index.php?act=order&page=list');
-                    exit();
-                }
-                $orderItems = $orderModel->getOrderItems($order_id);
-                include 'client/views/order/detail.php';
-                break;
+                case 'detail':
+                    $order_id = $_GET['id'] ?? 0;
+                    if ($order_id > 0) {
+                        $orderController->getOrderDetail($order_id, $_SESSION['user_id']);
+                    } else {
+                        $_SESSION['error'] = "Không tìm thấy đơn hàng.";
+                        header('Location: /duan1/index.php?act=order&page=list');
+                        exit();
+                    }
+                    break;
 
             case 'cancel':
-                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    $order_id = $_POST['order_id'] ?? 0;
-                    if ($orderModel->cancelOrder($order_id, $user_id)) {
-                        $_SESSION['success'] = "Hủy đơn hàng thành công!";
-                    } else {
-                        $_SESSION['error'] = "Không thể hủy đơn hàng này!";
-                    }
-                    header('Location: /duan1/index.php?act=order&page=list');
-                    exit();
-                }
+                $orderController->cancelOrder();
                 break;
 
             default:

@@ -1,135 +1,106 @@
 <?php
-$ROOT_URL = "/duan1";
-$CONTENT_URL = "$ROOT_URL/content";
-$ADMIN_URL = "$ROOT_URL/admin";
-$CLIENT_URL = "$ROOT_URL/client";
+require_once __DIR__ . '/../../../commons/helper.php';
 
 if (!isset($order) || !isset($orderItems)) {
-    die("Không tìm thấy thông tin đơn hàng.");
+    redirect('index.php');
 }
 ?>
 
 <div class="container py-4">
-    <nav aria-label="breadcrumb" class="mb-4">
+    <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/duan1/index.php">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a href="/duan1/index.php?act=order&page=list">Đơn hàng của tôi</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Chi tiết đơn hàng #<?= $order['order_id'] ?></li>
+            <li class="breadcrumb-item"><a href="index.php">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="?act=order">Đơn hàng của tôi</a></li>
+            <li class="breadcrumb-item active">Chi tiết đơn hàng #<?= htmlspecialchars($order['order_detail_id']) ?></li>
         </ol>
     </nav>
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">Chi tiết đơn hàng #<?= $order['order_id'] ?></h4>
-                    <div>
-                        <a href="/duan1/index.php?act=order&page=list" class="btn btn-secondary me-2">
-                            <i class="fas fa-arrow-left"></i> Quay lại
-                        </a>
-                        <?php if ($order['status'] === 'completed'): ?>
-                            <a href="/duan1/index.php" class="btn btn-primary">
-                                <i class="fas fa-shopping-cart"></i> Mua sắm tiếp
-                            </a>
-                        <?php endif; ?>
-                    </div>
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Chi tiết đơn hàng #<?= htmlspecialchars($order['order_detail_id']) ?></h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Thông tin người nhận</h6>
+                    <p><strong>Họ tên:</strong> <?= htmlspecialchars($order['name']) ?></p>
+                    <p><strong>Số điện thoại:</strong> <?= '0' . htmlspecialchars($order['phone']) ?></p>
+                    <p><strong>Địa chỉ:</strong> <?= htmlspecialchars($order['address']) ?></p>
                 </div>
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <h5>Thông tin đơn hàng</h5>
-                            <p><strong>Ngày đặt:</strong> <?= date('d/m/Y H:i', strtotime($order['order_date'])) ?></p>
-                            <p><strong>Phương thức thanh toán:</strong> <?= $order['payment_method'] ?></p>
-                            <p><strong>Trạng thái thanh toán:</strong> <?= $order['payment_status'] ?></p>
-                        </div>
-                        <div class="col-md-6">
-                            <h5>Thông tin giao hàng</h5>
-                            <p><strong>Người nhận:</strong> <?= htmlspecialchars($order['shipping_name']) ?></p>
-                            <p><strong>Số điện thoại:</strong> <?= htmlspecialchars($order['shipping_phone']) ?></p>
-                            <p><strong>Địa chỉ:</strong> <?= htmlspecialchars($order['shipping_address']) ?></p>
-                        </div>
-                    </div>
-
-                    <h5>Sản phẩm</h5>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Sản phẩm</th>
-                                    <th>Màu sắc</th>
-                                    <th>Dung lượng</th>
-                                    <th>Số lượng</th>
-                                    <th>Đơn giá</th>
-                                    <th>Thành tiền</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($orderItems as $item): ?>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img src="/duan1/upload/<?= htmlspecialchars($item['image']) ?>"
-                                                    alt="<?= htmlspecialchars($item['name']) ?>"
-                                                    class="img-thumbnail me-2"
-                                                    style="width: 50px; height: 50px; object-fit: cover;">
-                                                <div>
-                                                    <?= htmlspecialchars($item['name']) ?>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td><?= htmlspecialchars($item['color_name'] ?? 'N/A') ?></td>
-                                        <td><?= htmlspecialchars($item['size_name'] ?? 'N/A') ?></td>
-                                        <td><?= $item['quantity'] ?></td>
-                                        <td><?= number_format($item['price'], 0, ',', '.') ?> đ</td>
-                                        <td><?= number_format($item['price'] * $item['quantity'], 0, ',', '.') ?> đ</td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="row justify-content-end">
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <span>Tạm tính:</span>
-                                        <span><?= number_format($order['subtotal'], 0, ',', '.') ?> đ</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <span>Phí vận chuyển:</span>
-                                        <span><?= number_format($order['shipping_fee'], 0, ',', '.') ?> đ</span>
-                                    </div>
-                                    <?php if ($order['discount'] > 0): ?>
-                                        <div class="d-flex justify-content-between mb-2 text-success">
-                                            <span>Giảm giá:</span>
-                                            <span>-<?= number_format($order['discount'], 0, ',', '.') ?> đ</span>
-                                        </div>
-                                    <?php endif; ?>
-                                    <hr>
-                                    <div class="d-flex justify-content-between">
-                                        <strong>Tổng cộng:</strong>
-                                        <strong><?= number_format($order['total_amount'], 0, ',', '.') ?> đ</strong>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <?php if ($order['status'] === 'pending'): ?>
-                        <div class="mt-4">
-                            <form action="/duan1/index.php?act=order&page=cancel" method="POST"
-                                onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
-                                <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
-                                <button type="submit" class="btn btn-danger">Hủy đơn hàng</button>
-                            </form>
-                        </div>
-                    <?php endif; ?>
+                <div class="col-md-6">
+                    <h6>Thông tin đơn hàng</h6>
+                    <p><strong>Ngày đặt:</strong> <?= htmlspecialchars($order['created_at']) ?></p>
+                    <p><strong>Phương thức thanh toán:</strong> <?= htmlspecialchars($order['payment_method']) ?></p>
+                    <p><strong>Trạng thái thanh toán:</strong>
+                        <span class="badge <?= $order['payment_status'] === 'paid' ? 'bg-success' : 'bg-warning' ?>">
+                            <?= htmlspecialchars($order['payment_status']) ?>
+                        </span>
+                    </p>
                 </div>
+            </div>
+
+            <div class="table-responsive mt-4">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Màu sắc</th>
+                            <th>Kích thước</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($orderItems as $item): ?>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="/duan1/upload/<?= htmlspecialchars($item['product_image']) ?>"
+                                            alt="<?= htmlspecialchars($item['product_name']) ?>"
+                                            class="img-thumbnail me-2"
+                                            style="width: 50px; height: 50px; object-fit: cover;">
+                                        <span><?= htmlspecialchars($item['product_name']) ?></span>
+                                    </div>
+                                </td>
+                                <td><?= htmlspecialchars($item['color_name']) ?></td>
+                                <td><?= htmlspecialchars($item['size_name']) ?></td>
+                                <td><?= htmlspecialchars($item['quantity']) ?></td>
+                                <td><?= number_format($item['sale_price'] > 0 ? $item['sale_price'] : $item['price'], 0, ',', '.') ?> đ</td>
+                                <td><?= number_format($item['total_amount'], 0, ',', '.') ?> đ</td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5" class="text-end"><strong>Tổng tiền:</strong></td>
+                            <td><strong><?= number_format($order['amount'], 0, ',', '.') ?> đ</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="mt-4">
+                <a href="?act=order" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Quay lại danh sách
+                </a>
+                <?php if ($order['status'] === 'pending'): ?>
+                    <button type="button" class="btn btn-danger" onclick="confirmCancel(<?= $order['order_detail_id'] ?>)">
+                        <i class="fas fa-times"></i> Hủy đơn hàng
+                    </button>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function confirmCancel(orderId) {
+        if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {
+            window.location.href = `?act=order&page=cancel&id=${orderId}`;
+        }
+    }
+</script>
 
 <?php
 function getOrderStatusClass($status)
@@ -137,11 +108,11 @@ function getOrderStatusClass($status)
     switch ($status) {
         case 'pending':
             return 'bg-warning';
-        case 'processing':
+        case 'confirmed':
             return 'bg-info';
         case 'shipping':
             return 'bg-primary';
-        case 'completed':
+        case 'delivered':
             return 'bg-success';
         case 'cancelled':
             return 'bg-danger';
@@ -155,12 +126,12 @@ function getOrderStatusText($status)
     switch ($status) {
         case 'pending':
             return 'Chờ xác nhận';
-        case 'processing':
-            return 'Đang xử lý';
+        case 'confirmed':
+            return 'Đã xác nhận';
         case 'shipping':
             return 'Đang giao hàng';
-        case 'completed':
-            return 'Đã hoàn thành';
+        case 'delivered':
+            return 'Đã giao hàng';
         case 'cancelled':
             return 'Đã hủy';
         default:

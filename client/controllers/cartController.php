@@ -219,20 +219,24 @@ class CartController
             require_once __DIR__ . '/../models/orderModel.php';
             $orderModel = new OrderModel();
 
+            // Lấy thông tin người dùng
+            $user = $this->userModel->getUserById($user_id);
+
             $orderData = [
-                'shipping_name' => $_POST['name'] ?? '',
-                'shipping_phone' => $_POST['phone'] ?? '',
-                'shipping_address' => $_POST['address'] ?? '',
+                'name' => $_POST['name'] ?? $user['name'] ?? '',
+                'email' => $_POST['email'] ?? $user['email'] ?? '',
+                'phone' => $_POST['phone'] ?? $user['phone'] ?? '',
+                'address' => $_POST['address'] ?? $user['address'] ?? '',
                 'payment_method' => $_POST['payment_method'] ?? 'COD',
-                'subtotal' => $totalAmount,
-                'shipping_fee' => $shippingFee,
-                'discount' => $couponDiscount,
+                'shipping_id' => $_SESSION['selected_shipping'] ?? 1,
+                'coupon_id' => $_SESSION['applied_coupon']['coupon_id'] ?? null,
                 'total_amount' => $finalAmount,
+                'note' => $_POST['note'] ?? '',
                 'items' => []
             ];
 
             // Kiểm tra dữ liệu bắt buộc
-            if (empty($orderData['shipping_name']) || empty($orderData['shipping_phone']) || empty($orderData['shipping_address'])) {
+            if (empty($orderData['name']) || empty($orderData['phone']) || empty($orderData['address'])) {
                 $_SESSION['error'] = "Vui lòng điền đầy đủ thông tin giao hàng!";
                 header('Location: /duan1/index.php?act=cart&page=checkout');
                 exit();
@@ -243,34 +247,23 @@ class CartController
                 $orderData['items'][] = [
                     'product_id' => $item['product_id'],
                     'variant_id' => $item['variant_id'],
-                    'quantity' => $item['quantity'],
-                    'price' => $item['variant_sale_price'] ?? $item['variant_price'],
-                    'color_name' => $item['color_name'] ?? '',
-                    'size_name' => $item['size_name'] ?? ''
+                    'quantity' => $item['quantity']
                 ];
             }
 
             $orderId = $orderModel->createOrder($user_id, $orderData);
 
             if ($orderId) {
-                // Xóa giỏ hàng sau khi đặt hàng thành công
-                $this->cartModel->clearCart($user_id);
-
-                // Lưu thông tin đơn hàng vào session
-                $_SESSION['last_order'] = [
-                    'order_id' => $orderId,
-                    'total_amount' => $finalAmount,
-                    'payment_method' => $orderData['payment_method']
-                ];
-
                 // Xóa các session không cần thiết
                 unset($_SESSION['shipping_fee']);
                 unset($_SESSION['coupon_discount']);
                 unset($_SESSION['applied_coupon']);
                 unset($_SESSION['coupon_message']);
+                unset($_SESSION['selected_shipping']);
 
                 $_SESSION['success'] = "Đặt hàng thành công!";
-                header('Location: /duan1/index.php?act=order&page=success');
+                $_SESSION['last_order'] = $orderId;
+                header('Location: /duan1/index.php?act=cart&page=process_checkout');
                 exit();
             }
         } catch (Exception $e) {

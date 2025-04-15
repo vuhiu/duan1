@@ -1,74 +1,69 @@
 <?php
-class OrderModel
+require_once __DIR__ . '/../../commons/BaseModel.php';
+
+class OrderModel extends BaseModel
 {
-    private $conn;
-
-    public function __construct()
-    {
-        global $conn;
-        $this->conn = $conn;
-    }
-
     public function createOrder($userId, $orderData)
     {
         try {
             $this->conn->beginTransaction();
 
-            // Tạo đơn hàng mới
+            // Tạo order_details trước
             $stmt = $this->conn->prepare("
-                INSERT INTO orders (
-                    user_id, shipping_name, shipping_phone, shipping_address,
-                    payment_method, payment_status, order_status, subtotal,
-                    shipping_fee, discount, total_amount, created_at
+                INSERT INTO order_details (
+                    name, email, phone, address,
+                    amount, note, user_id, coupon_id,
+                    shipping_id, payment_method, status,
+                    payment_status, created_at
                 ) VALUES (
-                    :user_id, :shipping_name, :shipping_phone, :shipping_address,
-                    :payment_method, 'pending', 'pending', :subtotal,
-                    :shipping_fee, :discount, :total_amount, NOW()
+                    :name, :email, :phone, :address,
+                    :amount, :note, :user_id, :coupon_id,
+                    :shipping_id, :payment_method, 'pending',
+                    'unpaid', NOW()
                 )
             ");
 
             $result = $stmt->execute([
+                'name' => $orderData['name'],
+                'email' => $orderData['email'],
+                'phone' => $orderData['phone'],
+                'address' => $orderData['address'],
+                'amount' => $orderData['total_amount'],
+                'note' => $orderData['note'] ?? '',
                 'user_id' => $userId,
-                'shipping_name' => $orderData['shipping_name'],
-                'shipping_phone' => $orderData['shipping_phone'],
-                'shipping_address' => $orderData['shipping_address'],
-                'payment_method' => $orderData['payment_method'],
-                'subtotal' => $orderData['subtotal'],
-                'shipping_fee' => $orderData['shipping_fee'],
-                'discount' => $orderData['discount'],
-                'total_amount' => $orderData['total_amount']
+                'coupon_id' => $orderData['coupon_id'] ?? 0,
+                'shipping_id' => $orderData['shipping_id'],
+                'payment_method' => $orderData['payment_method']
             ]);
 
             if (!$result) {
-                throw new Exception("Không thể tạo đơn hàng");
+                throw new Exception("Không thể tạo chi tiết đơn hàng");
             }
 
-            $orderId = $this->conn->lastInsertId();
+            $orderDetailId = $this->conn->lastInsertId();
 
-            // Thêm chi tiết đơn hàng
+            // Thêm các sản phẩm vào bảng orders
             $stmt = $this->conn->prepare("
-                INSERT INTO order_items (
-                    order_id, product_id, variant_id, quantity,
-                    price, color_name, size_name
+                INSERT INTO orders (
+                    user_id, product_id, variant_id,
+                    order_detail_id, quantity, created_at
                 ) VALUES (
-                    :order_id, :product_id, :variant_id, :quantity,
-                    :price, :color_name, :size_name
+                    :user_id, :product_id, :variant_id,
+                    :order_detail_id, :quantity, NOW()
                 )
             ");
 
             foreach ($orderData['items'] as $item) {
                 $result = $stmt->execute([
-                    'order_id' => $orderId,
+                    'user_id' => $userId,
                     'product_id' => $item['product_id'],
                     'variant_id' => $item['variant_id'],
-                    'quantity' => $item['quantity'],
-                    'price' => $item['price'],
-                    'color_name' => $item['color_name'],
-                    'size_name' => $item['size_name']
+                    'order_detail_id' => $orderDetailId,
+                    'quantity' => $item['quantity']
                 ]);
 
                 if (!$result) {
-                    throw new Exception("Không thể thêm chi tiết đơn hàng");
+                    throw new Exception("Không thể thêm sản phẩm vào đơn hàng");
                 }
 
                 // Cập nhật số lượng sản phẩm
@@ -77,8 +72,11 @@ class OrderModel
                 }
             }
 
+            // Xóa giỏ hàng sau khi đặt hàng thành công
+            $this->clearCart($userId);
+
             $this->conn->commit();
-            return $orderId;
+            return $orderDetailId;
         } catch (Exception $e) {
             $this->conn->rollBack();
             error_log("Error creating order: " . $e->getMessage());
@@ -92,7 +90,7 @@ class OrderModel
             $stmt = $this->conn->prepare("
                 UPDATE product_variants 
                 SET quantity = quantity - :quantity 
-                WHERE variant_id = :variant_id 
+                WHERE product_variant_id = :variant_id 
                 AND quantity >= :check_quantity
             ");
 
@@ -115,16 +113,36 @@ class OrderModel
 
     private function clearCart($userId)
     {
-        $stmt = $this->conn->prepare("DELETE FROM cart WHERE user_id = :user_id");
-        return $stmt->execute(['user_id' => $userId]);
+        try {
+            // Lấy cart_id của user
+            $stmt = $this->conn->prepare("SELECT id FROM carts WHERE user_id = :user_id");
+            $stmt->execute(['user_id' => $userId]);
+            $cart = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($cart) {
+                // Xóa cart_items trước
+                $stmt = $this->conn->prepare("DELETE FROM cart_items WHERE cart_id = :cart_id");
+                $stmt->execute(['cart_id' => $cart['id']]);
+
+                // Sau đó xóa cart
+                $stmt = $this->conn->prepare("DELETE FROM carts WHERE id = :cart_id");
+                $stmt->execute(['cart_id' => $cart['id']]);
+            }
+
+            return true;
+        } catch (Exception $e) {
+            error_log("Error clearing cart: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function getOrdersByUserId($userId)
     {
         $stmt = $this->conn->prepare("
-            SELECT * FROM orders 
-            WHERE user_id = :user_id 
-            ORDER BY order_date DESC
+            SELECT DISTINCT od.*
+            FROM order_details od
+            WHERE od.user_id = :user_id 
+            ORDER BY od.created_at DESC
         ");
         $stmt->execute(['user_id' => $userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -132,77 +150,188 @@ class OrderModel
 
     public function getOrderById($orderId, $userId = null)
     {
-        $sql = "SELECT * FROM orders WHERE order_id = :order_id";
+        $sql = "SELECT od.*, u.name as user_name, u.email as user_email, u.phone as user_phone,
+                       c.coupon_code, c.coupon_value, c.coupon_type,
+                       s.shipping_name, s.shipping_prices
+                FROM order_details od
+                LEFT JOIN users u ON od.user_id = u.user_id
+                LEFT JOIN coupons c ON od.coupon_id = c.coupon_id
+                LEFT JOIN ships s ON od.shipping_id = s.ship_id
+                WHERE od.order_detail_id = ?";
+
         if ($userId) {
-            $sql .= " AND user_id = :user_id";
+            $sql .= " AND od.user_id = ?";
+            return $this->getOne($sql, [$orderId, $userId]);
         }
 
-        $stmt = $this->conn->prepare($sql);
-        $params = ['order_id' => $orderId];
-        if ($userId) {
-            $params['user_id'] = $userId;
-        }
-
-        $stmt->execute($params);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $this->getOne($sql, [$orderId]);
     }
 
     public function getOrderItems($orderId)
     {
-        $stmt = $this->conn->prepare("
-            SELECT oi.*, p.name, p.image
-            FROM order_items oi
-            JOIN products p ON oi.product_id = p.product_id
-            WHERE oi.order_id = :order_id
-        ");
-        $stmt->execute(['order_id' => $orderId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $sql = "SELECT o.*, 
+                       p.name as product_name, 
+                       p.image as product_image,
+                       pv.price, pv.sale_price,
+                       vc.color_name, vs.size_name,
+                       CASE 
+                           WHEN pv.sale_price > 0 THEN pv.sale_price * o.quantity
+                           ELSE pv.price * o.quantity
+                       END as total_amount
+                FROM orders o
+                JOIN products p ON o.product_id = p.product_id
+                LEFT JOIN product_variants pv ON o.variant_id = pv.product_variant_id
+                LEFT JOIN variant_colors vc ON pv.variant_color_id = vc.variant_color_id
+                LEFT JOIN variant_size vs ON pv.variant_size_id = vs.variant_size_id
+                WHERE o.order_detail_id = ?";
+        return $this->getAll($sql, [$orderId]);
     }
 
     public function cancelOrder($orderId, $userId)
     {
         try {
+            error_log("Starting cancelOrder in model - orderId: $orderId, userId: $userId");
+
             $this->conn->beginTransaction();
+            error_log("Transaction started");
 
             // Kiểm tra đơn hàng
             $order = $this->getOrderById($orderId, $userId);
-            if (!$order || $order['status'] !== 'pending') {
-                throw new Exception("Không thể hủy đơn hàng này.");
+            error_log("Order found: " . json_encode($order));
+
+            if (!$order) {
+                error_log("Order not found");
+                throw new Exception("Không tìm thấy đơn hàng.");
             }
+
+            if ($order['status'] !== 'pending') {
+                error_log("Invalid order status: " . $order['status']);
+                throw new Exception("Chỉ có thể hủy đơn hàng ở trạng thái chờ xác nhận.");
+            }
+
+            // Lấy danh sách sản phẩm trong đơn hàng
+            $orderItems = $this->getOrderItems($orderId);
+            error_log("Order items found: " . json_encode($orderItems));
 
             // Cập nhật trạng thái đơn hàng
             $stmt = $this->conn->prepare("
-                UPDATE orders 
-                SET status = 'cancelled', 
-                    updated_at = NOW() 
-                WHERE order_id = :order_id 
+                UPDATE order_details 
+                SET status = 'cancelled',
+                    updated_at = NOW()
+                WHERE order_detail_id = :order_id 
                 AND user_id = :user_id
+                AND status = 'pending'
             ");
-            $stmt->execute([
+
+            $params = [
                 'order_id' => $orderId,
                 'user_id' => $userId
-            ]);
+            ];
+            error_log("Executing update with params: " . json_encode($params));
+
+            $stmt->execute($params);
+            $updatedRows = $stmt->rowCount();
+            error_log("Updated rows: $updatedRows");
+
+            if ($updatedRows === 0) {
+                error_log("No rows updated in order_details");
+                throw new Exception("Không thể cập nhật trạng thái đơn hàng.");
+            }
 
             // Hoàn lại số lượng sản phẩm
-            $orderItems = $this->getOrderItems($orderId);
             foreach ($orderItems as $item) {
+                error_log("Processing item: " . json_encode($item));
+
+                // Kiểm tra số lượng hiện tại
+                $checkStmt = $this->conn->prepare("
+                    SELECT quantity 
+                    FROM product_variants 
+                    WHERE product_variant_id = :variant_id
+                ");
+                $checkStmt->execute(['variant_id' => $item['variant_id']]);
+                $currentQuantity = $checkStmt->fetchColumn();
+                error_log("Current quantity for variant {$item['variant_id']}: $currentQuantity");
+
                 $stmt = $this->conn->prepare("
                     UPDATE product_variants 
-                    SET quantity = quantity + :quantity 
-                    WHERE variant_id = :variant_id
+                    SET quantity = quantity + :quantity,
+                        updated_at = NOW()
+                    WHERE product_variant_id = :variant_id
                 ");
-                $stmt->execute([
+
+                $params = [
                     'variant_id' => $item['variant_id'],
                     'quantity' => $item['quantity']
-                ]);
+                ];
+                error_log("Updating product quantity with params: " . json_encode($params));
+
+                $stmt->execute($params);
+                $updatedRows = $stmt->rowCount();
+                error_log("Updated rows for variant {$item['variant_id']}: $updatedRows");
+
+                if ($updatedRows === 0) {
+                    error_log("Failed to update quantity for variant {$item['variant_id']}");
+                    throw new Exception("Không thể hoàn lại số lượng sản phẩm.");
+                }
             }
+
+            error_log("All updates successful, committing transaction");
+            $this->conn->commit();
+            return true;
+        } catch (Exception $e) {
+            error_log("Error in cancelOrder: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            $this->conn->rollBack();
+            throw $e;
+        }
+    }
+
+    public function updateStatus($orderId, $status)
+    {
+        $validStatuses = ['pending', 'confirmed', 'shipping', 'delivered', 'cancelled'];
+        if (!in_array($status, $validStatuses)) {
+            throw new Exception("Trạng thái đơn hàng không hợp lệ!");
+        }
+
+        $sql = "UPDATE order_details SET status = ? WHERE order_detail_id = ?";
+        return $this->update($sql, [$status, $orderId]);
+    }
+
+    public function updatePaymentStatus($orderId, $paymentStatus)
+    {
+        $validStatuses = ['unpaid', 'paid'];
+        if (!in_array($paymentStatus, $validStatuses)) {
+            throw new Exception("Trạng thái thanh toán không hợp lệ!");
+        }
+
+        $sql = "UPDATE order_details SET payment_status = ? WHERE order_detail_id = ?";
+        return $this->update($sql, [$paymentStatus, $orderId]);
+    }
+
+    public function deleteOrder($orderId, $userId)
+    {
+        try {
+            $this->conn->beginTransaction();
+
+            // Kiểm tra đơn hàng tồn tại và đã bị hủy
+            $order = $this->getOrderById($orderId, $userId);
+            if (!$order || $order['status'] !== 'cancelled') {
+                throw new Exception("Không thể xóa đơn hàng này.");
+            }
+
+            // Xóa các bản ghi trong bảng orders
+            $stmt = $this->conn->prepare("DELETE FROM orders WHERE order_detail_id = ? AND user_id = ?");
+            $stmt->execute([$orderId, $userId]);
+
+            // Xóa bản ghi trong bảng order_details
+            $stmt = $this->conn->prepare("DELETE FROM order_details WHERE order_detail_id = ? AND user_id = ?");
+            $stmt->execute([$orderId, $userId]);
 
             $this->conn->commit();
             return true;
         } catch (Exception $e) {
             $this->conn->rollBack();
-            error_log("Error cancelling order: " . $e->getMessage());
-            return false;
+            throw $e;
         }
     }
 }

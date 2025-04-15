@@ -2,17 +2,39 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-try {
-    $host = "localhost";
-    $dbname = "du_an_1";
-    $username = "root";
-    $password = "";
+if (!defined('DB_HOST')) {
+    define('DB_HOST', 'localhost');
+}
 
-    $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+if (!defined('DB_NAME')) {
+    define('DB_NAME', 'du_an_1');
+}
+
+if (!defined('DB_USER')) {
+    define('DB_USER', 'root');
+}
+
+if (!defined('DB_PASS')) {
+    define('DB_PASS', '');
+}
+
+if (!defined('DB_CHARSET')) {
+    define('DB_CHARSET', 'utf8mb4');
+}
+
+try {
+    $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
+    $options = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES " . DB_CHARSET
+    ];
+
+    $conn = new PDO($dsn, DB_USER, DB_PASS, $options);
 } catch (PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    error_log("Database Connection Error: " . $e->getMessage());
+    die("Không thể kết nối đến cơ sở dữ liệu. Vui lòng thử lại sau.");
 }
 // if ($conn) {
 //     echo "Kết nối cơ sở dữ liệu thành công!";

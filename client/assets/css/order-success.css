@@ -1,0 +1,186 @@
+.section {
+  width: 100%;
+  min-height: auto;
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.row {
+  margin: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.col-12,
+.col-md-8,
+.col-lg-6 {
+  padding: 0;
+  width: 100%;
+}
+
+.success-card {
+  background: #fff;
+  border-radius: 0;
+  box-shadow: none;
+  width: 100%;
+  margin: 20px auto;
+}
+
+.card-body {
+  padding: 15px !important;
+  text-align: center;
+  margin-left: 200px;
+}
+
+.breadcrumb-wrapper {
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.breadcrumb {
+  background: transparent;
+  padding: 8px 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb-item a {
+  color: #2b2d42;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.breadcrumb-item.active {
+  color: #d10024;
+  font-size: 14px;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: "›";
+  color: #8d99ae;
+}
+
+.success-check {
+  font-size: 40px;
+  text-align: center;
+  margin: 0 auto;
+  margin-bottom: 10px;
+}
+
+.success-check i {
+  display: inline-block;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: none;
+  padding: 5px;
+}
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+p {
+  font-size: 14px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.info-container {
+  max-width: 400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-item label {
+  color: #8d99ae;
+  margin: 0;
+  font-size: 14px;
+}
+
+.info-item span {
+  font-size: 14px;
+}
+
+.btn-custom {
+  display: inline-block;
+  padding: 6px 12px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent;
+  font-size: 13px;
+  line-height: 1.5;
+  border-radius: 0;
+  transition: all 0.3s;
+  margin: 0 3px;
+}
+
+.primary-custom {
+  background: #d10024;
+  border-color: #d10024;
+  color: #fff !important;
+}
+
+.primary-custom:hover {
+  background: #e4002b;
+  color: #fff !important;
+  text-decoration: none;
+}
+
+.outline-custom {
+  background: transparent;
+  border-color: #d10024;
+  color: #d10024 !important;
+}
+
+.outline-custom:hover {
+  background: #d10024;
+  color: #fff !important;
+  text-decoration: none;
+}
+
+.action-buttons {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  width: 100%;
+}
+
+.badge {
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 0;
+  font-size: 12px;
+  background: #6c757d;
+}

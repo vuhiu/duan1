@@ -114,12 +114,7 @@ $user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : "Hiếu";
                                 <p>Danh sách đơn hàng</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="index.php?act=order&page=edit&order_id=1" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Chỉnh sửa đơn hàng</p>
-                            </a>
-                        </li>
+                       
 
                     </ul>
                 </li>
@@ -165,12 +160,7 @@ $user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : "Hiếu";
                                 <p>Danh sách khách hàng</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="index.php?act=customer&page=edit&user_id=1" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Sửa thông tin khách hàng </p>
-                            </a>
-                        </li>
+                        
                     </ul>
                 </li>
             </ul>

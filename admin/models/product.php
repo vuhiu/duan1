@@ -5,8 +5,13 @@ class Product {
     private $conn;
 
     public function __construct() {
-        global $conn;
+        global $conn;// Sử dụng biến toàn cục $conn
         $this->conn = $conn;
+    }
+
+    // Getter để trả về kết nối cơ sở dữ liệu
+    public function getConnection() {
+        return $this->conn;
     }
 
     // Get all colors
@@ -129,14 +134,17 @@ class Product {
     }
 
     // Save a product variant
-    public function saveVariant($product_id, $color_id, $size_id) {
-        $sql = "INSERT INTO product_variants (product_id, variant_color_id, variant_size_id)
-                VALUES (:product_id, :color_id, :size_id)";
+    public function saveVariant($product_id, $color_id, $size_id, $price, $sale_price) {
+        $sql = "INSERT INTO product_variants (product_id, variant_color_id, variant_size_id, price, sale_price, quantity)
+                VALUES (:product_id, :color_id, :size_id, :price, :sale_price, :quantity)";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([
             ':product_id' => $product_id,
             ':color_id' => $color_id,
-            ':size_id' => $size_id
+            ':size_id' => $size_id,
+            ':price' => $price,
+            ':sale_price' => $sale_price,
+            ':quantity' => 0
         ]);
     }
 
@@ -214,6 +222,24 @@ class Product {
         $sql = "DELETE FROM product_galleries WHERE product_gallery_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$gallery_id]);
+    }
+
+    // Kiểm tra xem danh mục có sản phẩm nào không
+    public function hasProductsInCategory($category_id) {
+        $sql = "SELECT COUNT(*) FROM products WHERE category_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$category_id]);
+        $count = $stmt->fetchColumn();
+        return $count > 0;
+    }
+
+    // Kiểm tra xem biến thể có tồn tại trong đơn hàng nào không
+    public function isVariantInOrder($variant_id) {
+        $sql = "SELECT COUNT(*) FROM order_items WHERE variant_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$variant_id]);
+        $count = $stmt->fetchColumn();
+        return $count > 0;
     }
 }
 ?>

@@ -1,58 +1,89 @@
 <?php
-$ROOT_URL = "/duan1";
-$CONTENT_URL = "$ROOT_URL/content";
-$ADMIN_URL = "$ROOT_URL/admin";
-$CLIENT_URL = "$ROOT_URL/client";
+if (!isset($_SESSION)) {
+    session_start();
+}
 
-// Lấy thông tin đơn hàng từ session
-$orderInfo = $_SESSION['last_order'] ?? null;
+if (!isset($_SESSION['last_order'])) {
+    header('Location: /duan1/index.php');
+    exit();
+}
+
+require_once __DIR__ . '/../../models/orderModel.php';
+$orderModel = new OrderModel();
+$order = $orderModel->getOrderById($_SESSION['last_order'], $_SESSION['user_id']);
+
+if (!$order) {
+    header('Location: /duan1/index.php');
+    exit();
+}
+
+// Đảm bảo các giá trị tồn tại
+$orderId = $order['order_id'] ?? $_SESSION['last_order'];
+$createdAt = $order['created_at'] ?? date('Y-m-d H:i:s');
+$totalAmount = $order['amount'] ?? 0;
+$orderStatus = $order['order_status'] ?? 'pending';
 ?>
 
-<!DOCTYPE html>
-<html lang="vi">
+<!-- Link to external CSS -->
+<link rel="stylesheet" href="/duan1/client/assets/css/order-success.css">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đặt hàng thành công</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-</head>
-
-<body>
-    <div class="container py-5">
+<!-- SECTION -->
+<div class="section">
+    <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card border-success">
-                    <div class="card-body text-center">
-                        <div class="mb-4">
-                            <i class="fas fa-check-circle text-success" style="font-size: 64px;"></i>
+            <div class="col-12">
+                <div class="breadcrumb-wrapper text-center mb-4">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-center">
+                            <li class="breadcrumb-item"><a href="/duan1/index.php">Trang chủ</a></li>
+                            <li class="breadcrumb-item"><a href="/duan1/index.php?act=cart&page=list">Giỏ hàng</a></li>
+                            <li class="breadcrumb-item active">Đặt hàng thành công</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <div class="col-md-8 col-lg-6">
+                <div class="success-card">
+                    <div class="card-body text-center p-5">
+                        <div class="success-check mb-4">
+                            <i class="fas fa-check-circle text-danger"></i>
                         </div>
-                        <h2 class="card-title text-success mb-4">Đặt hàng thành công!</h2>
-                        <?php if ($orderInfo): ?>
-                            <div class="text-start mb-4">
-                                <h4>Thông tin đơn hàng #<?= $orderInfo['order_id'] ?></h4>
-                                <p><strong>Ngày đặt:</strong> <?= date('d/m/Y H:i', strtotime($orderInfo['order_date'])) ?></p>
-                                <p><strong>Tổng tiền:</strong> <?= number_format($orderInfo['total_amount'], 0, ',', '.') ?> đ</p>
-                                <p><strong>Phương thức thanh toán:</strong> <?= $orderInfo['payment_method'] ?></p>
+                        <h2 class="mb-3">Đặt hàng thành công!</h2>
+                        <p class="text-muted mb-4">Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất.</p>
+
+                        <div class="order-info mb-4">
+                            <div class="info-container">
+                                <div class="info-item">
+                                    <label>Mã đơn hàng:</label>
+                                    <span class="fw-bold">#<?= htmlspecialchars((string)$orderId) ?></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Ngày đặt:</label>
+                                    <span><?= date('d/m/Y H:i', strtotime($createdAt)) ?></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Tổng tiền:</label>
+                                    <span class="text-danger fw-bold"><?= number_format((float)$totalAmount, 0, ',', '.') ?> đ</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Trạng thái:</label>
+                                    <span class="badge bg-warning">Chờ xác nhận</span>
+                                </div>
                             </div>
-                        <?php endif; ?>
-                        <div class="alert alert-info">
-                            Chúng tôi sẽ sớm liên hệ với bạn để xác nhận đơn hàng.
-                            Vui lòng kiểm tra email để biết thêm chi tiết.
                         </div>
-                        <div class="mt-4">
-                            <a href="/duan1/index.php?act=order&page=detail&id=<?= $orderInfo['order_id'] ?>"
-                                class="btn btn-primary me-2">Xem chi tiết đơn hàng</a>
-                            <a href="/duan1/index.php" class="btn btn-secondary">Tiếp tục mua sắm</a>
+
+                        <div class="action-buttons">
+                            <a href="/duan1/index.php?act=order&page=detail&id=<?= htmlspecialchars((string)$orderId) ?>" class="btn-custom primary-custom">
+                                <i class="fas fa-eye"></i> Xem chi tiết đơn hàng
+                            </a>
+                            <a href="/duan1/index.php" class="btn-custom outline-custom">
+                                <i class="fas fa-shopping-cart"></i> Tiếp tục mua sắm
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
-</body>
-
-</html>
+</div>
+<!-- /SECTION -->

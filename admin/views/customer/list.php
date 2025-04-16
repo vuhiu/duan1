@@ -33,7 +33,7 @@
                             <td><?php echo $customer['email']; ?></td>
                             <td><?php echo $customer['phone']; ?></td>
                             <td><?php echo $customer['address']; ?></td>
-                            <td><?php echo date('d/m/Y H:i', strtotime($customer['created_at'])); ?></td>
+                            <td><?php echo $customer['created_at'] ? date('d/m/Y H:i', strtotime($customer['created_at'])) : 'Chưa có dữ liệu'; ?></td>
                             <td>
                                 <a href="/duan1/admin/?act=customer&page=detail&user_id=<?php echo $customer['user_id']; ?>"
                                     class="btn btn-info btn-sm">Xem</a>

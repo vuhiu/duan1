@@ -14,7 +14,7 @@ class Customer
     // Lấy danh sách khách hàng
     public function getAllCustomers()
     {
-        $sql = "SELECT * FROM users WHERE role = 'client' ORDER BY created_at DESC";
+        $sql = "SELECT * FROM users WHERE role_id = 1 ORDER BY created_at DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

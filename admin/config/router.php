@@ -17,13 +17,14 @@ require_once __DIR__ . '/../controllers/categoryController.php';
 require_once __DIR__ . '/../controllers/OrderAdminController.php';
 require_once __DIR__ . '/../controllers/couponController.php';
 require_once __DIR__ . '/../controllers/CustomerAdminController.php';
+require_once __DIR__ . '/../controllers/DashboardController.php';
 require_once __DIR__ . '/../../client/models/ProductModel.php';
 require_once __DIR__ . '/../models/product.php';
 require_once __DIR__ . '/../models/category.php';
 require_once __DIR__ . '/../../client/controllers/ClientProductController.php';
 
-use Client\Controllers\ClientProductController; // Import lớp ClientProductController
-use Client\Models\ClientProduct; // Import lớp ClientProduct
+use Client\Models\ClientProduct;
+use Client\Controllers\ClientProductController;
 
 // require_once __DIR__ . '/../../client/models/cart.php'
 
@@ -52,10 +53,12 @@ $categoryController = new CategoryController();
 $orderController = new OrderAdminController();
 $couponController = new CouponController();
 $customerController = new CustomerAdminController();
+$dashboardController = new DashboardController($conn);
 
 switch ($act) {
-    case 'search':
-        $controller->search();
+    case '':
+    case 'dashboard':
+        $dashboardController->index();
         break;
 
     case 'sanpham':
@@ -63,178 +66,117 @@ switch ($act) {
             case 'list':
                 $productController->getList();
                 break;
-
             case 'them':
                 $productController->addProduct();
                 break;
-
             case 'sua':
                 $productController->editProduct();
                 break;
-
             case 'update':
                 $productController->updateProduct();
                 break;
-
             case 'xoa':
                 $productController->deleteProduct();
                 break;
-
             default:
-                echo "Không tìm thấy trang!";
+                $productController->getList();
                 break;
         }
         break;
-    case 'danhmuc': // Category management
+
+    case 'danhmuc':
         switch ($page) {
             case 'list':
                 $categoryController->getList();
                 break;
-
-            case 'add':
+            case 'them':
                 $categoryController->addCategory();
                 break;
-
-            case 'edit':
+            case 'sua':
                 $categoryController->editCategory();
                 break;
-
             case 'update':
                 $categoryController->updateCategory();
                 break;
-
-            case 'delete':
+            case 'xoa':
                 $categoryController->deleteCategory();
                 break;
-
             default:
-                echo "Không tìm thấy trang!";
+                $categoryController->getList();
                 break;
         }
         break;
 
-    case 'cart': // Cart management
+    case 'donhang':
         switch ($page) {
             case 'list':
-                $user_id = $_SESSION['user_id'] ?? 0; // Get user_id from session
-                $cartController->getCart($user_id);
-                break;
-
-            case 'add_cart': // Thêm sản phẩm vào giỏ hàng
-                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    $cartController->addToCart();
-                } else {
-                    echo "❌ Phương thức không hợp lệ!";
-                }
-                break;
-
-            case 'update_cart': // Cập nhật số lượng sản phẩm
-                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    $cartController->updateCartItem();
-                } else {
-                    echo "❌ Phương thức không hợp lệ!";
-                }
-                break;
-
-            case 'delete_cart': // Xóa sản phẩm khỏi giỏ hàng
-                if (isset($_GET['cart_item_id'])) {
-                    $cartController->deleteCartItem();
-                } else {
-                    echo "❌ Không tìm thấy sản phẩm để xóa!";
-                }
-                break;
-
-            default:
-                echo "Không tìm thấy trang!";
-                break;
-        }
-        break;
-
-    case 'order': // Order management
-        switch ($page) {
-            case 'list': // Display order list
                 $orderController->getList();
                 break;
-
-            case 'edit': // Edit order
-                $orderController->editOrder();
+            case 'detail':
+                $orderController->getDetail();
                 break;
-
-            case 'update': // Update order status
-                $orderController->updateOrder();
+            case 'update':
+                $orderController->updateStatus();
                 break;
-
-            case 'history': // Order history
-                $userId = $_SESSION['user_id'] ?? 0; // Get user_id from session
-                $orderController->getHistory($userId);
-                break;
-
-            case 'status': // Order status
-                $orderId = $_GET['order_id'] ?? 0;
-                $orderController->getOrderStatus($orderId);
-                break;
-
             default:
-                echo "Không tìm thấy trang!";
+                $orderController->getList();
                 break;
         }
         break;
 
-    case 'coupon': // Coupon management
+    case 'magiamgia':
         switch ($page) {
-            case 'list': // Display coupon list
+            case 'list':
                 $couponController->getList();
                 break;
-
-            case 'add': // Add a new coupon
+            case 'them':
                 $couponController->addCoupon();
                 break;
-
-            case 'edit': // Edit a coupon
+            case 'sua':
                 $couponController->editCoupon();
                 break;
-
-            case 'update': // Update a coupon
+            case 'update':
                 $couponController->updateCoupon();
                 break;
-
-            case 'delete': // Delete a coupon
+            case 'xoa':
                 $couponController->deleteCoupon();
                 break;
-
             default:
-                echo "Không tìm thấy trang!";
+                $couponController->getList();
                 break;
         }
         break;
 
-    default:
-        echo "Module không hợp lệ!";
-        break;
-    case 'customer': // Quản lý khách hàng
+    case 'khachhang':
         switch ($page) {
-            case 'list': // Hiển thị danh sách khách hàng
+            case 'list':
                 $customerController->index();
                 break;
-
-            case 'detail': // Hiển thị chi tiết khách hàng
-                $user_id = $_GET['user_id'] ?? 0;
-                $customerController->detail($user_id);
+            case 'detail':
+                $customerController->detail();
                 break;
-
-            case 'edit': // Hiển thị form sửa thông tin khách hàng
-                $user_id = $_GET['user_id'] ?? 0;
-                $customerController->edit($user_id);
-                break;
-
-            case 'update': // Cập nhật thông tin khách hàng
-                $user_id = $_GET['user_id'] ?? 0;
-                $customerController->update($user_id);
-                break;
-
             default:
-                echo "Không tìm thấy trang!";
+                $customerController->index();
                 break;
         }
+        break;
+    
+        case 'orders':
+            require_once __DIR__ . '/../controllers/orderController.php';
+            $orderController = new OrderController();
+            if (isset($_GET['id'])) {
+                $orderController->detail();
+            } else {
+                $orderController->index();
+            }
+            break;
+        case 'orders/cancel':
+            require_once __DIR__ . '/../controllers/orderController.php';
+            $orderController = new OrderController();
+            $orderController->cancel();
+            break;
+
+    default:
+        $dashboardController->index();
         break;
 }

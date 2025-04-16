@@ -188,12 +188,12 @@
                                                 <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
                                             </div>
                                         </div>
-                                    </div>
+                                </div>
                                     <?php endforeach; ?>
                                 </div>
                                 <div id="slick-nav-2" class="products-slick-nav"></div>
-                            </div>
-                        </div>
+                                </div>
+                                </div>
                     </div>
                 </div>
             </div>

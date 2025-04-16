@@ -1,14 +1,16 @@
 <?php
+namespace Client\Controllers;
 
+use Client\Models\ClientProduct;
 require_once __DIR__ . '/../../client/models/ProductModel.php';
 
 class ClientProductController
 {
     private $productModel;
 
-    public function __construct($conn)
+    public function __construct(ClientProduct $productModel)
     {
-        $this->productModel = new ClientProduct($conn);
+        $this->productModel = $productModel;
     }
 
     // Get all products

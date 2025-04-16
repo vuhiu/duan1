@@ -13,72 +13,58 @@ class OrderModel
     {
         try {
             $this->conn->beginTransaction();
-
-            // Tạo đơn hàng mới
+    
+            // Tạo chi tiết đơn hàng trong bảng order_details
+            $stmt = $this->conn->prepare("
+                INSERT INTO order_details (
+                    name, phone, address, amount, note, user_id, coupon_id, shipping_id,
+                    payment_method, status, payment_status, created_at
+                ) VALUES (
+                    :name, :phone, :address, :amount, :note, :user_id, :coupon_id, :shipping_id,
+                    :payment_method, 'pending', 'unpaid', NOW()
+                )
+            ");
+    
+            $stmt->execute([
+                'name' => $orderData['shipping_name'],
+                'phone' => $orderData['shipping_phone'],
+                'address' => $orderData['shipping_address'],
+                'amount' => $orderData['total_amount'],
+                'note' => $orderData['note'],
+                'user_id' => $userId,
+                'coupon_id' => $orderData['coupon_id'],
+                'shipping_id' => $orderData['shipping_id'],
+                'payment_method' => $orderData['payment_method']
+            ]);
+    
+            $orderDetailId = $this->conn->lastInsertId();
+    
+            // Tạo đơn hàng trong bảng orders
             $stmt = $this->conn->prepare("
                 INSERT INTO orders (
-                    user_id, shipping_name, shipping_phone, shipping_address,
-                    payment_method, payment_status, order_status, subtotal,
-                    shipping_fee, discount, total_amount, created_at
+                    user_id, product_id, variant_id, order_detail_id, quantity, created_at
                 ) VALUES (
-                    :user_id, :shipping_name, :shipping_phone, :shipping_address,
-                    :payment_method, 'pending', 'pending', :subtotal,
-                    :shipping_fee, :discount, :total_amount, NOW()
+                    :user_id, :product_id, :variant_id, :order_detail_id, :quantity, NOW()
                 )
             ");
-
-            $result = $stmt->execute([
-                'user_id' => $userId,
-                'shipping_name' => $orderData['shipping_name'],
-                'shipping_phone' => $orderData['shipping_phone'],
-                'shipping_address' => $orderData['shipping_address'],
-                'payment_method' => $orderData['payment_method'],
-                'subtotal' => $orderData['subtotal'],
-                'shipping_fee' => $orderData['shipping_fee'],
-                'discount' => $orderData['discount'],
-                'total_amount' => $orderData['total_amount']
-            ]);
-
-            if (!$result) {
-                throw new Exception("Không thể tạo đơn hàng");
-            }
-
-            $orderId = $this->conn->lastInsertId();
-
-            // Thêm chi tiết đơn hàng
-            $stmt = $this->conn->prepare("
-                INSERT INTO order_items (
-                    order_id, product_id, variant_id, quantity,
-                    price, color_name, size_name
-                ) VALUES (
-                    :order_id, :product_id, :variant_id, :quantity,
-                    :price, :color_name, :size_name
-                )
-            ");
-
+    
             foreach ($orderData['items'] as $item) {
-                $result = $stmt->execute([
-                    'order_id' => $orderId,
+                $stmt->execute([
+                    'user_id' => $userId,
                     'product_id' => $item['product_id'],
                     'variant_id' => $item['variant_id'],
-                    'quantity' => $item['quantity'],
-                    'price' => $item['price'],
-                    'color_name' => $item['color_name'],
-                    'size_name' => $item['size_name']
+                    'order_detail_id' => $orderDetailId,
+                    'quantity' => $item['quantity']
                 ]);
-
-                if (!$result) {
-                    throw new Exception("Không thể thêm chi tiết đơn hàng");
-                }
-
+    
                 // Cập nhật số lượng sản phẩm
                 if (!$this->updateProductQuantity($item['variant_id'], $item['quantity'])) {
                     throw new Exception("Không thể cập nhật số lượng sản phẩm");
                 }
             }
-
+    
             $this->conn->commit();
-            return $orderId;
+            return $orderDetailId;
         } catch (Exception $e) {
             $this->conn->rollBack();
             error_log("Error creating order: " . $e->getMessage());
@@ -119,14 +105,15 @@ class OrderModel
         return $stmt->execute(['user_id' => $userId]);
     }
 
-    public function getOrdersByUserId($userId)
+    public function getOrdersByUserId($user_id)
     {
-        $stmt = $this->conn->prepare("
-            SELECT * FROM orders 
-            WHERE user_id = :user_id 
-            ORDER BY order_date DESC
-        ");
-        $stmt->execute(['user_id' => $userId]);
+        $sql = "SELECT o.*, od.name, od.phone, od.address, od.amount, od.note, od.status, od.payment_status, od.created_at
+                FROM orders o
+                LEFT JOIN order_details od ON o.order_detail_id = od.order_detail_id
+                WHERE o.user_id = :user_id
+                ORDER BY od.created_at DESC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['user_id' => $user_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

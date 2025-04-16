@@ -2,22 +2,32 @@
 ob_start(); // Bật bộ đệm đầu ra
 session_start(); // Khởi tạo session
 
-// Kiểm tra session trước khi xử lý router
-if (!isset($_SESSION['user_id'])) {
-    header('Location: /duan1/client/views/auth/form-login.php');
-    exit();
-}
-
 // Kết nối database & Load cấu hình
-require __DIR__ . '/commons/connect.php';
 require __DIR__ . '/commons/env.php';
+
+try {
+    $host = "localhost";
+    $dbname = "du_an_1";
+    $username = "root";
+    $password = "";
+
+    $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
+}
 
 // Load controllers
 require_once __DIR__ . '/client/controllers/ClientProductController.php';
 require_once __DIR__ . '/client/controllers/cartController.php';
 require_once __DIR__ . '/client/controllers/authenController.php';
 require_once __DIR__ . '/client/controllers/categoryController.php';
+<<<<<<< HEAD
+require_once __DIR__ . '/client/controllers/FavoriteController.php';
+=======
 require_once __DIR__ . '/client/controllers/OrderController.php';
+>>>>>>> 426fad3974964d4c2adffc4060d861697f252430
 
 // Load models
 require_once __DIR__ . '/client/models/categoryModel.php';
@@ -25,6 +35,10 @@ require_once __DIR__ . '/client/models/cartModel.php';
 require_once __DIR__ . '/client/models/couponModel.php';
 require_once __DIR__ . '/client/models/UserClient.php';
 require_once __DIR__ . '/client/models/ShippingModel.php';
+require_once __DIR__ . '/client/models/ProductModel.php';
+
+use Client\Controllers\ClientProductController;
+use Client\Models\ClientProduct;
 
 // Kiểm tra & nạp file header
 $headerPath = __DIR__ . '/client/views/layout/header.php';
@@ -39,10 +53,15 @@ $act = $_GET['act'] ?? '';
 $page = $_GET['page'] ?? '';
 
 // Khởi tạo các controller
-$productController = new ClientProductController($conn);
+$productModel = new ClientProduct($conn);
+$productController = new ClientProductController($productModel);
 $cartController = new CartController();
 $categoryController = new CategoryController($conn);
+<<<<<<< HEAD
+$favoriteController = new FavoriteController();
+=======
 $orderController = new OrderController();
+>>>>>>> 426fad3974964d4c2adffc4060d861697f252430
 
 switch ($act) {
     case "":
@@ -62,19 +81,31 @@ switch ($act) {
     case 'cart':
         switch ($page) {
             case 'list':
+                if (!isset($_SESSION['user_id'])) {
+                    header('Location: /duan1/client/views/auth/form-login.php');
+                    exit();
+                }
                 $user_id = $_SESSION['user_id'];
                 $cartController->getCart($user_id);
                 break;
 
             case 'add':
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    if (!isset($_SESSION['user_id'])) {
+                        header('Location: /duan1/client/views/auth/form-login.php');
+                        exit();
+                    }
                     $user_id = $_SESSION['user_id'];
                     $product_id = $_POST['product_id'] ?? null;
                     $variant_id = $_POST['variant_id'] ?? null;
                     $quantity = $_POST['quantity'] ?? 1;
 
                     if (!$product_id || !$variant_id || $quantity < 1) {
-                        die("❌ Lỗi: Dữ liệu không hợp lệ.");
+                        echo json_encode([
+                            'status' => 'error',
+                            'message' => 'Dữ liệu không hợp lệ'
+                        ]);
+                        exit();
                     }
 
                     $cartController->addToCart($user_id, $product_id, $variant_id, $quantity);
@@ -203,6 +234,33 @@ switch ($act) {
                 header('Location: /duan1/index.php?act=order&page=list');
                 exit();
         }
+        break;
+
+    case 'favorite':
+        if (isset($_GET['action'])) {
+            switch ($_GET['action']) {
+                case 'add':
+                    header('Content-Type: application/json');
+                    $favoriteController->addToFavorite();
+                    break;
+                case 'remove':
+                    header('Content-Type: application/json');
+                    $favoriteController->removeFromFavorite();
+                    break;
+                case 'list':
+                    $favoriteController->showFavorites();
+                    break;
+                default:
+                    $favoriteController->showFavorites();
+                    break;
+            }
+        } else {
+            $favoriteController->showFavorites();
+        }
+        break;
+
+    case 'buy-now':
+        $favoriteController->buyNow();
         break;
 
     default:

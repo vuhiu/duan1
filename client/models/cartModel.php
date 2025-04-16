@@ -25,6 +25,15 @@ class Cart
         $stmt->execute([$cart_id, $product_id, $variant_id]);
         $item = $stmt->fetch();
 
+        // Lấy giá sản phẩm từ product_variants
+        $sql = "SELECT price, sale_price FROM product_variants WHERE product_variant_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$variant_id]);
+        $variant = $stmt->fetch();
+        
+        // Sử dụng sale_price nếu có, ngược lại sử dụng price
+        $price = $variant['sale_price'] > 0 ? $variant['sale_price'] : $variant['price'];
+
         if ($item) {
             // Cập nhật số lượng nếu sản phẩm đã tồn tại
             $new_quantity = $item['quantity'] + $quantity;
@@ -33,10 +42,10 @@ class Cart
             return $stmt->execute([$new_quantity, $item['id']]);
         } else {
             // Thêm sản phẩm mới vào giỏ hàng
-            $sql = "INSERT INTO cart_items (cart_id, product_id, variant_id, quantity) 
-                    VALUES (?, ?, ?, ?)";
+            $sql = "INSERT INTO cart_items (cart_id, product_id, variant_id, quantity, price) 
+                    VALUES (?, ?, ?, ?, ?)";
             $stmt = $this->conn->prepare($sql);
-            return $stmt->execute([$cart_id, $product_id, $variant_id, $quantity]);
+            return $stmt->execute([$cart_id, $product_id, $variant_id, $quantity, $price]);
         }
     }
 
@@ -99,9 +108,27 @@ class Cart
         try {
             $this->conn->beginTransaction();
 
-            // Chuẩn bị câu lệnh SQL với coupon_id mặc định là 0 nếu không có
-            $sql = "INSERT INTO order_details (user_id, amount, shipping_id, coupon_id, status, payment_status) 
-                    VALUES (?, ?, ?, ?, 'pending', 'unpaid')";
+            // Lấy thông tin người dùng
+            $sql = "SELECT name, email, phone, address FROM users WHERE user_id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$user_id]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Chuẩn bị câu lệnh SQL để tạo order_details
+            $sql = "INSERT INTO order_details (
+                    user_id, 
+                    name,
+                    email,
+                    phone,
+                    address,
+                    amount,
+                    shipping_id,
+                    coupon_id,
+                    note,
+                    payment_method,
+                    status,
+                    payment_status
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'unpaid')";
 
             // Nếu có mã giảm giá, kiểm tra tính hợp lệ
             if ($coupon_id) {
@@ -113,13 +140,19 @@ class Cart
                 }
             }
 
-            // Thực thi câu lệnh tạo order_details với coupon_id là 0 nếu không có mã giảm giá
+            // Thực thi câu lệnh tạo order_details
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([
                 $user_id,
+                $user['name'],
+                $user['email'],
+                $user['phone'],
+                $user['address'],
                 $final_amount,
                 $shipping_method_id,
-                $coupon_id ? $coupon_id : 0  // Sử dụng 0 nếu không có mã giảm giá
+                $coupon_id ? $coupon_id : 0,
+                isset($_POST['note']) ? $_POST['note'] : '',
+                isset($_POST['payment_method']) ? $_POST['payment_method'] : 'cod'
             ]);
 
             $order_detail_id = $this->conn->lastInsertId();
@@ -144,6 +177,9 @@ class Cart
                 $stmt = $this->conn->prepare($sql);
                 $stmt->execute([$coupon_id]);
             }
+
+            // Xóa giỏ hàng sau khi đặt hàng thành công
+            $this->clearCart($user_id);
 
             $this->conn->commit();
             return $order_detail_id;

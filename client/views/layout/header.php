@@ -162,6 +162,17 @@
                             </div>
                             <!-- /Cart -->
 
+                            <!-- Orders -->
+                            <?php if (isset($_SESSION['user_name'])): ?>
+                            <div>
+                                <a href="/duan1/index.php?act=order&page=list">
+                                    <i class="fa fa-shopping-bag"></i>
+                                    <span>Đơn hàng của tôi</span>
+                                </a>
+                            </div>
+                            <?php endif; ?>
+                            <!-- /Orders -->
+
                             <!-- Menu Toogle -->
                             <div class="menu-toggle">
                                 <a href="#">
@@ -207,7 +218,6 @@
                     </li> -->
                     <!-- <li><a href="#">Máy ảnh</a></li> -->
                     <li><a href="/duan1/index.php?act=category&category_id=35">Phụ kiện</a></li>
-
                 </ul>
                 <!-- /NAV -->
             </div>

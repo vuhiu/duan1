@@ -233,13 +233,22 @@ class Product {
         return $count > 0;
     }
 
-    // Kiểm tra xem biến thể có tồn tại trong đơn hàng nào không
+    // Kiểm tra xem sản phẩm có trong đơn hàng nào không
+    public function hasOrders($product_id) {
+        $sql = "SELECT COUNT(*) FROM order_details od 
+                INNER JOIN product_variants pv ON od.variant_id = pv.product_variant_id 
+                WHERE pv.product_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$product_id]);
+        return $stmt->fetchColumn() > 0;
+    }
+
+    // Kiểm tra xem biến thể có trong đơn hàng nào không
     public function isVariantInOrder($variant_id) {
-        $sql = "SELECT COUNT(*) FROM order_items WHERE variant_id = ?";
+        $sql = "SELECT COUNT(*) FROM order_details WHERE variant_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$variant_id]);
-        $count = $stmt->fetchColumn();
-        return $count > 0;
+        return $stmt->fetchColumn() > 0;
     }
 }
 ?>

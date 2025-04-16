@@ -6,11 +6,20 @@ require_once __DIR__ . '/../controllers/categoryController.php';
 require_once __DIR__ . '/../controllers/OrderAdminController.php';
 require_once __DIR__ . '/../controllers/couponController.php';
 require_once __DIR__ . '/../controllers/CustomerAdminController.php';
+require_once __DIR__ . '/../controllers/DashboardController.php';
 require_once __DIR__ . '/../../client/models/ProductModel.php';
 require_once __DIR__ . '/../models/product.php';
 require_once __DIR__ . '/../models/category.php';
 require_once __DIR__ . '/../../client/controllers/ClientProductController.php';
 
+<<<<<<< HEAD
+use Client\Models\ClientProduct;
+use Client\Controllers\ClientProductController;
+
+// require_once __DIR__ . '/../../client/models/cart.php'
+
+=======
+>>>>>>> 426fad3974964d4c2adffc4060d861697f252430
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -41,8 +50,14 @@ $categoryController = new CategoryController();
 $orderController = new OrderAdminController();
 $couponController = new CouponController();
 $customerController = new CustomerAdminController();
+$dashboardController = new DashboardController($conn);
 
 switch ($act) {
+<<<<<<< HEAD
+    case '':
+    case 'dashboard':
+        $dashboardController->index();
+=======
     case 'dashboard':
         include __DIR__ . '/../views/dashboard.php';
         break;
@@ -75,6 +90,7 @@ switch ($act) {
                 $orderController->getList();
                 break;
         }
+>>>>>>> 426fad3974964d4c2adffc4060d861697f252430
         break;
 
     case 'sanpham':
@@ -82,23 +98,18 @@ switch ($act) {
             case 'list':
                 $productController->getList();
                 break;
-
             case 'them':
                 $productController->addProduct();
                 break;
-
             case 'sua':
                 $productController->editProduct();
                 break;
-
             case 'update':
                 $productController->updateProduct();
                 break;
-
             case 'xoa':
                 $productController->deleteProduct();
                 break;
-
             default:
                 $productController->getList();
                 break;
@@ -110,29 +121,59 @@ switch ($act) {
             case 'list':
                 $categoryController->getList();
                 break;
-
-            case 'add':
+            case 'them':
                 $categoryController->addCategory();
                 break;
-
-            case 'edit':
+            case 'sua':
                 $categoryController->editCategory();
                 break;
-
             case 'update':
                 $categoryController->updateCategory();
                 break;
-
-            case 'delete':
+            case 'xoa':
                 $categoryController->deleteCategory();
                 break;
-
             default:
                 $categoryController->getList();
                 break;
         }
         break;
 
+<<<<<<< HEAD
+    case 'donhang':
+        switch ($page) {
+            case 'list':
+                $orderController->getList();
+                break;
+            case 'detail':
+                $orderController->getDetail();
+                break;
+            case 'update':
+                $orderController->updateStatus();
+                break;
+            default:
+                $orderController->getList();
+                break;
+        }
+        break;
+
+    case 'magiamgia':
+        switch ($page) {
+            case 'list':
+                $couponController->getList();
+                break;
+            case 'them':
+                $couponController->addCoupon();
+                break;
+            case 'sua':
+                $couponController->editCoupon();
+                break;
+            case 'update':
+                $couponController->updateCoupon();
+                break;
+            case 'xoa':
+                $couponController->deleteCoupon();
+=======
     case 'coupon':
         switch ($page) {
             case 'list':
@@ -177,16 +218,54 @@ switch ($act) {
                         $customerController->edit($_GET['user_id']);
                     }
                 }
+>>>>>>> 426fad3974964d4c2adffc4060d861697f252430
                 break;
-
             default:
+<<<<<<< HEAD
+                $couponController->getList();
+=======
                 $customerController->index();
+>>>>>>> 426fad3974964d4c2adffc4060d861697f252430
                 break;
         }
         break;
 
+<<<<<<< HEAD
+    case 'khachhang':
+        switch ($page) {
+            case 'list':
+                $customerController->index();
+                break;
+            case 'detail':
+                $customerController->detail();
+                break;
+            default:
+                $customerController->index();
+                break;
+        }
+=======
     default:
         $orderController->getList();
+>>>>>>> 426fad3974964d4c2adffc4060d861697f252430
+        break;
+    
+        case 'orders':
+            require_once __DIR__ . '/../controllers/orderController.php';
+            $orderController = new OrderController();
+            if (isset($_GET['id'])) {
+                $orderController->detail();
+            } else {
+                $orderController->index();
+            }
+            break;
+        case 'orders/cancel':
+            require_once __DIR__ . '/../controllers/orderController.php';
+            $orderController = new OrderController();
+            $orderController->cancel();
+            break;
+
+    default:
+        $dashboardController->index();
         break;
 }
 

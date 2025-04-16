@@ -7,6 +7,45 @@ class OrderModel extends BaseModel
     {
         try {
             $this->conn->beginTransaction();
+<<<<<<< HEAD
+    
+            // Tạo chi tiết đơn hàng trong bảng order_details
+            $stmt = $this->conn->prepare("
+                INSERT INTO order_details (
+                    name, phone, address, amount, note, user_id, coupon_id, shipping_id,
+                    payment_method, status, payment_status, created_at
+                ) VALUES (
+                    :name, :phone, :address, :amount, :note, :user_id, :coupon_id, :shipping_id,
+                    :payment_method, 'pending', 'unpaid', NOW()
+                )
+            ");
+    
+            $stmt->execute([
+                'name' => $orderData['shipping_name'],
+                'phone' => $orderData['shipping_phone'],
+                'address' => $orderData['shipping_address'],
+                'amount' => $orderData['total_amount'],
+                'note' => $orderData['note'],
+                'user_id' => $userId,
+                'coupon_id' => $orderData['coupon_id'],
+                'shipping_id' => $orderData['shipping_id'],
+                'payment_method' => $orderData['payment_method']
+            ]);
+    
+            $orderDetailId = $this->conn->lastInsertId();
+    
+            // Tạo đơn hàng trong bảng orders
+            $stmt = $this->conn->prepare("
+                INSERT INTO orders (
+                    user_id, product_id, variant_id, order_detail_id, quantity, created_at
+                ) VALUES (
+                    :user_id, :product_id, :variant_id, :order_detail_id, :quantity, NOW()
+                )
+            ");
+    
+            foreach ($orderData['items'] as $item) {
+                $stmt->execute([
+=======
 
             // Tạo order_details trước
             $stmt = $this->conn->prepare("
@@ -55,26 +94,35 @@ class OrderModel extends BaseModel
 
             foreach ($orderData['items'] as $item) {
                 $result = $stmt->execute([
+>>>>>>> 426fad3974964d4c2adffc4060d861697f252430
                     'user_id' => $userId,
                     'product_id' => $item['product_id'],
                     'variant_id' => $item['variant_id'],
                     'order_detail_id' => $orderDetailId,
                     'quantity' => $item['quantity']
                 ]);
+<<<<<<< HEAD
+    
+=======
 
                 if (!$result) {
                     throw new Exception("Không thể thêm sản phẩm vào đơn hàng");
                 }
 
+>>>>>>> 426fad3974964d4c2adffc4060d861697f252430
                 // Cập nhật số lượng sản phẩm
                 if (!$this->updateProductQuantity($item['variant_id'], $item['quantity'])) {
                     throw new Exception("Không thể cập nhật số lượng sản phẩm");
                 }
             }
+<<<<<<< HEAD
+    
+=======
 
             // Xóa giỏ hàng sau khi đặt hàng thành công
             $this->clearCart($userId);
 
+>>>>>>> 426fad3974964d4c2adffc4060d861697f252430
             $this->conn->commit();
             return $orderDetailId;
         } catch (Exception $e) {
@@ -136,8 +184,17 @@ class OrderModel extends BaseModel
         }
     }
 
-    public function getOrdersByUserId($userId)
+    public function getOrdersByUserId($user_id)
     {
+<<<<<<< HEAD
+        $sql = "SELECT o.*, od.name, od.phone, od.address, od.amount, od.note, od.status, od.payment_status, od.created_at
+                FROM orders o
+                LEFT JOIN order_details od ON o.order_detail_id = od.order_detail_id
+                WHERE o.user_id = :user_id
+                ORDER BY od.created_at DESC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['user_id' => $user_id]);
+=======
         $stmt = $this->conn->prepare("
             SELECT DISTINCT od.*
             FROM order_details od
@@ -145,6 +202,7 @@ class OrderModel extends BaseModel
             ORDER BY od.created_at DESC
         ");
         $stmt->execute(['user_id' => $userId]);
+>>>>>>> 426fad3974964d4c2adffc4060d861697f252430
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

@@ -1,13 +1,14 @@
 <?php
+namespace Client\Models;
 require_once __DIR__ . '/../../commons/connect.php';
 
 class ClientProduct
 {
-    private $conn;
+    private $pdo;
 
-    public function __construct($conn)
+    public function __construct(\PDO $conn)
     {
-        $this->conn = $conn;
+        $this->pdo = $conn;
     }
 
     // Get product by ID
@@ -25,9 +26,9 @@ class ClientProduct
                 LEFT JOIN variant_colors vc ON pv.variant_color_id = vc.variant_color_id
                 LEFT JOIN variant_size vs ON pv.variant_size_id = vs.variant_size_id
                 WHERE p.product_id = ?";
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$product_id]);
-        $product = $stmt->fetch(PDO::FETCH_ASSOC);
+        $product = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         // Lấy danh sách biến thể
         if ($product) {
@@ -50,9 +51,9 @@ class ClientProduct
                     categories.name AS category_name
                 FROM products
                 LEFT JOIN categories ON products.category_id = categories.category_id";
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
-        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $products = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         // Lấy biến thể cho từng sản phẩm
         foreach ($products as &$product) {
@@ -65,7 +66,7 @@ class ClientProduct
     // Fetch product variants
     public function getProductVariants($productId)
     {
-        $stmt = $this->conn->prepare("
+        $stmt = $this->pdo->prepare("
             SELECT 
                 pv.product_variant_id, 
                 pv.price, 
@@ -82,7 +83,7 @@ class ClientProduct
             WHERE pv.product_id = ?
         ");
         $stmt->execute([$productId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     // search products by keyword
     public function searchProducts($keyword)
@@ -98,15 +99,15 @@ class ClientProduct
                 WHERE name LIKE :keyword 
                    OR product_id LIKE :keyword 
                    OR description LIKE :keyword";
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute(['keyword' => '%' . $keyword . '%']);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function deleteVariants($product_id)
     {
         // Kiểm tra xem có bản ghi liên quan trong bảng cart_items không
-        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM cart_items WHERE variant_id IN (
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM cart_items WHERE variant_id IN (
             SELECT product_variant_id FROM product_variants WHERE product_id = ?
         )");
         $stmt->execute([$product_id]);
@@ -117,7 +118,7 @@ class ClientProduct
         }
 
         // Xóa các bản ghi trong bảng product_variants
-        $stmt = $this->conn->prepare("DELETE FROM product_variants WHERE product_id = ?");
+        $stmt = $this->pdo->prepare("DELETE FROM product_variants WHERE product_id = ?");
         $stmt->execute([$product_id]);
     }
     // lấy sản phẩm theo danh mục
@@ -134,8 +135,8 @@ class ClientProduct
                 FROM products
                 LEFT JOIN categories ON products.category_id = categories.category_id
                 WHERE categories.category_id = ?";
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$category_id]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

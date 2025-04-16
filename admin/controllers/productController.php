@@ -224,31 +224,38 @@ class ProductController
 
     // Delete a product
     public function deleteProduct() {
-        if (!isset($_GET['product_id']) || !is_numeric($_GET['product_id'])) {
-            die("❌ Lỗi: ID sản phẩm không hợp lệ!");
-        }
-    
-        $id = $_GET['product_id'];
-        $product = $this->productModel->getProductById($id);
-    
-        if (!$product) {
-            die("❌ Lỗi: Sản phẩm không tồn tại.");
-        }
-    
         try {
-            // Xóa các biến thể và dữ liệu liên quan
-            $this->productModel->deleteVariants($id);
-    
+            if (!isset($_GET['id'])) {
+                throw new Exception("ID sản phẩm không hợp lệ");
+            }
+
+            $product_id = $_GET['id'];
+            $product = $this->productModel->getById($product_id);
+
+            if (!$product) {
+                throw new Exception("Không tìm thấy sản phẩm");
+            }
+
+            // Kiểm tra xem sản phẩm có trong đơn hàng nào không
+            if ($this->productModel->hasOrders($product_id)) {
+                throw new Exception("Không thể xóa sản phẩm vì đã có trong đơn hàng");
+            }
+
+            // Xóa các biến thể của sản phẩm
+            $this->productModel->deleteVariants($product_id);
+
             // Xóa sản phẩm
-            $this->productModel->delete($id);
-    
-            // Redirect to the product list with a success message
-            $_SESSION['success'] = "Xóa sản phẩm thành công.";
-            header('Location: /duan1/admin/index.php?act=sanpham&page=list');
-            exit();
+            if ($this->productModel->delete($product_id)) {
+                $_SESSION['success'] = "Xóa sản phẩm thành công";
+            } else {
+                throw new Exception("Xóa sản phẩm thất bại");
+            }
         } catch (Exception $e) {
-            die("❌ Lỗi: " . $e->getMessage());
+            $_SESSION['error'] = $e->getMessage();
         }
+
+        header("Location: index.php?act=sanpham");
+        exit;
     }
 
 }

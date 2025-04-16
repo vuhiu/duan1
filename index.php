@@ -23,11 +23,9 @@ require_once __DIR__ . '/client/controllers/ClientProductController.php';
 require_once __DIR__ . '/client/controllers/cartController.php';
 require_once __DIR__ . '/client/controllers/authenController.php';
 require_once __DIR__ . '/client/controllers/categoryController.php';
-<<<<<<< HEAD
-require_once __DIR__ . '/client/controllers/FavoriteController.php';
-=======
 require_once __DIR__ . '/client/controllers/OrderController.php';
->>>>>>> 426fad3974964d4c2adffc4060d861697f252430
+require_once __DIR__ . '/client/controllers/SearchController.php';
+require_once __DIR__ . '/client/controllers/FavoriteController.php';
 
 // Load models
 require_once __DIR__ . '/client/models/categoryModel.php';
@@ -49,33 +47,30 @@ if (file_exists($headerPath)) {
 }
 
 // Xử lý router
-$act = $_GET['act'] ?? '';
-$page = $_GET['page'] ?? '';
+$act = $_GET['act'] ?? 'home';
+$page = $_GET['page'] ?? 'list';
 
 // Khởi tạo các controller
 $productModel = new ClientProduct($conn);
 $productController = new ClientProductController($productModel);
 $cartController = new CartController();
 $categoryController = new CategoryController($conn);
-<<<<<<< HEAD
-$favoriteController = new FavoriteController();
-=======
-$orderController = new OrderController();
->>>>>>> 426fad3974964d4c2adffc4060d861697f252430
+$orderController = new OrderController($conn);
+$searchController = new SearchController($conn);
+$favoriteController = new FavoriteController($conn);
+$authenController = new AuthenController($conn);
 
 switch ($act) {
-    case "":
-        // Gọi trang chủ
+    case 'home':
         $productController->getAllProducts();
         break;
 
     case 'product':
-        // Gọi trang chi tiết sản phẩm
         $productController->getProductDetail();
         break;
 
     case 'search':
-        $productController->search();
+        $searchController->index();
         break;
 
     case 'cart':
@@ -183,29 +178,22 @@ switch ($act) {
         break;
 
     case 'auth':
-        $authController = new AuthenController();
-        $action = $_GET['action'] ?? '';
-        switch ($action) {
+        switch ($page) {
             case 'login':
-                $email = $_POST['email'] ?? '';
-                $password = $_POST['password'] ?? '';
-                $authController->login($email, $password);
+                $authenController->login();
                 break;
 
             case 'register':
-                $name = $_POST['name'] ?? '';
-                $email = $_POST['email'] ?? '';
-                $password = $_POST['password'] ?? '';
-                $authController->register($name, $email, $password);
+                $authenController->register();
                 break;
 
             case 'logout':
-                $authController->logout();
+                $authenController->logout();
                 break;
 
             default:
-                header('Location: /duan1/client/views/auth/form-login.php');
-                exit();
+                $authenController->login();
+                break;
         }
         break;
 
@@ -215,16 +203,16 @@ switch ($act) {
                 $orderController->getOrders($_SESSION['user_id']);
                 break;
 
-                case 'detail':
-                    $order_id = $_GET['id'] ?? 0;
-                    if ($order_id > 0) {
-                        $orderController->getOrderDetail($order_id, $_SESSION['user_id']);
-                    } else {
-                        $_SESSION['error'] = "Không tìm thấy đơn hàng.";
-                        header('Location: /duan1/index.php?act=order&page=list');
-                        exit();
-                    }
-                    break;
+            case 'detail':
+                $order_id = $_GET['id'] ?? 0;
+                if ($order_id > 0) {
+                    $orderController->getOrderDetail($order_id, $_SESSION['user_id']);
+                } else {
+                    $_SESSION['error'] = "Không tìm thấy đơn hàng.";
+                    header('Location: /duan1/index.php?act=order&page=list');
+                    exit();
+                }
+                break;
 
             case 'cancel':
                 $orderController->cancelOrder();
@@ -237,25 +225,19 @@ switch ($act) {
         break;
 
     case 'favorite':
-        if (isset($_GET['action'])) {
-            switch ($_GET['action']) {
-                case 'add':
-                    header('Content-Type: application/json');
-                    $favoriteController->addToFavorite();
-                    break;
-                case 'remove':
-                    header('Content-Type: application/json');
-                    $favoriteController->removeFromFavorite();
-                    break;
-                case 'list':
-                    $favoriteController->showFavorites();
-                    break;
-                default:
-                    $favoriteController->showFavorites();
-                    break;
-            }
-        } else {
-            $favoriteController->showFavorites();
+        switch ($page) {
+            case 'add':
+                $favoriteController->addToFavorite();
+                break;
+            case 'remove':
+                $favoriteController->removeFromFavorite();
+                break;
+            case 'list':
+                $favoriteController->showFavorites();
+                break;
+            default:
+                $favoriteController->showFavorites();
+                break;
         }
         break;
 

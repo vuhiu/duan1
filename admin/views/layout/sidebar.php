@@ -1,101 +1,169 @@
+<!-- filepath: c:\xampp\htdocs\duan1\admin\layouts\sidebar.php -->
 <?php
-$current_page = $_GET['act'] ?? 'dashboard';
+// Lấy tên người dùng nếu đã đăng nhập
+$user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : "Hiếu";
 ?>
-<div class="sidebar">
-    <div class="sidebar-header">
-        <h3>Admin Panel</h3>
+
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="index.php" class="brand-link">
+        <img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+            style="opacity: .8">
+        <span class="brand-text font-weight-light">ElectroShop</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar user panel (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+            </div>
+            <div class="info">
+                <a href="#" class="d-block"><?= htmlspecialchars($user_name) ?></a>
+            </div>
+        </div>
+
+        <!-- SidebarSearch Form -->
+        <div class="form-inline">
+            <div class="input-group" data-widget="sidebar-search">
+                <input class="form-control form-control-sidebar" type="search" placeholder="Tìm kiếm chức năng"
+                    aria-label="Search">
+                <div class="input-group-append">
+                    <button class="btn btn-sidebar">
+                        <i class="fas fa-search fa-fw"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <!-- Dashboard -->
+                <li class="nav-item">
+                    <a href="index.php" class="nav-link active">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+
+                <!-- Sản Phẩm -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-box"></i>
+                        <p>
+                            Sản Phẩm
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="index.php?act=sanpham&page=them" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Thêm sản phẩm mới</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="index.php?act=sanpham&page=list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Danh sách sản phẩm</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Danh Mục -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-list"></i>
+                        <p>
+                            Danh Mục
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="index.php?act=danhmuc&page=add" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Thêm danh mục</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="index.php?act=danhmuc&page=list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Danh sách danh mục</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- Đơn hàng -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-shopping-cart"></i>
+                        <p>
+                            Đơn Hàng
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="index.php?act=order&page=list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Danh sách đơn hàng</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
+                <!-- Khuyến mại -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-newspaper"></i>
+                        <p>
+                            Mã giảm giá
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="index.php?act=coupon&page=add" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Tạo mã giảm giá</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="index.php?act=coupon&page=list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Danh sách mã giảm giá </p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- quản lý khách hàng -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-newspaper"></i>
+                        <p>
+                            Quản lý khách hàng
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="index.php?act=customer&page=list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Danh sách khách hàng</p>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
     </div>
-    
-    <ul class="nav flex-column">
-        <li class="nav-item">
-            <a class="nav-link <?= $current_page == 'dashboard' ? 'active' : '' ?>" href="index.php?act=dashboard">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-        </li>
-        
-        <li class="nav-item">
-            <a class="nav-link <?= $current_page == 'sanpham' ? 'active' : '' ?>" href="index.php?act=sanpham">
-                <i class="fas fa-box"></i>
-                <span>Sản phẩm</span>
-            </a>
-        </li>
-        
-        <li class="nav-item">
-            <a class="nav-link <?= $current_page == 'danhmuc' ? 'active' : '' ?>" href="index.php?act=danhmuc">
-                <i class="fas fa-list"></i>
-                <span>Danh mục</span>
-            </a>
-        </li>
-        
-        <li class="nav-item">
-            <a class="nav-link <?= $current_page == 'donhang' ? 'active' : '' ?>" href="index.php?act=donhang">
-                <i class="fas fa-shopping-cart"></i>
-                <span>Đơn hàng</span>
-            </a>
-        </li>
-        
-        <li class="nav-item">
-            <a class="nav-link <?= $current_page == 'magiamgia' ? 'active' : '' ?>" href="index.php?act=magiamgia">
-                <i class="fas fa-ticket-alt"></i>
-                <span>Mã giảm giá</span>
-            </a>
-        </li>
-        
-        <li class="nav-item">
-            <a class="nav-link <?= $current_page == 'khachhang' ? 'active' : '' ?>" href="index.php?act=khachhang">
-                <i class="fas fa-users"></i>
-                <span>Khách hàng</span>
-            </a>
-        </li>
-    </ul>
-</div>
-
-<style>
-.sidebar {
-    min-height: 100vh;
-    background: #2B3A4A;
-    color: #fff;
-    width: 250px;
-    transition: all 0.3s;
-}
-
-.sidebar-header {
-    padding: 20px;
-    background: #1F2937;
-}
-
-.sidebar-header h3 {
-    color: #fff;
-    font-size: 1.2rem;
-    margin: 0;
-}
-
-.nav-link {
-    color: #fff;
-    padding: 15px 20px;
-    display: flex;
-    align-items: center;
-    transition: all 0.3s;
-}
-
-.nav-link:hover {
-    background: #1F2937;
-    color: #fff;
-}
-
-.nav-link.active {
-    background: #1F2937;
-    border-left: 4px solid #D10024;
-}
-
-.nav-link i {
-    margin-right: 10px;
-    width: 20px;
-    text-align: center;
-}
-
-.nav-link span {
-    font-size: 0.9rem;
-}
-</style> 
+    <!-- /.sidebar -->
+</aside>

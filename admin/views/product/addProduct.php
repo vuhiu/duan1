@@ -67,6 +67,10 @@
                     <?php endforeach; ?>
                 </select>
             </div>
+            <div class="form-group">
+                <label for="quantity">Số lượng</label>
+                <input type="number" name="quantity" id="quantity" class="form-control" min="0" required>
+            </div>
             <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
         </form>
     </div>

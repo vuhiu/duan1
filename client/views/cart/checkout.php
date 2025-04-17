@@ -93,7 +93,7 @@ if (isset($_SESSION['error'])) {
                         <div class="form-group">
                             <input class="input <?= isset($errors['phone']) ? 'is-invalid' : '' ?>" type="tel"
                                 name="phone" placeholder="Số điện thoại"
-                                value="<?= htmlspecialchars($_POST['phone'] ?? $user['phone'] ?? '') ?>">
+                                value="<?= htmlspecialchars(isset($_POST['phone']) ? $_POST['phone'] : (isset($user['phone']) ? str_pad($user['phone'], 10, '0', STR_PAD_LEFT) : '')) ?>">
                             <?php if (isset($errors['phone'])): ?>
                                 <div class="invalid-feedback"><?= $errors['phone'] ?></div>
                             <?php endif; ?>
@@ -236,43 +236,68 @@ if (isset($_SESSION['error'])) {
                     <div class="section-title">
                         <h4 class="title">Tổng tiền</h4>
                     </div>
-                    <div class="order-col">
-                        <div><strong>Tạm tính</strong></div>
-                        <div><strong><?= number_format($totalPrice, 0, ',', '.') ?>đ</strong></div>
-                    </div>
-                    <?php if ($selectedShippingId && isset($shippingMethods)): ?>
-                        <?php
+                    <?php
+                    // Tính toán các giá trị
+                    $subtotal = $totalPrice;
+                    $shippingFee = 0;
+                    if ($selectedShippingId && isset($shippingMethods)) {
                         $shippingMethod = array_filter($shippingMethods, function ($method) use ($selectedShippingId) {
                             return $method['ship_id'] == $selectedShippingId;
                         });
                         $shippingMethod = reset($shippingMethod);
-                        ?>
+                        $shippingFee = $shippingMethod['shipping_prices'];
+                    }
+
+                    // Tính lại giảm giá nếu có mã giảm giá
+                    if ($appliedCoupon) {
+                        $discountResult = $couponModel->applyDiscount($appliedCoupon, $subtotal);
+                        $couponDiscount = $discountResult['discount'];
+                        $_SESSION['coupon_discount'] = $couponDiscount;
+                    }
+
+                    // Tính tổng cộng
+                    $finalTotal = $subtotal + $shippingFee - $couponDiscount;
+                    if ($finalTotal < 0) $finalTotal = 0;
+                    ?>
+
+                    <div class="order-col">
+                        <div><strong>Tạm tính</strong></div>
+                        <div><strong><?= number_format($subtotal, 0, ',', '.') ?>đ</strong></div>
+                    </div>
+
+                    <?php if ($shippingFee > 0): ?>
                         <div class="order-col">
                             <div><strong>Phí vận chuyển</strong></div>
-                            <div><strong><?= number_format($shippingMethod['shipping_prices'], 0, ',', '.') ?>đ</strong></div>
+                            <div><strong><?= number_format($shippingFee, 0, ',', '.') ?>đ</strong></div>
                         </div>
                     <?php endif; ?>
+
                     <?php if ($couponDiscount > 0): ?>
                         <div class="order-col">
-                            <div><strong>Giảm giá</strong></div>
-                            <div><strong class="text-danger">-<?= number_format($couponDiscount, 0, ',', '.') ?>đ</strong></div>
+                            <div>
+                                <strong>Giảm giá</strong>
+                                <?php if ($appliedCoupon): ?>
+                                    <br>
+                                    <small class="text-muted">
+                                        Mã: <?= htmlspecialchars($appliedCoupon['coupon_code']) ?>
+                                        <br>
+                                        <?= $discountResult['message'] ?>
+                                    </small>
+                                <?php endif; ?>
+                            </div>
+                            <div>
+                                <strong class="text-danger">-<?= number_format($couponDiscount, 0, ',', '.') ?>đ</strong>
+                            </div>
                         </div>
                     <?php endif; ?>
+
                     <div class="order-col total">
                         <div><strong>TỔNG CỘNG</strong></div>
                         <div>
-                            <strong class="order-total">
-                                <?php
-                                $finalTotal = $totalPrice;
-                                if ($selectedShippingId && isset($shippingMethod)) {
-                                    $finalTotal += $shippingMethod['shipping_prices'];
-                                }
-                                $finalTotal -= $couponDiscount;
-                                echo number_format($finalTotal, 0, ',', '.') . 'đ';
-                                ?>
-                            </strong>
+                            <strong class="order-total"><?= number_format($finalTotal, 0, ',', '.') ?>đ</strong>
                         </div>
                     </div>
+
                     <button type="submit" form="checkoutForm" name="process_checkout"
                         class="primary-btn order-submit"
                         <?= empty($cartItems) ? 'disabled' : '' ?>>

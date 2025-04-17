@@ -41,32 +41,32 @@ class CouponModel
         }
 
         $discount = 0;
-        $couponType = trim(strtolower($coupon['coupon_type']));
-        $couponValue = floatval($coupon['coupon_value']);
+        $couponCode = strtoupper(trim($coupon['coupon_code']));
+        $message = '';
 
-        switch ($couponType) {
-            case 'fixed amount':
-                // Giảm giá trực tiếp theo số tiền
-                $discount = $couponValue;
+        switch ($couponCode) {
+            case 'VOUCHER10':
+                // Giảm 10% tổng giá trị đơn hàng
+                $discount = round($totalAmount * 0.1);
+                $message = 'Giảm 10% tổng giá trị đơn hàng';
                 break;
 
-            case 'percentage':
-                // Giảm giá theo phần trăm
-                $discount = ($totalAmount * $couponValue) / 100;
-                // Nếu có giới hạn giảm giá tối đa
-                if (isset($coupon['max_discount']) && $coupon['max_discount'] > 0) {
-                    $discount = min($discount, floatval($coupon['max_discount']));
-                }
+            case 'ST20':
+                // Giảm 20% tổng giá trị đơn hàng
+                $discount = round($totalAmount * 0.2);
+                $message = 'Giảm 20% tổng giá trị đơn hàng';
                 break;
 
-            case 'free shipping':
-                $discount = isset($coupon['shipping_discount']) ? floatval($coupon['shipping_discount']) : 0;
+            case 'ST100K':
+                // Giảm trực tiếp 100.000đ
+                $discount = 100000;
+                $message = 'Giảm ' . number_format($discount, 0, ',', '.') . 'đ';
                 break;
 
             default:
                 return [
                     'discount' => 0,
-                    'error' => 'Loại mã giảm giá không hợp lệ'
+                    'error' => 'Mã giảm giá không hợp lệ'
                 ];
         }
 
@@ -75,7 +75,8 @@ class CouponModel
 
         return [
             'discount' => $discount,
-            'error' => null
+            'error' => null,
+            'message' => $message
         ];
     }
 

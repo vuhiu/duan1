@@ -97,22 +97,40 @@ class OrderAdminController extends BaseController
     public function updateOrderStatus($orderId, $status)
     {
         try {
-            // Luôn cập nhật trạng thái thành 'delivered' khi xác nhận đơn hàng
+            // Validate status
+            $validStatuses = ['pending', 'confirmed', 'delivered', 'cancelled'];
+            if (!in_array($status, $validStatuses)) {
+                throw new Exception("Trạng thái không hợp lệ");
+            }
+
+            // Get current order status
+            $currentOrder = $this->orderModel->getById($orderId);
+            if (!$currentOrder) {
+                throw new Exception("Không tìm thấy đơn hàng");
+            }
+
+            // When confirming order, set it directly to delivered
             if ($status === 'confirmed') {
                 $status = 'delivered';
             }
 
-            $this->orderModel->updateStatus($orderId, $status);
+            $result = $this->orderModel->updateStatus($orderId, $status);
 
-            // Cập nhật trạng thái thanh toán thành 'paid' khi đơn hàng được giao
-            if ($status === 'delivered') {
-                $this->orderModel->updatePaymentStatus($orderId, 'paid');
+            if ($result) {
+                // Update payment status to 'paid' when order is delivered
+                if ($status === 'delivered') {
+                    $this->orderModel->updatePaymentStatus($orderId, 'paid');
+                    $_SESSION['success'] = "✅ Xác nhận đơn hàng thành công!";
+                } else if ($status === 'cancelled') {
+                    $_SESSION['success'] = "✅ Hủy đơn hàng thành công!";
+                }
+            } else {
+                $_SESSION['error'] = "❌ Không thể cập nhật trạng thái đơn hàng!";
             }
-
-            $_SESSION['success'] = "✅ Cập nhật trạng thái đơn hàng thành công!";
         } catch (Exception $e) {
             $_SESSION['error'] = "❌ Lỗi: " . $e->getMessage();
         }
+
         header("Location: index.php?act=order&page=detail&id=" . $orderId);
         exit();
     }

@@ -1,5 +1,7 @@
 <?php
+
 namespace Client\Models;
+
 require_once __DIR__ . '/../../commons/connect.php';
 
 class ClientProduct
@@ -138,5 +140,40 @@ class ClientProduct
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$category_id]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    // Cập nhật số lượng biến thể sản phẩm
+    public function updateVariantQuantity($variantId, $quantity)
+    {
+        try {
+            $sql = "UPDATE product_variants 
+                    SET quantity = quantity - :quantity 
+                    WHERE product_variant_id = :variant_id 
+                    AND quantity >= :quantity";
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([
+                ':variant_id' => $variantId,
+                ':quantity' => $quantity
+            ]);
+
+            // Kiểm tra xem có bản ghi nào được cập nhật không
+            if ($stmt->rowCount() === 0) {
+                // Kiểm tra lý do không cập nhật được
+                $checkSql = "SELECT quantity FROM product_variants WHERE product_variant_id = ?";
+                $checkStmt = $this->pdo->prepare($checkSql);
+                $checkStmt->execute([$variantId]);
+                $currentQuantity = $checkStmt->fetchColumn();
+
+                if ($currentQuantity < $quantity) {
+                    throw new \Exception("Số lượng sản phẩm trong kho không đủ");
+                }
+                throw new \Exception("Không thể cập nhật số lượng sản phẩm");
+            }
+
+            return true;
+        } catch (\PDOException $e) {
+            throw new \Exception("Lỗi cập nhật số lượng sản phẩm: " . $e->getMessage());
+        }
     }
 }

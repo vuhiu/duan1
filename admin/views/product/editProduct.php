@@ -1,11 +1,13 @@
 <!-- filepath: c:\xampp\htdocs\duan1\admin\views\product\editProduct.php -->
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <title>Chỉnh sửa sản phẩm</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
+
 <body>
     <div class="container mt-4" style="padding-bottom: 100px;">
         <h2>Chỉnh sửa sản phẩm</h2>
@@ -89,8 +91,38 @@
                 <?php endif; ?>
             </div>
 
+            <div class="mb-3">
+                <label class="form-label">Số lượng cho từng biến thể</label>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Màu sắc</th>
+                            <th>Kích thước</th>
+                            <th>Số lượng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($variants as $variant): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($variant['color_name']) ?></td>
+                                <td><?= htmlspecialchars($variant['size_name']) ?></td>
+                                <td>
+                                    <input type="number"
+                                        name="variant_quantities[<?= $variant['variant_color_id'] ?>][<?= $variant['variant_size_id'] ?>]"
+                                        class="form-control"
+                                        min="0"
+                                        value="<?= htmlspecialchars($variant['quantity'] ?? 0) ?>"
+                                        required>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+
             <button type="submit" class="btn btn-primary">Cập nhật</button>
         </form>
     </div>
 </body>
+
 </html>

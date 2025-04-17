@@ -215,7 +215,11 @@ switch ($act) {
                 break;
 
             case 'cancel':
-                $orderController->cancelOrder();
+                $orderController->cancel();
+                break;
+
+            case 'delete':
+                $orderController->deleteOrder();
                 break;
 
             default:

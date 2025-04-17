@@ -256,12 +256,10 @@ function getOrderStatusClass($status)
             return 'bg-warning';
         case 'confirmed':
             return 'bg-info';
-        case 'shipping':
-            return 'bg-primary';
         case 'delivered':
             return 'bg-success';
         case 'cancelled':
-            return 'bg-danger';
+            return 'bg-secondary';
         default:
             return 'bg-secondary';
     }
@@ -271,15 +269,13 @@ function getOrderStatusText($status)
 {
     switch ($status) {
         case 'pending':
-            return 'Chờ xác nhận';
+            return 'Chờ xử lý';
         case 'confirmed':
             return 'Đã xác nhận';
-        case 'shipping':
-            return 'Đang giao hàng';
         case 'delivered':
             return 'Đã giao hàng';
         case 'cancelled':
-            return 'Đã hủy';
+            return 'Đơn đã bị hủy';
         default:
             return 'Đơn đã bị hủy';
     }

@@ -8,11 +8,13 @@ class ProductController
 {
     public $productModel;
     public $categoryModel;
+    public $conn;
 
     public function __construct()
     {
         $this->productModel = new Product();
         $this->categoryModel = new Category();
+        $this->conn = $this->productModel->getConnection();
     }
 
     // List all products
@@ -24,70 +26,78 @@ class ProductController
 
     // Add a new product
     public function addProduct()
-{
-    $categories = $this->categoryModel->getAllCategories();
-    $colors = $this->productModel->getAllColor();
-    $sizes = $this->productModel->getAllSize();
+    {
+        $categories = $this->categoryModel->getAllCategories();
+        $colors = $this->productModel->getAllColor();
+        $sizes = $this->productModel->getAllSize();
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $name = $_POST['name'];
-        $description = $_POST['description'];
-        if (!isset($_POST['price']) || $_POST['price'] === '') {
-            die("❌ Lỗi: Giá sản phẩm không được để trống.");
-        }
-        
-        if (!isset($_POST['sale_price']) || $_POST['sale_price'] === '') {
-            $_POST['sale_price'] = 0; // Giá khuyến mãi mặc định là 0 nếu không được nhập
-        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                $name = $_POST['name'];
+                $description = $_POST['description'];
+                if (!isset($_POST['price']) || $_POST['price'] === '') {
+                    throw new Exception("Giá sản phẩm không được để trống.");
+                }
 
-        
-        $price = $_POST['price'];
-        $sale_price = $_POST['sale_price'];
-        echo "Price: $price, Sale Price: $sale_price";
-        // exit();
-        $slug = $_POST['slug'];
-        $status = $_POST['status'];
-        $category_id = $_POST['category_id'];
-        $image = null;
+                if (!isset($_POST['sale_price']) || $_POST['sale_price'] === '') {
+                    $_POST['sale_price'] = 0;
+                }
 
-        // Handle image upload
-        if (!empty($_FILES['image']['name'])) {
-            $upload_dir = __DIR__ . '/../../upload/';
-            $image = uniqid() . '-' . basename($_FILES['image']['name']);
-            $target_file = $upload_dir . $image;
+                $price = $_POST['price'];
+                $sale_price = $_POST['sale_price'];
+                $slug = $_POST['slug'];
+                $status = $_POST['status'];
+                $category_id = $_POST['category_id'];
+                $image = null;
 
-            if (!is_dir($upload_dir)) {
-                mkdir($upload_dir, 0777, true);
-            }
+                // Handle image upload
+                if (!empty($_FILES['image']['name'])) {
+                    $upload_dir = __DIR__ . '/../../upload/';
+                    $image = uniqid() . '-' . basename($_FILES['image']['name']);
+                    $target_file = $upload_dir . $image;
 
-            if (!move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
-                die("Lỗi: Không thể tải ảnh lên.");
-            }
-        }
+                    if (!is_dir($upload_dir)) {
+                        mkdir($upload_dir, 0777, true);
+                    }
 
-        // Save product and get the product_id
-        $product_id = $this->productModel->save($name, $image, $price, $sale_price, $slug, $description, $status, $category_id);
-
-        // Save variants
-        if (isset($_POST['colors']) && isset($_POST['sizes'])) {
-            foreach ($_POST['colors'] as $color_id) {
-                foreach ($_POST['sizes'] as $size_id) {
-                    echo "Debug: Calling saveVariant with price=$price, sale_price=$sale_price";
-                    // exit();
-                    if (!$this->variantExists($product_id, $color_id, $size_id)) {
-                        $this->productModel->saveVariant($product_id, $color_id, $size_id, $price, $sale_price);
+                    if (!move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
+                        throw new Exception("Không thể tải ảnh lên.");
                     }
                 }
+
+                // Save product and get the product_id
+                $product_id = $this->productModel->save($name, $image, $price, $sale_price, $slug, $description, $status, $category_id);
+
+                // Save variants
+                if (isset($_POST['colors']) && isset($_POST['sizes'])) {
+                    foreach ($_POST['colors'] as $color_id) {
+                        foreach ($_POST['sizes'] as $size_id) {
+                            if (!$this->variantExists($product_id, $color_id, $size_id)) {
+                                $this->productModel->saveVariant(
+                                    $product_id,
+                                    $color_id,
+                                    $size_id,
+                                    $price,
+                                    $sale_price,
+                                    $_POST['quantity']
+                                );
+                            }
+                        }
+                    }
+                }
+
+                $_SESSION['success'] = "Thêm sản phẩm thành công!";
+                header('Location: /duan1/admin/index.php?act=sanpham&page=list');
+                exit();
+            } catch (Exception $e) {
+                $_SESSION['error'] = "Lỗi: " . $e->getMessage();
+                header('Location: /duan1/admin/index.php?act=sanpham&page=them');
+                exit();
             }
         }
 
-        // Redirect to product list
-        header('Location: /duan1/admin/index.php?act=sanpham&page=list');
-        exit();
+        require_once __DIR__ . '/../views/product/addProduct.php';
     }
-
-    require_once __DIR__ . '/../views/product/addProduct.php';
-}
 
     // Edit a product
     public function editProduct()
@@ -111,151 +121,161 @@ class ProductController
         require_once __DIR__ . '/../views/product/editProduct.php';
     }
     // Update a product
-    public function updateProduct() {
+    public function updateProduct()
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = $_POST['product_id'];
-            $name = $_POST['name'];
-            $description = $_POST['description'];
-            $price = $_POST['price'];
-            $sale_price = $_POST['sale_price'];
-            $slug = $_POST['slug'];
-            $status = $_POST['status'];
-            $category_id = $_POST['category_id'];
-            $image = $_POST['current_image'];
-    
-            // Handle image upload
-            if (!empty($_FILES['image']['name'])) {
-                $upload_dir = __DIR__ . '/../../upload/';
-                $image = uniqid() . '-' . basename($_FILES['image']['name']);
-                $target_file = $upload_dir . $image;
-    
-                if (!is_dir($upload_dir)) {
-                    mkdir($upload_dir, 0777, true);
-                }
-    
-                if (!move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
-                    die("Lỗi: Không thể tải ảnh lên.");
-                }
-            }
-    
-            // Update product
-            $this->productModel->update($id, $name, $description, $status, $image, $price, $sale_price, $slug, $category_id);
-    
-            // Lấy danh sách biến thể hiện tại
-            $currentVariants = $this->productModel->getProductVariant($id);
-    
-            // Tạo danh sách biến thể mới từ form
-            $newVariants = [];
-            if (isset($_POST['colors']) && isset($_POST['sizes'])) {
-                foreach ($_POST['colors'] as $color_id) {
-                    foreach ($_POST['sizes'] as $size_id) {
-                        $newVariants[] = ['color_id' => $color_id, 'size_id' => $size_id];
+            try {
+                $this->conn->beginTransaction();
+
+                $id = $_POST['product_id'];
+                $name = $_POST['name'];
+                $description = $_POST['description'];
+                $price = $_POST['price'];
+                $sale_price = $_POST['sale_price'];
+                $slug = $_POST['slug'];
+                $status = $_POST['status'];
+                $category_id = $_POST['category_id'];
+                $image = $_POST['current_image'];
+
+                // Handle image upload
+                if (!empty($_FILES['image']['name'])) {
+                    $upload_dir = __DIR__ . '/../../upload/';
+                    $image = uniqid() . '-' . basename($_FILES['image']['name']);
+                    $target_file = $upload_dir . $image;
+
+                    if (!is_dir($upload_dir)) {
+                        mkdir($upload_dir, 0777, true);
+                    }
+
+                    if (!move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
+                        throw new Exception("Lỗi: Không thể tải ảnh lên.");
                     }
                 }
-            }
-    
-            // Kiểm tra và xử lý các biến thể
-            foreach ($currentVariants as $variant) {
-                $existsInNew = false;
+
+                // Update product
+                $this->productModel->update($id, $name, $description, $status, $image, $price, $sale_price, $slug, $category_id);
+
+                // Lấy danh sách biến thể hiện tại
+                $currentVariants = $this->productModel->getProductVariant($id);
+
+                // Tạo danh sách biến thể mới từ form
+                $newVariants = [];
+                if (isset($_POST['colors']) && isset($_POST['sizes'])) {
+                    foreach ($_POST['colors'] as $color_id) {
+                        foreach ($_POST['sizes'] as $size_id) {
+                            $newVariants[] = [
+                                'color_id' => $color_id,
+                                'size_id' => $size_id,
+                                'quantity' => $_POST['variant_quantities'][$color_id][$size_id] ?? 0
+                            ];
+                        }
+                    }
+                }
+
+                // Kiểm tra và xử lý các biến thể
+                foreach ($currentVariants as $variant) {
+                    $existsInNew = false;
+                    foreach ($newVariants as $newVariant) {
+                        if (
+                            $variant['variant_color_id'] == $newVariant['color_id'] &&
+                            $variant['variant_size_id'] == $newVariant['size_id']
+                        ) {
+                            $existsInNew = true;
+                            // Cập nhật số lượng cho biến thể đã tồn tại
+                            $this->productModel->updateVariantQuantity(
+                                $id,
+                                $newVariant['color_id'],
+                                $newVariant['size_id'],
+                                $newVariant['quantity']
+                            );
+                            break;
+                        }
+                    }
+
+                    // Chỉ xóa biến thể nếu nó không tồn tại trong đơn hàng nào
+                    if (!$existsInNew) {
+                        if (!$this->productModel->isVariantInOrder($variant['product_variant_id'])) {
+                            $this->productModel->deleteVariant($variant['product_variant_id']);
+                        }
+                    }
+                }
+
+                // Thêm các biến thể mới
                 foreach ($newVariants as $newVariant) {
-                    if ($variant['variant_color_id'] == $newVariant['color_id'] &&
-                        $variant['variant_size_id'] == $newVariant['size_id']) {
-                        $existsInNew = true;
-                        break;
+                    if (!$this->variantExists($id, $newVariant['color_id'], $newVariant['size_id'])) {
+                        $this->productModel->saveVariant(
+                            $id,
+                            $newVariant['color_id'],
+                            $newVariant['size_id'],
+                            $price,
+                            $sale_price,
+                            $newVariant['quantity']
+                        );
                     }
                 }
-    
-                // Chỉ xóa biến thể nếu nó không tồn tại trong đơn hàng nào
-                if (!$existsInNew) {
-                    if (!$this->productModel->isVariantInOrder($variant['product_variant_id'])) {
-                        $this->productModel->deleteVariant($variant['product_variant_id']);
-                    }
-                }
+
+                $this->conn->commit();
+                $_SESSION['success'] = "Cập nhật sản phẩm thành công";
+
+                // Redirect to product list
+                header('Location: /duan1/admin/index.php?act=sanpham&page=list');
+                exit();
+            } catch (Exception $e) {
+                $this->conn->rollBack();
+                $_SESSION['error'] = $e->getMessage();
+                header('Location: /duan1/admin/index.php?act=sanpham&page=edit&product_id=' . $id);
+                exit();
             }
-    
-            // Thêm các biến thể mới
-            foreach ($newVariants as $newVariant) {
-                if (!$this->variantExists($id, $newVariant['color_id'], $newVariant['size_id'])) {
-                    $this->productModel->saveVariant($id, $newVariant['color_id'], $newVariant['size_id'], $price, $sale_price);
-                }
-            }
-    
-            // Redirect to product list
-            header('Location: /duan1/admin/index.php?act=sanpham&page=list');
-            exit();
         }
     }
 
     //Thêm phương thức variantExists kiểm tra xem biến thể đã tồn tại hay chưa trước khi thêm mới.
-    public function variantExists($product_id, $color_id, $size_id) {
+    public function variantExists($product_id, $color_id, $size_id)
+    {
         $sql = "SELECT COUNT(*) FROM product_variants 
                 WHERE product_id = ? AND variant_color_id = ? AND variant_size_id = ?";
         $stmt = $this->productModel->getConnection()->prepare($sql);
         $stmt->execute([$product_id, $color_id, $size_id]);
         $count = $stmt->fetchColumn();
-    
+
         return $count > 0;
     }
     // Save a product variant
-    // Thêm phương thức saveVariant để lưu biến thể sản phẩm vào cơ sở dữ liệu.
-    public function saveVariant($product_id, $color_id, $size_id, $price, $sale_price) {
+    public function saveVariant($product_id, $color_id, $size_id, $price, $sale_price, $quantity)
+    {
         if ($price === null || $sale_price === null) {
             die("❌ Lỗi: Giá hoặc giá khuyến mãi không hợp lệ.");
         }
 
-        echo "Debug: product_id=$product_id, color_id=$color_id, size_id=$size_id, price=$price, sale_price=$sale_price";
-        // exit();
-        $sql = "INSERT INTO product_variants (product_id, variant_color_id, variant_size_id, price, sale_price)
-                VALUES (:product_id, :color_id, :size_id, :price, :sale_price)";
-        echo "Debug: SQL Query: $sql<br>";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([
-            ':product_id' => $product_id,
-            ':color_id' => $color_id,
-            ':size_id' => $size_id,
-            ':price' => $price,
-            ':sale_price' => $sale_price
-        ]);
-
-        echo "Debug: Variant saved successfully!<br>";
-        // exit();
+        $this->productModel->saveVariant($product_id, $color_id, $size_id, $price, $sale_price, $quantity);
     }
 
     // Delete a product
-    public function deleteProduct() {
+    public function deleteProduct()
+    {
         try {
             if (!isset($_GET['id'])) {
                 throw new Exception("ID sản phẩm không hợp lệ");
             }
 
             $product_id = $_GET['id'];
-            $product = $this->productModel->getById($product_id);
 
+            // Kiểm tra sản phẩm tồn tại
+            $product = $this->productModel->getProductById($product_id);
             if (!$product) {
                 throw new Exception("Không tìm thấy sản phẩm");
             }
 
-            // Kiểm tra xem sản phẩm có trong đơn hàng nào không
-            if ($this->productModel->hasOrders($product_id)) {
-                throw new Exception("Không thể xóa sản phẩm vì đã có trong đơn hàng");
-            }
-
-            // Xóa các biến thể của sản phẩm
-            $this->productModel->deleteVariants($product_id);
-
-            // Xóa sản phẩm
+            // Thực hiện xóa sản phẩm
             if ($this->productModel->delete($product_id)) {
                 $_SESSION['success'] = "Xóa sản phẩm thành công";
-            } else {
-                throw new Exception("Xóa sản phẩm thất bại");
             }
         } catch (Exception $e) {
             $_SESSION['error'] = $e->getMessage();
         }
 
-        header("Location: index.php?act=sanpham");
+        // Redirect về trang danh sách
+        header("Location: index.php?act=sanpham&page=list");
         exit;
     }
-
 }

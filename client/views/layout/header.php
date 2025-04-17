@@ -156,22 +156,13 @@
                                     </div>
                                     <div class="cart-btns">
                                         <a href="/duan1/index.php?act=cart&page=list">Xem giỏ hàng</a>
-                                        <a href="#">Thanh toán<i class="fa fa-arrow-circle-right"></i></a>
+                                        <a href="/duan1/index.php?act=order&page=list">Xem đơn hàng</a>
                                     </div>
                                 </div>
                             </div>
                             <!-- /Cart -->
 
-                            <!-- Orders -->
-                            <?php if (isset($_SESSION['user_name'])): ?>
-                            <div>
-                                <a href="/duan1/index.php?act=order&page=list">
-                                    <i class="fa fa-shopping-bag"></i>
-                                    <span>Đơn hàng của tôi</span>
-                                </a>
-                            </div>
-                            <?php endif; ?>
-                            <!-- /Orders -->
+                           
 
                             <!-- Menu Toogle -->
                             <div class="menu-toggle">

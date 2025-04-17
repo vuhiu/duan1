@@ -1,41 +1,73 @@
 <!-- filepath: c:\laragon\www\duan1\admin\views\customer\edit.php -->
-<!DOCTYPE html>
-<html lang="vi">
+<?php require_once __DIR__ . '/../layouts/header.php'; ?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sửa thông tin khách hàng</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Chỉnh sửa thông tin khách hàng</h1>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<body>
-    <div class="container mt-5">
-        <h3 class="text-center">Sửa thông tin khách hàng</h3>
-        <form method="POST" action="/duan1/admin/?act=customer&page=update&user_id=<?php echo $customer['user_id']; ?>">
-            <div class="mb-3">
-                <label for="name" class="form-label">Tên:</label>
-                <input type="text" id="name" name="name" class="form-control" value="<?php echo $customer['name']; ?>"
-                    required>
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email:</label>
-                <input type="email" id="email" name="email" class="form-control"
-                    value="<?php echo $customer['email']; ?>" required>
-            </div>
-            <div class="mb-3">
-                <label for="phone" class="form-label">Số điện thoại:</label>
-                <input type="text" id="phone" name="phone" class="form-control"
-                    value="<?php echo $customer['phone']; ?>">
-            </div>
-            <div class="mb-3">
-                <label for="address" class="form-label">Địa chỉ:</label>
-                <textarea id="address" name="address"
-                    class="form-control"><?php echo $customer['address']; ?></textarea>
-            </div>
-            <button type="submit" class="btn btn-success w-100">Cập nhật</button>
-        </form>
-    </div>
-</body>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <?php if (isset($_SESSION['error'])): ?>
+                                <div class="alert alert-danger">
+                                    <?= $_SESSION['error']; ?>
+                                    <?php unset($_SESSION['error']); ?>
+                                </div>
+                            <?php endif; ?>
 
-</html>
+                            <form action="index.php?act=customer&page=update" method="POST">
+                                <input type="hidden" name="user_id" value="<?= htmlspecialchars($customer['user_id']); ?>">
+
+                                <div class="form-group">
+                                    <label for="name">Tên khách hàng</label>
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        value="<?= htmlspecialchars($customer['name']); ?>" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        value="<?= htmlspecialchars($customer['email']); ?>" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="phone">Số điện thoại</label>
+                                    <input type="text" class="form-control" id="phone" name="phone"
+                                        value="<?= htmlspecialchars($customer['phone']); ?>"
+                                        pattern="[0-9]{10}" title="Vui lòng nhập 10 số">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="address">Địa chỉ</label>
+                                    <input type="text" class="form-control" id="address" name="address"
+                                        value="<?= htmlspecialchars($customer['address']); ?>">
+                                </div>
+
+                                <div class="form-group mt-3">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Cập nhật
+                                    </button>
+                                    <a href="index.php?act=customer&page=list" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left"></i> Quay lại
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<?php require_once __DIR__ . '/../layouts/footer.php'; ?>

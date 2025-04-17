@@ -7,19 +7,9 @@ require_once __DIR__ . '/../controllers/OrderAdminController.php';
 require_once __DIR__ . '/../controllers/couponController.php';
 require_once __DIR__ . '/../controllers/CustomerAdminController.php';
 require_once __DIR__ . '/../controllers/DashboardController.php';
-require_once __DIR__ . '/../../client/models/ProductModel.php';
 require_once __DIR__ . '/../models/product.php';
 require_once __DIR__ . '/../models/category.php';
-require_once __DIR__ . '/../../client/controllers/ClientProductController.php';
 
-<<<<<<< HEAD
-use Client\Models\ClientProduct;
-use Client\Controllers\ClientProductController;
-
-// require_once __DIR__ . '/../../client/models/cart.php'
-
-=======
->>>>>>> 426fad3974964d4c2adffc4060d861697f252430
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -42,9 +32,7 @@ $id = $_GET['id'] ?? '';
 // Debug URL parameters
 error_log("URL Parameters - act: $act, page: $page, id: $id");
 
-// Initialize objects
-$productModel = new ClientProduct($conn);
-$clientProductController = new ClientProductController($conn);
+// Initialize controllers
 $productController = new ProductController();
 $categoryController = new CategoryController();
 $orderController = new OrderAdminController();
@@ -53,44 +41,8 @@ $customerController = new CustomerAdminController();
 $dashboardController = new DashboardController($conn);
 
 switch ($act) {
-<<<<<<< HEAD
-    case '':
     case 'dashboard':
         $dashboardController->index();
-=======
-    case 'dashboard':
-        include __DIR__ . '/../views/dashboard.php';
-        break;
-
-    case 'order':
-        switch ($page) {
-            case 'list':
-                $orderController->getList();
-                break;
-
-            case 'detail':
-                if (isset($_GET['id'])) {
-                    $orderController->getOrderDetail($_GET['id']);
-                }
-                break;
-
-            case 'update_status':
-                if (isset($_GET['id']) && isset($_GET['status'])) {
-                    $orderController->updateOrderStatus($_GET['id'], $_GET['status']);
-                }
-                break;
-
-            case 'edit':
-                if (isset($_GET['id'])) {
-                    include __DIR__ . '/../views/order/edit.php';
-                }
-                break;
-
-            default:
-                $orderController->getList();
-                break;
-        }
->>>>>>> 426fad3974964d4c2adffc4060d861697f252430
         break;
 
     case 'sanpham':
@@ -121,7 +73,7 @@ switch ($act) {
             case 'list':
                 $categoryController->getList();
                 break;
-            case 'them':
+            case 'add':
                 $categoryController->addCategory();
                 break;
             case 'sua':
@@ -139,17 +91,42 @@ switch ($act) {
         }
         break;
 
-<<<<<<< HEAD
-    case 'donhang':
+    case 'order':
         switch ($page) {
             case 'list':
                 $orderController->getList();
                 break;
             case 'detail':
-                $orderController->getDetail();
+                if (isset($_GET['id'])) {
+                    $orderController->getOrderDetail($_GET['id']);
+                } else {
+                    header('Location: index.php?act=order&page=list');
+                    exit();
+                }
                 break;
-            case 'update':
-                $orderController->updateStatus();
+            case 'update_status':
+                if (isset($_GET['id']) && isset($_GET['status'])) {
+                    $orderController->updateOrderStatus($_GET['id'], $_GET['status']);
+                } else {
+                    header('Location: index.php?act=order&page=list');
+                    exit();
+                }
+                break;
+            case 'cancel':
+                if (isset($_GET['id'])) {
+                    $orderController->updateOrderStatus($_GET['id'], 'cancelled');
+                } else {
+                    header('Location: index.php?act=order&page=list');
+                    exit();
+                }
+                break;
+            case 'confirm':
+                if (isset($_GET['id'])) {
+                    $orderController->updateOrderStatus($_GET['id'], 'delivered');
+                } else {
+                    header('Location: index.php?act=order&page=list');
+                    exit();
+                }
                 break;
             default:
                 $orderController->getList();
@@ -157,41 +134,23 @@ switch ($act) {
         }
         break;
 
-    case 'magiamgia':
-        switch ($page) {
-            case 'list':
-                $couponController->getList();
-                break;
-            case 'them':
-                $couponController->addCoupon();
-                break;
-            case 'sua':
-                $couponController->editCoupon();
-                break;
-            case 'update':
-                $couponController->updateCoupon();
-                break;
-            case 'xoa':
-                $couponController->deleteCoupon();
-=======
     case 'coupon':
         switch ($page) {
             case 'list':
                 $couponController->getList();
                 break;
-
             case 'add':
                 $couponController->addCoupon();
                 break;
-
             case 'edit':
                 $couponController->editCoupon();
                 break;
-
             case 'update':
                 $couponController->updateCoupon();
                 break;
-
+            case 'delete':
+                $couponController->deleteCoupon();
+                break;
             default:
                 $couponController->getList();
                 break;
@@ -203,66 +162,35 @@ switch ($act) {
             case 'list':
                 $customerController->index();
                 break;
-
             case 'detail':
-                if (isset($_GET['user_id'])) {
-                    $customerController->detail($_GET['user_id']);
+                if (isset($_GET['id'])) {
+                    $customerController->detail($_GET['id']);
+                } else {
+                    header('Location: index.php?act=customer&page=list');
+                    exit();
                 }
                 break;
-
             case 'edit':
-                if (isset($_GET['user_id'])) {
-                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                        $customerController->update($_GET['user_id']);
-                    } else {
-                        $customerController->edit($_GET['user_id']);
-                    }
+                if (isset($_GET['id'])) {
+                    $customerController->edit($_GET['id']);
+                } else {
+                    header('Location: index.php?act=customer&page=list');
+                    exit();
                 }
->>>>>>> 426fad3974964d4c2adffc4060d861697f252430
                 break;
-            default:
-<<<<<<< HEAD
-                $couponController->getList();
-=======
-                $customerController->index();
->>>>>>> 426fad3974964d4c2adffc4060d861697f252430
-                break;
-        }
-        break;
-
-<<<<<<< HEAD
-    case 'khachhang':
-        switch ($page) {
-            case 'list':
-                $customerController->index();
-                break;
-            case 'detail':
-                $customerController->detail();
+            case 'update':
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $customerController->update($_POST);
+                } else {
+                    header('Location: index.php?act=customer&page=list');
+                    exit();
+                }
                 break;
             default:
                 $customerController->index();
                 break;
         }
-=======
-    default:
-        $orderController->getList();
->>>>>>> 426fad3974964d4c2adffc4060d861697f252430
         break;
-    
-        case 'orders':
-            require_once __DIR__ . '/../controllers/orderController.php';
-            $orderController = new OrderController();
-            if (isset($_GET['id'])) {
-                $orderController->detail();
-            } else {
-                $orderController->index();
-            }
-            break;
-        case 'orders/cancel':
-            require_once __DIR__ . '/../controllers/orderController.php';
-            $orderController = new OrderController();
-            $orderController->cancel();
-            break;
 
     default:
         $dashboardController->index();

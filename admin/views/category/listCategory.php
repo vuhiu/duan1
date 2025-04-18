@@ -1,4 +1,23 @@
 <h2 class="mt-3">Danh sách danh mục</h2>
+
+<!-- Hiển thị thông báo thành công -->
+<?php if (isset($_SESSION['success'])): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <?= $_SESSION['success'] ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <?php unset($_SESSION['success']); ?>
+<?php endif; ?>
+
+<!-- Hiển thị thông báo lỗi -->
+<?php if (isset($_SESSION['error'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <?= $_SESSION['error'] ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <?php unset($_SESSION['error']); ?>
+<?php endif; ?>
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <!-- <link type="text/css" rel="stylesheet" href="/duan1/css/bootstrap.min.css" /> -->
 <link rel="stylesheet" href="/duan1/client/public/css/style.css">

@@ -1,5 +1,4 @@
-<!-- filepath: c:\laragon\www\duan1\admin\views\customer\detail.php -->
-<?php require_once __DIR__ . '/../layouts/header.php'; ?>
+
 
 <div class="content-wrapper">
     <section class="content-header">
@@ -67,4 +66,3 @@
     </section>
 </div>
 
-<?php require_once __DIR__ . '/../layouts/footer.php'; ?>

@@ -52,7 +52,7 @@
                     <li><a href="#"><i class="fa fa-map-marker"></i> Hà Nội, Việt Nam</a></li>
                 </ul>
                 <ul class="header-links pull-right">
-                    <li><a href="#"><i class="fa fa-dollar"></i> VN</a></li>
+                    
                     <?php
                     if (session_status() === PHP_SESSION_NONE) {
                         session_start();

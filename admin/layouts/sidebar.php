@@ -101,7 +101,7 @@ $user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : "Hiếu";
                 <!-- Đơn hàng -->
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-list"></i>
+                    <i class="nav-icon fas fa-shopping-cart"></i>
                         <p>
                             Đơn Hàng
                             <i class="fas fa-angle-left right"></i>
@@ -123,7 +123,7 @@ $user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : "Hiếu";
                 <!-- Khuyến mại -->
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-newspaper"></i>
+                    <i class="nav-icon fas fa-ticket-alt"></i>
                         <p>
                             Mã giảm giá
                             <i class="fas fa-angle-left right"></i>
@@ -147,7 +147,7 @@ $user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : "Hiếu";
                 <!-- quản lý khách hàng -->
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-newspaper"></i>
+                        <i class="nav-icon fas fa-users"></i>
                         <p>
                             Quản lý khách hàng
                             <i class="fas fa-angle-left right"></i>

@@ -1,55 +1,102 @@
 <!-- filepath: c:\laragon\www\duan1\admin\views\customer\list.php -->
-<!DOCTYPE html>
-<html lang="vi">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách khách hàng</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Danh sách khách hàng</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="index.php?act=dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Danh sách khách hàng</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<body>
-    <div class="container mt-5">
-        <h3 class="text-center">Danh sách khách hàng</h3>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Tên</th>
-                    <th>Email</th>
-                    <th>Số điện thoại</th>
-                    <th>Địa chỉ</th>
-                    <th>Ngày đăng ký</th>
-                    <th>Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (!empty($customers)): ?>
-                    <?php foreach ($customers as $customer): ?>
-                        <tr>
-                            <td><?php echo $customer['user_id']; ?></td>
-                            <td><?php echo $customer['name']; ?></td>
-                            <td><?php echo $customer['email']; ?></td>
-                            <td><?php echo $customer['phone']; ?></td>
-                            <td><?php echo $customer['address']; ?></td>
-                            <td><?php echo $customer['created_at'] ? date('d/m/Y H:i', strtotime($customer['created_at'])) : 'Chưa có dữ liệu'; ?></td>
-                            <td>
-                                <a href="/duan1/admin/?act=customer&page=detail&user_id=<?php echo $customer['user_id']; ?>"
-                                    class="btn btn-info btn-sm">Xem</a>
-                                <a href="/duan1/admin/?act=customer&page=edit&user_id=<?php echo $customer['user_id']; ?>"
-                                    class="btn btn-warning btn-sm">Sửa</a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="6" class="text-center">Không có khách hàng nào.</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
-</body>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Thông tin khách hàng</h3>
+                        </div>
+                        <div class="card-body">
+                            <?php if (isset($_SESSION['success'])): ?>
+                                <div class="alert alert-success alert-dismissible fade show">
+                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    <?= $_SESSION['success']; ?>
+                                    <?php unset($_SESSION['success']); ?>
+                                </div>
+                            <?php endif; ?>
 
-</html>
+                            <?php if (isset($_SESSION['error'])): ?>
+                                <div class="alert alert-danger alert-dismissible fade show">
+                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    <?= $_SESSION['error']; ?>
+                                    <?php unset($_SESSION['error']); ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <div class="table-responsive">
+                                <table id="customerTable" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th width="5%">ID</th>
+                                            <th width="20%">Tên</th>
+                                            <th width="20%">Email</th>
+                                            <th width="15%">Số điện thoại</th>
+                                            <th width="20%">Địa chỉ</th>
+                                            <th width="10%">Ngày đăng ký</th>
+                                            <th width="10%">Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (!empty($customers)): ?>
+                                            <?php foreach ($customers as $customer): ?>
+                                                <tr>
+                                                    <td><?= htmlspecialchars($customer['user_id'] ?? ''); ?></td>
+                                                    <td><?= htmlspecialchars($customer['name'] ?? ''); ?></td>
+                                                    <td><?= htmlspecialchars($customer['email'] ?? ''); ?></td>
+                                                    <td><?= htmlspecialchars($customer['phone'] ?? ''); ?></td>
+                                                    <td><?= htmlspecialchars($customer['address'] ?? ''); ?></td>
+                                                    <td>
+                                                        <?php
+                                                        if (!empty($customer['created_at'])) {
+                                                            echo date('d/m/Y', strtotime($customer['created_at']));
+                                                        } else {
+                                                            echo 'Chưa có dữ liệu';
+                                                        }
+                                                        ?>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a href="index.php?act=customer&page=detail&id=<?= $customer['user_id']; ?>"
+                                                            class="btn btn-info btn-sm" title="Xem chi tiết">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                        <a href="index.php?act=customer&page=edit&id=<?= $customer['user_id']; ?>"
+                                                            class="btn btn-warning btn-sm" title="Chỉnh sửa">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="7" class="text-center">Không có dữ liệu</td>
+                                            </tr>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

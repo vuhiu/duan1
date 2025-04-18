@@ -30,7 +30,7 @@ class UserClient
     // Đăng ký người dùng mới
     public function register($name, $email, $password, $address, $phone)
     {
-        $stmt = $this->conn->prepare("INSERT INTO users (name, email, password, address, phone, role, created_at) VALUES (?, ?, ?, ?, ?, 'client', NOW())");
+        $stmt = $this->conn->prepare("INSERT INTO users (name, email, password, address, phone, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
         return $stmt->execute([$name, $email, md5($password), $address, $phone]);
     }
 

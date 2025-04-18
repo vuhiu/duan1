@@ -37,7 +37,7 @@
                     <div class="main-banner">
                         <div class="banner-slider">
                             <div class="banner-item">
-                                <img src="/duan1/images/banner1.jpg" alt="Laptop Collection">
+                                <img src="/duan1/upload/banner1.avif" alt="Laptop Collection">
                                 <div class="banner-content">
                                     <h2>Laptop Collection</h2>
                                     <p>MacBook, Laptop Gaming, Dell, Asus</p>
@@ -45,7 +45,7 @@
                                 </div>
                             </div>
                             <div class="banner-item">
-                                <img src="/duan1/images/banner2.jpg" alt="Accessories Collection">
+                                <img src="/duan1/upload/banner2.jpg" alt="Accessories Collection">
                                 <div class="banner-content">
                                     <h2>Phụ kiện</h2>
                                     <p>Sạc, Tai nghe, Cáp</p>
@@ -53,7 +53,7 @@
                                 </div>
                             </div>
                             <div class="banner-item">
-                                <img src="/duan1/images/banner3.jpg" alt="Cameras Collection">
+                                <img src="/duan1/upload/banner3.jpg" alt="Cameras Collection">
                                 <div class="banner-content">
                                     <h2>SamSung</h2>
                                     <p>Galaxy S24, Galaxy Z</p>
@@ -61,11 +61,11 @@
                                 </div>
                             </div>
                             <div class="banner-item">
-                                <img src="/duan1/images/banner3.jpg" alt="Cameras Collection">
+                                <img src="/duan1/upload/banner4.jpg" alt="Cameras Collection">
                                 <div class="banner-content">
                                     <h2>Apple</h2>
                                     <p>Iphone 15, Iphone 14, Iphone 13</p>
-                                    <a href="/duan1/index.php?act=category&category_id=36" class="btn-shop">SHOP NOW</a>
+                                    <a href="/duan1/index.php?act=category&category_id=34" class="btn-shop">SHOP NOW</a>
                                 </div>
                             </div>
                         </div>
@@ -264,7 +264,7 @@
         background-color: #ff4d4d;
     }
     .product-label .new {
-        background-color: #4CAF50;
+        background-color:rgb(233, 84, 20);
     }
     .product-label .best-seller {
         background-color: #ff9800;
@@ -318,14 +318,14 @@
     .add-to-cart-btn {
         width: 100%;
         padding: 10px;
-        background-color: #4CAF50;
+        background-color:#D21737;
         color: #fff;
         border: none;
         border-radius: 4px;
         cursor: pointer;
     }
     .add-to-cart-btn:hover {
-        background-color: #45a049;
+        background-color:rgb(134, 4, 25);
     }
 
     /* Banner styles */

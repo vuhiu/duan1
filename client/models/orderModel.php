@@ -19,10 +19,10 @@ class OrderModel extends BaseModel
             // Tạo chi tiết đơn hàng trong bảng order_details
             $stmt = $this->conn->prepare("
                 INSERT INTO order_details (
-                    name, phone, address, amount, note, user_id, coupon_id, shipping_id,
+                    name, phone, email, address, amount, note, user_id, coupon_id, shipping_id,
                     payment_method, status, payment_status, created_at
                 ) VALUES (
-                    :name, :phone, :address, :amount, :note, :user_id, :coupon_id, :shipping_id,
+                    :name, :phone, :email, :address, :amount, :note, :user_id, :coupon_id, :shipping_id,
                     :payment_method, 'pending', 'unpaid', NOW()
                 )
             ");
@@ -30,6 +30,7 @@ class OrderModel extends BaseModel
             $stmt->execute([
                 'name' => $orderData['shipping_name'],
                 'phone' => $orderData['shipping_phone'],
+                'email' => $orderData['shipping_email'],
                 'address' => $orderData['shipping_address'],
                 'amount' => $orderData['total_amount'],
                 'note' => $orderData['note'],

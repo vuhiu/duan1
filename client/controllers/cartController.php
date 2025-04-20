@@ -297,4 +297,39 @@ class CartController
         header('Location: /duan1/index.php?act=cart&page=checkout');
         exit();
     }
+
+    public function getCartInfo($user_id) {
+        // Đảm bảo không có output nào trước khi gửi JSON
+        ob_clean();
+        header('Content-Type: application/json');
+        
+        if (!$user_id) {
+            echo json_encode(['error' => 'Unauthorized']);
+            exit;
+        }
+
+        try {
+            // Lấy thông tin giỏ hàng
+            $cartItems = $this->cartModel->getCartItems($user_id);
+            
+            // Tính tổng số lượng và tổng tiền
+            $totalQuantity = 0;
+            $totalAmount = 0;
+
+            foreach ($cartItems as $item) {
+                $price = $item['sale_price'] > 0 ? $item['sale_price'] : $item['price'];
+                $totalQuantity += $item['quantity'];
+                $totalAmount += $price * $item['quantity'];
+            }
+
+            echo json_encode([
+                'items' => $cartItems,
+                'total' => $totalAmount,
+                'count' => $totalQuantity
+            ]);
+        } catch (Exception $e) {
+            echo json_encode(['error' => $e->getMessage()]);
+        }
+        exit;
+    }
 }

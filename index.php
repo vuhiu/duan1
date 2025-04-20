@@ -66,7 +66,17 @@ switch ($act) {
         break;
 
     case 'product':
-        $productController->getProductDetail();
+        switch ($page) {
+            case 'list':
+                $productController->getAllProducts();
+                break;
+            case 'detail':
+                $productController->getProductDetail();
+                break;
+            case 'get_default_variant':
+                $productController->getDefaultVariant();
+                break;
+        }
         break;
 
     case 'search':
@@ -75,6 +85,16 @@ switch ($act) {
 
     case 'cart':
         switch ($page) {
+            case 'info':
+                if (!isset($_SESSION['user_id'])) {
+                    header('HTTP/1.1 401 Unauthorized');
+                    exit();
+                }
+                // Đảm bảo không có output nào trước khi gọi getCartInfo
+                ob_clean(); // Xóa output buffer
+                $cartController->getCartInfo($_SESSION['user_id']);
+                exit(); // Đảm bảo không có output nào sau JSON
+
             case 'list':
                 if (!isset($_SESSION['user_id'])) {
                     header('Location: /duan1/client/views/auth/form-login.php');
@@ -87,7 +107,7 @@ switch ($act) {
             case 'add':
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if (!isset($_SESSION['user_id'])) {
-                        header('Location: /duan1/client/views/auth/form-login.php');
+                        header('HTTP/1.1 401 Unauthorized');
                         exit();
                     }
                     $user_id = $_SESSION['user_id'];
@@ -104,7 +124,7 @@ switch ($act) {
                     }
 
                     $cartController->addToCart($user_id, $product_id, $variant_id, $quantity);
-                    header('Location: /duan1/index.php?act=cart&page=list');
+                    echo json_encode(['status' => 'success']);
                     exit();
                 }
                 break;

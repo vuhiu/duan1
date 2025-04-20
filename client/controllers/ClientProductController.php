@@ -55,4 +55,25 @@ class ClientProductController
         $products = $this->productModel->getProductsByCategory($category_id);
         require_once __DIR__ . '/../views/product/category.php';
     }
+
+    // Lấy variant mặc định của sản phẩm
+    public function getDefaultVariant()
+    {
+        header('Content-Type: application/json');
+        
+        if (!isset($_POST['product_id'])) {
+            echo json_encode(['error' => 'Missing product_id']);
+            exit;
+        }
+
+        $product_id = $_POST['product_id'];
+        $variant = $this->productModel->getDefaultVariant($product_id);
+
+        if ($variant) {
+            echo json_encode(['variant_id' => $variant['product_variant_id']]);
+        } else {
+            echo json_encode(['error' => 'No variant found']);
+        }
+        exit;
+    }
 }

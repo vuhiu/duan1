@@ -142,6 +142,18 @@ class ClientProduct
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    // Lấy variant mặc định của sản phẩm
+    public function getDefaultVariant($product_id)
+    {
+        $sql = "SELECT product_variant_id, price, sale_price, quantity 
+                FROM product_variants 
+                WHERE product_id = ? 
+                LIMIT 1";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$product_id]);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
     // Cập nhật số lượng biến thể sản phẩm
     public function updateVariantQuantity($variantId, $quantity)
     {

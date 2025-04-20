@@ -207,4 +207,29 @@ class Cart
         $stmt->execute([$user_id]);
         return $this->conn->lastInsertId();
     }
+
+    // Lấy thông tin giỏ hàng cho dropdown
+    public function getCartItems($user_id)
+    {
+        $sql = "SELECT 
+                ci.id as cart_item_id,
+                ci.product_id,
+                ci.variant_id,
+                ci.quantity,
+                p.name as product_name,
+                p.image as product_image,
+                pv.price,
+                pv.sale_price
+                FROM carts c
+                JOIN cart_items ci ON c.id = ci.cart_id
+                JOIN products p ON ci.product_id = p.product_id
+                JOIN product_variants pv ON ci.variant_id = pv.product_variant_id
+                WHERE c.user_id = ?
+                ORDER BY ci.id DESC
+                LIMIT 5";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$user_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

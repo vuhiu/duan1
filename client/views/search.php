@@ -29,11 +29,12 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php foreach ($products as $product): ?>
                     <div class="col-md-4">
                         <div class="card mb-4">
-                            <img src="/duan1/uploads/<?php echo $product['image']; ?>" class="card-img-top" alt="<?php echo htmlspecialchars($product['name']); ?>">
+                            <img src="/duan1/upload/<?php echo $product['image']; ?>" class="card-img-top" alt="<?php echo htmlspecialchars($product['name']); ?>">
                             <div class="card-body">
                                 <h5 class="card-title"><?php echo htmlspecialchars($product['name']); ?></h5>
                                 <p class="card-text">Giá: <?php echo number_format($product['price'], 0, ',', '.'); ?> VNĐ</p>
-                                <a href="/duan1/client/views/product.php?id=<?php echo $product['id']; ?>" class="btn btn-primary">Xem chi tiết</a>
+                                <p class="card-text"><?php echo htmlspecialchars($product['description'] ?? 'Không có mô tả'); ?></p>
+                                <a href="/duan1/index.php?act=product&product_id=<?php echo $product['id']; ?>" class="btn btn-primary">Xem chi tiết</a>
                             </div>
                         </div>
                     </div>

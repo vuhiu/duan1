@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_checkout'])) 
     $name = trim($_POST['name'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
     $address = trim($_POST['address'] ?? '');
+    $email = trim($_POST['email'] ?? '');
     $payment_method = $_POST['payment_method'] ?? '';
 
     if (empty($name)) {
@@ -28,6 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_checkout'])) 
         $errors['phone'] = 'Vui lòng nhập số điện thoại';
     } elseif (!preg_match('/^[0-9]{10,11}$/', $phone)) {
         $errors['phone'] = 'Số điện thoại không hợp lệ';
+    }
+    if (empty($email)) {
+        $errors['email'] = 'Vui lòng nhập email';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Email không hợp lệ';
     }
     if (empty($address)) {
         $errors['address'] = 'Vui lòng nhập địa chỉ';
@@ -88,6 +94,14 @@ if (isset($_SESSION['error'])) {
                                 value="<?= htmlspecialchars($_POST['name'] ?? $user['name'] ?? '') ?>">
                             <?php if (isset($errors['name'])): ?>
                                 <div class="invalid-feedback"><?= $errors['name'] ?></div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="form-group">
+                            <input class="input <?= isset($errors['email']) ? 'is-invalid' : '' ?>" type="email"
+                                name="email" placeholder="Email"
+                                value="<?= htmlspecialchars($_POST['email'] ?? $user['email'] ?? '') ?>">
+                            <?php if (isset($errors['email'])): ?>
+                                <div class="invalid-feedback"><?= $errors['email'] ?></div>
                             <?php endif; ?>
                         </div>
                         <div class="form-group">

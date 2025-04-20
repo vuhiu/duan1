@@ -26,6 +26,19 @@
 
     <!-- Custom stylesheet -->
     <link type="text/css" rel="stylesheet" href="/duan1/css/style.css" />
+    <style>
+        .product-description {
+            font-size: 14px;
+            color: #666;
+            margin: 10px 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            min-height: 40px;
+        }
+    </style>
 </head>
 
 <body>
@@ -106,7 +119,7 @@
                                             <div class="product-body">
                                                 <p class="product-category"><?= htmlspecialchars($product['category_name']) ?></p>
                                                 <h3 class="product-name">
-                                                    <a href="/duan1/index.php?act=product&product_id=<?= $product['product_id'] ?>">
+                                                    <a href="/duan1/index.php?act=product&page=detail&product_id=<?= $product['product_id'] ?>">
                                                         <?= htmlspecialchars($product['product_name']) ?>
                                                     </a>
                                                 </h3>
@@ -118,13 +131,16 @@
                                                     <span class="price"><?= number_format($product['product_price'], 0, ',', '.') ?>₫</span>
                                                     <?php endif; ?>
                                                 </h4>
+                                                <p class="product-description"><?= htmlspecialchars($product['product_description'] ?? 'Không có mô tả') ?></p>
                                                 <div class="product-btns">
                                                     <button class="add-to-wishlist"><i class="fa fa-heart-o"></i></button>
                                                     <button class="quick-view"><i class="fa fa-eye"></i></button>
                                                 </div>
                                             </div>
                                             <div class="add-to-cart">
-                                                <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
+                                                <a href="/duan1/index.php?act=product&page=detail&product_id=<?= $product['product_id'] ?>" class="btn btn-primary view-detail-btn">
+                                                    <i class="fa fa-eye"></i> Xem chi tiết
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -167,7 +183,7 @@
                                             <div class="product-body">
                                                 <p class="product-category"><?= htmlspecialchars($product['category_name']) ?></p>
                                                 <h3 class="product-name">
-                                                    <a href="/duan1/index.php?act=product&product_id=<?= $product['product_id'] ?>">
+                                                    <a href="/duan1/index.php?act=product&product_id=<?= $product['product_id'] ?>" data-id="<?= $product['product_id'] ?>">
                                                         <?= htmlspecialchars($product['product_name']) ?>
                                                     </a>
                                                 </h3>
@@ -179,16 +195,19 @@
                                                     <span class="price"><?= number_format($product['product_price'], 0, ',', '.') ?>₫</span>
                                                     <?php endif; ?>
                                                 </h4>
+                                                <p class="product-description"><?= htmlspecialchars($product['product_description'] ?? 'Không có mô tả') ?></p>
                                                 <div class="product-btns">
                                                     <button class="add-to-wishlist"><i class="fa fa-heart-o"></i></button>
                                                     <button class="quick-view"><i class="fa fa-eye"></i></button>
                                                 </div>
                                             </div>
                                             <div class="add-to-cart">
-                                                <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
+                                                <button class="add-to-cart-btn" data-id="<?= $product['product_id'] ?>">
+                                                    <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                                                </button>
                                             </div>
                                         </div>
-                                </div>
+                                    </div>
                                     <?php endforeach; ?>
                                 </div>
                                 <div id="slick-nav-2" class="products-slick-nav"></div>
@@ -406,6 +425,25 @@
     }
     .slick-prev:before, .slick-next:before {
         font-size: 40px;
+    }
+    .view-detail-btn {
+        width: 100%;
+        padding: 10px;
+        background-color: #D21737;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        transition: background-color 0.3s;
+    }
+
+    .view-detail-btn:hover {
+        background-color: rgb(134, 4, 25);
+        color: #fff;
+        text-decoration: none;
     }
     </style>
 

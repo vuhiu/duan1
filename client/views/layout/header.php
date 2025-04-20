@@ -31,6 +31,45 @@
     <!-- Custom stlylesheet -->
     <link type="text/css" rel="stylesheet" href="/duan1/css/style.css" />
 
+    <style>
+        .cart-link {
+            display: flex;
+            align-items: center;
+            color: #2B2D42;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .cart-link:hover {
+            color: #D10024;
+            text-decoration: none;
+        }
+
+        .cart-link i {
+            font-size: 18px;
+            margin-right: 5px;
+        }
+
+        .cart-link .qty {
+            position: absolute;
+            right: -8px;
+            top: -10px;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            border-radius: 50%;
+            font-size: 10px;
+            color: #FFF;
+            background-color: #D10024;
+        }
+
+        .dropdown:hover .cart-dropdown {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -120,39 +159,18 @@
 
                             <!-- Cart -->
                             <div class="dropdown">
-                                <a href="/duan1/index.php?act=cart&page=list" class="dropdown-toggle"
-                                    data-toggle="dropdown" aria-expanded="true">
+                                <a href="/duan1/index.php?act=cart&page=list" class="cart-link">
                                     <i class="fa fa-shopping-cart"></i>
-                                    <span> Giỏ hàng</span>
-                                    <div class="qty">3</div>
+                                    <span>Giỏ hàng</span>
+                                    <div class="qty" id="cart-count">0</div>
                                 </a>
                                 <div class="cart-dropdown">
-                                    <div class="cart-list">
-                                        <div class="product-widget">
-                                            <div class="product-img">
-                                                <img src="./img/product01.png" alt="">
-                                            </div>
-                                            <div class="product-body">
-                                                <h3 class="product-name"><a href="#">Tên sản phẩm</a></h3>
-                                                <h4 class="product-price"><span class="qty">1x</span>$980.00</h4>
-                                            </div>
-                                            <button class="delete"><i class="fa fa-close"></i></button>
-                                        </div>
-
-                                        <div class="product-widget">
-                                            <div class="product-img">
-                                                <img src="./img/product02.png" alt="">
-                                            </div>
-                                            <div class="product-body">
-                                                <h3 class="product-name"><a href="#"> Tên sản phẩm</a></h3>
-                                                <h4 class="product-price"><span class="qty">3x</span>$980.00</h4>
-                                            </div>
-                                            <button class="delete"><i class="fa fa-close"></i></button>
-                                        </div>
+                                    <div class="cart-list" id="cart-items">
+                                        <!-- Cart items will be loaded here -->
                                     </div>
                                     <div class="cart-summary">
-                                        <small> Giỏ hàng</small>
-                                        <h5> Tổng tiền: $1960.00</h5>
+                                        <small>Giỏ hàng</small>
+                                        <h5>Tổng tiền: <span id="cart-total">0₫</span></h5>
                                     </div>
                                     <div class="cart-btns">
                                         <a href="/duan1/index.php?act=cart&page=list">Xem giỏ hàng</a>
@@ -279,6 +297,103 @@
     <script src="/duan1/js/nouislider.min.js"></script>
     <script src="/duan1/js/jquery.zoom.min.js"></script>
     <script src="/duan1/js/main.js"></script>
+
+    <!-- Add this before closing body tag -->
+    <script>
+    // Hàm cập nhật giỏ hàng
+    function updateCart() {
+        fetch('/duan1/index.php?act=cart&page=info')
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        updateEmptyCart();
+                        return null;
+                    }
+                    throw new Error('Network response was not ok');
+                }
+                return response.text().then(text => {
+                    try {
+                        return JSON.parse(text);
+                    } catch (e) {
+                        console.error('Invalid JSON:', text);
+                        throw new Error('Invalid JSON response');
+                    }
+                });
+            })
+            .then(data => {
+                if (!data) return;
+                if (data.error) {
+                    console.error('Error:', data.error);
+                    updateEmptyCart();
+                    return;
+                }
+
+                // Cập nhật số lượng
+                document.getElementById('cart-count').textContent = data.count || 0;
+
+                // Cập nhật danh sách sản phẩm
+                const cartItems = document.getElementById('cart-items');
+                if (data.items && data.items.length > 0) {
+                    cartItems.innerHTML = data.items.map(item => `
+                        <div class="product-widget">
+                            <div class="product-img">
+                                <img src="/duan1/upload/${item.product_image}" alt="${item.product_name}">
+                            </div>
+                            <div class="product-body">
+                                <h3 class="product-name">
+                                    <a href="/duan1/index.php?act=product&page=detail&product_id=${item.product_id}">
+                                        ${item.product_name}
+                                    </a>
+                                </h3>
+                                <h4 class="product-price">
+                                    <span class="qty">${item.quantity}x</span>
+                                    ${Number(item.sale_price > 0 ? item.sale_price : item.price).toLocaleString()}₫
+                                </h4>
+                            </div>
+                            <button class="delete" onclick="removeFromCart(${item.cart_item_id})">
+                                <i class="fa fa-close"></i>
+                            </button>
+                        </div>
+                    `).join('');
+                } else {
+                    cartItems.innerHTML = '<div class="empty-cart">Giỏ hàng trống</div>';
+                }
+
+                // Cập nhật tổng tiền
+                document.getElementById('cart-total').textContent = 
+                    Number(data.total || 0).toLocaleString() + '₫';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                updateEmptyCart();
+            });
+    }
+
+    // Hàm cập nhật trạng thái giỏ hàng trống
+    function updateEmptyCart() {
+        document.getElementById('cart-count').textContent = '0';
+        document.getElementById('cart-items').innerHTML = 
+            '<div class="empty-cart">Giỏ hàng trống</div>';
+        document.getElementById('cart-total').textContent = '0₫';
+    }
+
+    // Cập nhật giỏ hàng khi trang web load
+    document.addEventListener('DOMContentLoaded', updateCart);
+
+    // Thêm hàm này vào window để có thể gọi từ các trang khác
+    window.updateCartCount = updateCart;
+
+    // Thêm CSS cho trường hợp giỏ hàng trống
+    const style = document.createElement('style');
+    style.textContent = `
+        .empty-cart {
+            padding: 20px;
+            text-align: center;
+            color: #666;
+        }
+    `;
+    document.head.appendChild(style);
+    </script>
 </body>
 
 </html>

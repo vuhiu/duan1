@@ -251,63 +251,55 @@ $CLIENT_URL = "$ROOT_URL/client";
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 1px solid #E4E7ED;
-        border-radius: 3px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
         overflow: hidden;
+        width: fit-content;
+        margin: 0 auto;
     }
 
     .quantity-btn {
-        width: 30px;
-        height: 30px;
-        background: #fff;
+        background: #f8f9fa;
         border: none;
-        color: #333;
-        font-size: 14px;
+        padding: 5px 10px;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
+        font-size: 16px;
     }
 
     .quantity-btn:hover {
-        background-color: #E4E7ED;
+        background: #e9ecef;
     }
 
     .quantity-input {
-        width: 40px;
-        height: 30px;
-        border: none;
-        border-left: 1px solid #E4E7ED;
-        border-right: 1px solid #E4E7ED;
+        width: 50px;
         text-align: center;
-        font-size: 14px;
-        padding: 0;
-        -moz-appearance: textfield;
+        border: none;
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        padding: 5px;
     }
 
-    .quantity-input::-webkit-outer-spin-button,
-    .quantity-input::-webkit-inner-spin-button {
+    .quantity-input::-webkit-inner-spin-button,
+    .quantity-input::-webkit-outer-spin-button {
         -webkit-appearance: none;
         margin: 0;
     }
 
     .sale-price {
         color: #D10024;
-        font-weight: 600;
-        font-size: 16px;
+        font-weight: bold;
     }
 
     .original-price {
-        color: #8D99AE;
-        font-size: 14px;
         text-decoration: line-through;
+        color: #8D99AE;
+        font-size: 0.9em;
     }
 
     .total-amount {
+        font-size: 1.2em;
+        font-weight: bold;
         color: #D10024;
-        font-weight: 700;
-        font-size: 18px;
     }
 
     .table th {
@@ -344,34 +336,62 @@ $CLIENT_URL = "$ROOT_URL/client";
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const forms = document.querySelectorAll('.quantity-form');
-
-        forms.forEach(form => {
-            const minusBtn = form.querySelector('.quantity-btn.minus');
-            const plusBtn = form.querySelector('.quantity-btn.plus');
-            const input = form.querySelector('.quantity-input');
-
-            minusBtn.addEventListener('click', function() {
-                let value = parseInt(input.value);
-                if (value > 1) {
-                    input.value = value - 1;
-                    form.submit();
+        // Xử lý nút tăng/giảm số lượng
+        document.querySelectorAll('.quantity-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const form = this.closest('.quantity-form');
+                const input = form.querySelector('.quantity-input');
+                const currentValue = parseInt(input.value);
+                
+                if (this.classList.contains('plus')) {
+                    input.value = Math.min(currentValue + 1, 99);
+                } else if (this.classList.contains('minus')) {
+                    input.value = Math.max(currentValue - 1, 1);
                 }
+                
+                // Tự động submit form khi thay đổi số lượng
+                updateCartItem(form);
             });
+        });
 
-            plusBtn.addEventListener('click', function() {
-                let value = parseInt(input.value);
-                if (value < 99) {
-                    input.value = value + 1;
-                    form.submit();
-                }
-            });
-
+        // Xử lý input số lượng
+        document.querySelectorAll('.quantity-input').forEach(input => {
             input.addEventListener('change', function() {
-                let value = parseInt(this.value);
-                if (value < 1) this.value = 1;
-                if (value > 99) this.value = 99;
-                form.submit();
+                const form = this.closest('.quantity-form');
+                updateCartItem(form);
+            });
+        });
+
+        // Hàm cập nhật số lượng sản phẩm
+        function updateCartItem(form) {
+            const formData = new FormData(form);
+            
+            fetch('/duan1/index.php?act=cart&page=update_cart', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(() => {
+                // Cập nhật lại giỏ hàng
+                location.reload();
+                // Cập nhật số lượng trên header
+                if (window.updateCartCount) {
+                    window.updateCartCount();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi cập nhật giỏ hàng');
+            });
+        }
+
+        // Xử lý xóa sản phẩm
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
+                    window.location.href = this.getAttribute('href');
+                }
             });
         });
     });

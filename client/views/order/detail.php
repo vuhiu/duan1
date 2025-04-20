@@ -103,6 +103,10 @@ require_once __DIR__ . '/../layout/header.php';
                                     <td><?= htmlspecialchars($order[0]['name']) ?></td>
                                 </tr>
                                 <tr>
+                                    <th>Email:</th>
+                                    <td><?= htmlspecialchars($order[0]['email'] ?? 'Không có dữ liệu') ?></td>
+                                
+                                <tr>
                                     <th>Điện thoại:</th>
                                     <td>0<?= htmlspecialchars($order[0]['phone']) ?></td>
                                 </tr>

@@ -37,7 +37,15 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             min-height: 40px;
+            
         }
+        .sale-price,
+        .old-price,
+        .price {
+        display: block;
+    }
+        
+
     </style>
 </head>
 
@@ -202,9 +210,9 @@
                                                 </div>
                                             </div>
                                             <div class="add-to-cart">
-                                                <button class="add-to-cart-btn" data-id="<?= $product['product_id'] ?>">
-                                                    <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
-                                                </button>
+                                                <a href="/duan1/index.php?act=product&page=detail&product_id=<?= $product['product_id'] ?>" class="btn btn-primary view-detail-btn">
+                                                    <i class="fa fa-eye"></i> Xem chi tiết
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
